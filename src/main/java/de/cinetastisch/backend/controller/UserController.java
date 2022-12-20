@@ -2,7 +2,6 @@ package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.model.User;
 import de.cinetastisch.backend.model.pojo.UserPojo;
-import de.cinetastisch.backend.record.UserRequestBody;
 import de.cinetastisch.backend.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
