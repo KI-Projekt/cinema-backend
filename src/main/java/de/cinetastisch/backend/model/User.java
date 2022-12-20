@@ -1,9 +1,6 @@
 package de.cinetastisch.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -17,8 +14,6 @@ public class User {
     private String email;
     private String password;
 
-    public User(){}
-
     public User(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -26,4 +21,6 @@ public class User {
         this.password = password;
     }
 
+    public User() {
+    }
 }

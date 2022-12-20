@@ -25,7 +25,7 @@ public class MovieService {
     }
 
     public void addMovie(Movie movie){
-        movieRepository.save(movie); // TODO: abstract to DAO ("dao.addMovie(movie)")?
+        movieRepository.save(movie); // Optional: abstract to DAO ("dao.addMovie(movie)")?
     }
 
     public Iterable<Movie> addMovies(List<Movie> movies){
