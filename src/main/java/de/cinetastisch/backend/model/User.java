@@ -1,14 +1,18 @@
 package de.cinetastisch.backend.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "USERS")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
-    private @Id @GeneratedValue Long user_id;
+    private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long user_id;
     private String firstName;
     private String lastName;
     private String email;
@@ -19,8 +23,5 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-    }
-
-    public User() {
     }
 }
