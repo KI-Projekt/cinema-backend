@@ -9,9 +9,9 @@ import lombok.Data;
 @Entity
 @Data
 public class Movie {
-    private @Id @GeneratedValue(strategy = GenerationType.AUTO) Long movieId;
+    private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long movieId;
     private String imdbId;
-    private String rank;
+    private String imdbRank;
     private String title;
     private String fullTitle;
     private String releaseYear;
@@ -22,10 +22,9 @@ public class Movie {
 
     public Movie() {}
 
-    public Movie(Long movieId, String imdbId, String rank, String title, String fullTitle, String releaseYear, String image, String crew, String imdbRating, String imdbRatingCount) {
-        this.movieId = movieId;
+    public Movie(String imdbId, String imdbRank, String title, String fullTitle, String releaseYear, String image, String crew, String imdbRating, String imdbRatingCount) {
         this.imdbId = imdbId;
-        this.rank = rank;
+        this.imdbRank = imdbRank;
         this.title = title;
         this.fullTitle = fullTitle;
         this.releaseYear = releaseYear;
@@ -35,9 +34,10 @@ public class Movie {
         this.imdbRatingCount = imdbRatingCount;
     }
 
-    public Movie(String imdbId, String rank, String title, String fullTitle, String releaseYear, String image, String crew, String imdbRating, String imdbRatingCount) {
+    public Movie(Long movieId, String imdbId, String imdbRank, String title, String fullTitle, String releaseYear, String image, String crew, String imdbRating, String imdbRatingCount) {
+        this.movieId = movieId;
         this.imdbId = imdbId;
-        this.rank = rank;
+        this.imdbRank = imdbRank;
         this.title = title;
         this.fullTitle = fullTitle;
         this.releaseYear = releaseYear;
@@ -46,6 +46,8 @@ public class Movie {
         this.imdbRating = imdbRating;
         this.imdbRatingCount = imdbRatingCount;
     }
+
+
 
     public Movie(String title, String releaseYear) {
         this.title = title;
