@@ -1,7 +1,6 @@
 package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.model.User;
-import de.cinetastisch.backend.model.pojo.UserPojo;
 import de.cinetastisch.backend.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +19,7 @@ public class UserController {
     }
 
     @PostMapping
-    public void add(@RequestBody UserPojo request){ // statt "User" kann auch ein eigener record benutzt werden
+    public void add(@RequestBody User request){ // statt "User" kann auch ein eigener record benutzt werden
         userService.registerUser(request);
     }
 

@@ -4,54 +4,46 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-public class Movie {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Movie { //Title, Rated, Runtime, Genre, Director, Actors, Plot, Poster, imdbID, trailer
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long movieId;
-    private String imdbId;
-    private String imdbRank;
     private String title;
-    private String fullTitle;
     private String releaseYear;
-    private String image;
-    private String crew;
+    private String posterImage;
+    private String rated;
+    private String runtime;
+    private String genre;
+    private String actors;
+    private String plot;
+    private String trailer;
+    private String imdbId;
     private String imdbRating;
     private String imdbRatingCount;
 
-    public Movie() {}
-
-    public Movie(String imdbId, String imdbRank, String title, String fullTitle, String releaseYear, String image, String crew, String imdbRating, String imdbRatingCount) {
-        this.imdbId = imdbId;
-        this.imdbRank = imdbRank;
+    public Movie(String title, String releaseYear, String posterImage, String rated, String runtime, String genre, String actors, String plot, String trailer, String imdbId, String imdbRating, String imdbRatingCount) {
         this.title = title;
-        this.fullTitle = fullTitle;
         this.releaseYear = releaseYear;
-        this.image = image;
-        this.crew = crew;
+        this.posterImage = posterImage;
+        this.rated = rated;
+        this.runtime = runtime;
+        this.genre = genre;
+        this.actors = actors;
+        this.plot = plot;
+        this.trailer = trailer;
+        this.imdbId = imdbId;
         this.imdbRating = imdbRating;
         this.imdbRatingCount = imdbRatingCount;
     }
-
-    public Movie(Long movieId, String imdbId, String imdbRank, String title, String fullTitle, String releaseYear, String image, String crew, String imdbRating, String imdbRatingCount) {
-        this.movieId = movieId;
-        this.imdbId = imdbId;
-        this.imdbRank = imdbRank;
-        this.title = title;
-        this.fullTitle = fullTitle;
-        this.releaseYear = releaseYear;
-        this.image = image;
-        this.crew = crew;
-        this.imdbRating = imdbRating;
-        this.imdbRatingCount = imdbRatingCount;
-    }
-
-
 
     public Movie(String title, String releaseYear) {
         this.title = title;
         this.releaseYear = releaseYear;
     }
-
 }

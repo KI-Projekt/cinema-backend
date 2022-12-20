@@ -2,7 +2,6 @@ package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.exeption.ResourceNotFoundException;
 import de.cinetastisch.backend.model.User;
-import de.cinetastisch.backend.model.pojo.UserPojo;
 import de.cinetastisch.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +13,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void registerUser(UserPojo userCredentials){
+    public void registerUser(User userCredentials){
         User newUser = new User();
-        newUser.setFirstName(userCredentials.firstName);
-        newUser.setLastName(userCredentials.lastName);
-        newUser.setEmail(userCredentials.email);
-        newUser.setPassword(userCredentials.password);
+        newUser.setFirstName(userCredentials.getFirstName());
+        newUser.setLastName(userCredentials.getLastName());
+        newUser.setEmail(userCredentials.getEmail());
+        newUser.setPassword(userCredentials.getPassword());
         userRepository.save(newUser);
     }
 
