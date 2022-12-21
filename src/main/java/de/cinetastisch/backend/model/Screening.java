@@ -35,7 +35,6 @@ public class Screening {
             name = "movie_id",
             foreignKey = @ForeignKey(name = "screening_movie_id_fk")
     )
-    // @NotFound(action=NotFoundAction.IGNORE) // Auskommentieren wenn es beim Starten zu problemen gibt (Nach jeder @ManyToOne oder @OneToMany Annotation)
     private Movie movie;
 
     @ManyToOne
