@@ -54,7 +54,6 @@ public class Seat { // Nicht in relation zu den
     )
     private String seatType; // Standard, Premium
 
-
     public Seat(Room room, Integer seatRow, Integer seatColumn, String seatType) {
         this.room = room;
         this.seatRow = seatRow;

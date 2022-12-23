@@ -62,10 +62,26 @@ public class User {
     )
     private String password;
 
+    @Column(
+            name = "birthday",
+            nullable = true,
+            columnDefinition = "TEXT"
+    )
+    private String birthday;
+
+    @Column(
+            name = "address",
+            nullable = true,
+            columnDefinition = "TEXT"
+    )
+    private String address;
+
+
 //=== === === === === === === ===
     @OneToMany(
             cascade = {CascadeType.ALL}, // oder {CascadeType.PERSIST, CascadeType.REMOVE},
-            mappedBy = "user"
+            mappedBy = "user",
+            fetch = FetchType.LAZY
     )
     private List<Booking> bookings = new ArrayList<>();
 //=== === === === === === === ===
@@ -75,5 +91,12 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+    }
+
+    public void addBooking(Booking book){
+        if(!this.bookings.contains(book)){
+            this.bookings.add(book);
+            book.setUser(this);
+        }
     }
 }

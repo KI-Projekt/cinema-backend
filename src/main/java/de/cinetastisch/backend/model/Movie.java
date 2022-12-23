@@ -1,18 +1,30 @@
 package de.cinetastisch.backend.model;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @Entity(name = "Movie")
-@Table(name = "movie")
+@Table(name = "movie", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+//@Table(name = "movie")
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id",
+    scope = Movie.class
+)
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Movie { //Title, Rated, Runtime, Genre, Director, Actors, Plot, Poster, imdbID, trailer
 
     @Id
@@ -70,11 +82,7 @@ public class Movie { //Title, Rated, Runtime, Genre, Director, Actors, Plot, Pos
     )
     private String genre;
 
-    @Column(
-            name = "actors",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @Column(name = "actors", nullable = false, columnDefinition = "TEXT")
     private String actors;
 
     @Column(
@@ -113,10 +121,16 @@ public class Movie { //Title, Rated, Runtime, Genre, Director, Actors, Plot, Pos
     private String imdbRatingCount;
 
 
+    @JsonManagedReference
     @OneToMany(
-            cascade = {CascadeType.ALL}, // oder {CascadeType.PERSIST, CascadeType.REMOVE},
-            mappedBy = "movie"
+            mappedBy = "movie",
+//            targetEntity = Screening.class,
+            cascade = {CascadeType.PERSIST,CascadeType.MERGE},
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
     )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Screening> screenings = new ArrayList<>();
 
 
@@ -135,4 +149,23 @@ public class Movie { //Title, Rated, Runtime, Genre, Director, Actors, Plot, Pos
         this.imdbRatingCount = imdbRatingCount;
     }
 
+//    public void addScreening(Screening screening){
+////        if (!this.screenings.contains(screening)){
+//        this.screenings.add(screening);
+//        screening.setMovie(this);
+////        }
+//    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Movie movie = (Movie) o;
+        return id != null && Objects.equals(id, movie.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
