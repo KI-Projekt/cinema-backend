@@ -1,7 +1,8 @@
 package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.model.Screening;
-import de.cinetastisch.backend.pojo.ScreeningPostRequest;
+import de.cinetastisch.backend.model.dto.ScreeningDto;
+import de.cinetastisch.backend.model.info.ScreeningInfo;
 import de.cinetastisch.backend.service.ScreeningService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,22 +19,22 @@ public class ScreeningController {
     }
 
     @PostMapping
-    public Screening add(@RequestBody ScreeningPostRequest screeningPostRequest){
+    public Screening add(@RequestBody ScreeningInfo screeningInfo){
         return screeningService.addScreening(
-                screeningPostRequest.getDate(),
-                screeningPostRequest.getTimeSlot(),
-                screeningPostRequest.getMovieId(),
-                screeningPostRequest.getRoomId()
+                screeningInfo.getDate(),
+                screeningInfo.getTimeSlot(),
+                screeningInfo.getMovieId(),
+                screeningInfo.getRoomId()
         );
     }
 
     @GetMapping
-    public List<Screening> getAll(){
+    public List<ScreeningDto> getAll(){
         return screeningService.getAllScreenings();
     }
 
     @GetMapping("/{id}")
-    public Screening getOne(@PathVariable Long id){
+    public ScreeningDto getOne(@PathVariable Long id){
         return screeningService.getScreening(id);
     }
 }

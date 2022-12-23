@@ -22,23 +22,23 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
         scope = Room.class
 )
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-public class Room{
+public class Room {
 
-    @SequenceGenerator(name = "room_sequence",sequenceName = "room_sequence",allocationSize = 1)
-    @GeneratedValue(strategy = SEQUENCE,generator = "room_sequence")
+    @SequenceGenerator(name = "room_sequence", sequenceName = "room_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "room_sequence")
     @Column(name = "id")
     private @Id Long id;
 
-    @Column(name = "is_three_d",nullable = false,columnDefinition = "TEXT")
+    @Column(name = "is_three_d", nullable = false, columnDefinition = "TEXT")
     private boolean isThreeD;
 
-    @Column(name = "is_dolby_atmos",nullable = false,columnDefinition = "TEXT")
+    @Column(name = "is_dolby_atmos", nullable = false, columnDefinition = "TEXT")
     private boolean isDolbyAtmos;
 
     @JsonManagedReference
     @OneToMany(
             mappedBy = "room",
-            cascade = {CascadeType.PERSIST,CascadeType.MERGE},
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             fetch = FetchType.LAZY,
             orphanRemoval = true
     )
@@ -47,7 +47,7 @@ public class Room{
 
     @OneToMany(
             mappedBy = "room",
-            cascade = {CascadeType.PERSIST,CascadeType.MERGE},
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             fetch = FetchType.LAZY,
             orphanRemoval = true
     )
