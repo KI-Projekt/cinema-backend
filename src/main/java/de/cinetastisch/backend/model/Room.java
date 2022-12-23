@@ -43,7 +43,6 @@ public class Room{
             orphanRemoval = true
     )
     @ToString.Exclude
-    @JsonIdentityReference(alwaysAsId=true)
     private List<Screening> screenings = new ArrayList<>();
 
     @OneToMany(
