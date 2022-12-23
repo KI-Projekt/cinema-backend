@@ -15,8 +15,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @NoArgsConstructor
 @Entity(name = "Screening")
 @Table(name = "screening", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Screening.class)
-@JsonIgnoreProperties({"hibernateLazyInitializer"})
+//@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Screening {
 
     @SequenceGenerator(name = "screening_sequence", sequenceName = "screening_sequence", allocationSize = 1)

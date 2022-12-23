@@ -16,11 +16,6 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @NoArgsConstructor
 @Entity(name = "Room")
 @Table(name = "room", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id",
-        scope = Room.class
-)
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Room {
 
