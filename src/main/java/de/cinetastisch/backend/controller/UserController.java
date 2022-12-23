@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping
-    public void addOne(@RequestBody User request) { // statt "User" kann auch ein eigener record benutzt werden (Leere Attribute sind NULL)
+    public void addOne(@RequestBody User request) {
         userService.registerUser(request);
     }
 

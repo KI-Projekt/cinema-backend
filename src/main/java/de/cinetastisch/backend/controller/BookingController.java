@@ -1,7 +1,6 @@
 package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.model.Booking;
-import de.cinetastisch.backend.model.Ticket;
 import de.cinetastisch.backend.service.BookingService;
 import de.cinetastisch.backend.pojo.Order;
 import lombok.AllArgsConstructor;
@@ -34,7 +33,5 @@ public class BookingController {
     @PostMapping
     public Booking placeOrder(@RequestBody Order order){
         return bookingService.createOrder(order);
-    };
-
-//        Ticket = new Ticket();
+    }
 }

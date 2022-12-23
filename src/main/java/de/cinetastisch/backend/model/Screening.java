@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -18,76 +15,41 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @NoArgsConstructor
 @Entity(name = "Screening")
 @Table(name = "screening", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
-//@Table(name = "screening")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id",
-        scope = Screening.class
-)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Screening.class)
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-public class Screening{
+public class Screening {
 
-    @Id
-    @SequenceGenerator(
-            name = "screening_sequence",
-            sequenceName = "screening_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = SEQUENCE,
-            generator = "screening_sequence"
-    )
+    @SequenceGenerator(name = "screening_sequence", sequenceName = "screening_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "screening_sequence")
     @Column(name = "id")
-    private Long id;
+    private @Id Long id;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)//    @MapsId("movieId")  maps-id du hs
-    @JoinColumn(
-            name = "movie_id",
-            nullable = true,
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "screening_movie_id_fk")
-    )
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "movie_id", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_movie_id_fk"))
     @ToString.Exclude
     private Movie movie;
 
     @JsonBackReference
-    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(
-            name = "room_id",
-            nullable = true,
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "screening_room_id_fk")
-    )//    @MapsId("roomId")   DU WI***
-    private Room room; //TODO: Filmsaal-Entität erstellen
+    @JoinColumn(name = "room_id", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_room_id_fk"))
+    @ToString.Exclude
+    private Room room;
 
-    @Column(
-            name = "date",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @Column(name = "date", nullable = false, columnDefinition = "TEXT")
     private String date;
 
-    @Column(
-            name = "time_slot",
-            nullable = false,
-            columnDefinition = "TEXT"
+    @Column(name = "time_slot", nullable = false, columnDefinition = "TEXT")
+    private String timeSlot;
+
+/*
+    @OneToMany(
+            cascade = {CascadeType.ALL},
+            mappedBy = "screening"
     )
-    private String timeSlot; // statt genaue Uhrzeiten die Vorstellungen in Blöcke einteilen?
-
-
-//    @OneToMany(
-//            cascade = {CascadeType.ALL},
-//            mappedBy = "screening"
-//    )
-//    @ToString.Exclude
-//    private List<Ticket> tickets = new ArrayList<>();
-
-    public Screening(String date, String timeSlot) {
-        this.date = date;
-        this.timeSlot = timeSlot;
-    }
+    @ToString.Exclude
+    private List<Ticket> tickets = new ArrayList<>();
+*/
 
     public Screening(Movie movie, Room room, String date, String timeSlot) {
         this.movie = movie;
@@ -95,14 +57,6 @@ public class Screening{
         this.date = date;
         this.timeSlot = timeSlot;
     }
-
-    //    public void addTicket(Ticket ticket){
-//        if (!tickets.contains(ticket)) {
-//            tickets.add(ticket);
-//            ticket.setScreening(this);
-//        }
-//    }
-
 
     @Override
     public boolean equals(Object o) {

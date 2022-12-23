@@ -2,8 +2,6 @@ package de.cinetastisch.backend.repository;
 
 import de.cinetastisch.backend.model.Booking;
 import de.cinetastisch.backend.model.Ticket;
-import de.cinetastisch.backend.model.User;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

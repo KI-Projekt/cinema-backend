@@ -32,10 +32,7 @@ public class MovieService {
     }
 
     public void replaceMovie(Long id, Movie movie){
-//        Movie oldMovie = movieRepository.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundException("ID not found"));
         Movie refMovie = movieRepository.getReferenceById(id);
-        // TODO: add checks
         refMovie.setTitle(movie.getTitle());
         movieRepository.save(refMovie);
     }

@@ -1,6 +1,5 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.enumeration.BookingStatus;
 import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.TicketRepository;
 import org.springframework.stereotype.Service;

@@ -6,7 +6,6 @@ import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.repository.MovieRepository;
 import de.cinetastisch.backend.repository.RoomRepository;
 import de.cinetastisch.backend.repository.ScreeningRepository;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +28,6 @@ public class ScreeningService {
         return screeningRepository.findById(id).get();
     }
 
-//    @Transactional
     public Screening addScreening(String date, String timeSlot, Long movieId, Long roomId) {
         Movie movie = movieRepository.findById(movieId).get();
         Room room = roomRepository.findById(roomId).get();

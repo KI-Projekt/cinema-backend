@@ -14,12 +14,6 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
 
-//    public UserService(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
-
-    // wird geregelt durch @AllArgsContructor
-
     public void registerUser(User userCredentials){
         User newUser = new User();
         newUser.setFirstName(userCredentials.getFirstName());
@@ -45,8 +39,7 @@ public class UserService {
         oldUser.setBirthday(newUser.getBirthday());
         oldUser.setPassword(newUser.getPassword());
         oldUser.setEmail(newUser.getEmail());
-
-       userRepository.save(oldUser);
+        userRepository.save(oldUser);
     }
 
     public void deleteUser(Long id) {

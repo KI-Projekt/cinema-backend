@@ -3,7 +3,6 @@ package de.cinetastisch.backend.model;
 import de.cinetastisch.backend.enumeration.BookingStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.Hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,41 +18,22 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Table(name = "booking")
 public class Booking {
 
-    @Id
-    @SequenceGenerator(
-            name = "booking_sequence",
-            sequenceName = "booking_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = SEQUENCE,
-            generator = "booking_sequence"
-    )
+    @SequenceGenerator(name = "booking_sequence",sequenceName = "booking_sequence",allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE,generator = "booking_sequence")
     @Column(name = "id")
-    private Long id;
+    private @Id Long id;
 
     @ManyToOne
     @MapsId("userId")
-    @JoinColumn(
-            name = "user_id",
-            foreignKey = @ForeignKey(
-                    name = "booking_user_id_fk"
-            )
-    )
+    @JoinColumn(name = "user_id",foreignKey = @ForeignKey(name = "booking_user_id_fk"))
     private User user;
 
-    @Column(
-            name = "booking_status",
-            nullable = false
-    )
+    @Column(name = "booking_status",nullable = false)
     @Enumerated(EnumType.STRING)
     private BookingStatus bookingStatus = BookingStatus.IN_PROGRESS;
 
 
-    @OneToMany(
-            cascade = {CascadeType.ALL},
-            mappedBy = "booking" //OneToMany benutzt IMMER mappedBy
-    )
+    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "booking")
     @ToString.Exclude
     private List<Ticket> tickets = new ArrayList<>();
 
@@ -64,46 +44,13 @@ public class Booking {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Booking booking = (Booking) o;
-        return id != null && Objects.equals(id, booking.id);
+        return Objects.equals(id, booking.id) && Objects.equals(user, booking.user) && bookingStatus == booking.bookingStatus;
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(id, user, bookingStatus);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
