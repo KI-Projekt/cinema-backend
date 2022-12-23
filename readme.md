@@ -1,5 +1,39 @@
 # Cinema Backend (WWI21SEB Gruppe 4)
-...
+
+## Bi-direktionale vs Uni-direktionale Datenbankbeziehungen
+
+Als Notiz möchte ich hier vermerken, was der Unterschied zwischen eier **Bi-direktionalen** Datenbankbeziehung 
+und einer **Uni-direktionalen** Beziehung ist und wann welche verwendet werden soll.
+
+
+### Bi-direktional
+Eine bi-direktionale Beziehung wird dann benutzt, wenn Parent- und Child-Tabellen,
+beide von ihrer Beziehung zueinander mitbekommen sollen. 
+Heißt: Parent-Tabelle hat eine Liste von Child als Attribut, z.B. List<Screenings> (welche nicht in der eigentlichen
+Tabelle gespeichert wird, sondern nur der API dienen soll).
+
+Diese Beziehung wird mithilfe der Annotations **@ManyToOne** und **@OneToMany** in Hibernate implementiert.
+
+### Uni-direktional
+Lässt man eines der beiden Annotations in der Beziehung weg (z.B. man hat nur @ManyToOne), so entsteht eine uni-direktionale
+Datenbankbeziehung. Dadurch weiß nur die Child-Tabelle von ihrer Beziehung zu dem Parent.
+
+### Vergleich
+Konkret gesagt, ist es *Best-Practice* bei einer **kleinen** Anzahl an zu erwartenden Entitäten, 
+eine bi-direktionale Datenbankbeziehung zu verwenden.
+Nachteil beim bi-direktionalen Ansatz ist, dass die API-Ergebnisse *weder "gepaged" noch gefiltert werden* können 
+und **alle** Entitäten bei der Abfrage von Parent-Entitäten ausgegeben werden.
+
+Entsprechend eignen sich uni-direktionale Beziehung für **größere** Datensätze (wie bei "ein Film kann **(sehr) viele** Vorstellungen haben").
+Nachteil beim Uni-direktionalen Ansatz ist, dass ihre Logik mehr geschriebenen Code benötigt und angeblich mehr Performance kosten soll.
+
+Weitere Beiträge:
+- https://stackoverflow.com/a/47711251
+- https://stackoverflow.com/a/49806745
+- https://dzone.com/articles/deterring-%E2%80%9Ctomany%E2%80%9D
+
+
+
 # MYSQL RESERVED KEYWORDS
 **Die aufgelisteten keywords nicht als Variablennamen benutzen!**
 
