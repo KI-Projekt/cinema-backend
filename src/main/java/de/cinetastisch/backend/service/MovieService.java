@@ -2,17 +2,20 @@ package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.exeption.ResourceNotFoundException;
 import de.cinetastisch.backend.model.Movie;
+import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.repository.MovieRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class MovieService {
 
     private final MovieRepository movieRepository;
+
+    public MovieService(MovieRepository movieRepository) {
+        this.movieRepository = movieRepository;
+    }
 
     public List<Movie> getAllMovies(){
         return movieRepository.findAll();
@@ -39,5 +42,9 @@ public class MovieService {
 
     public void deleteMovie(Long id){
         movieRepository.deleteById(id);
+    }
+
+    public List<Screening> getScreeningsOfMovie(Long id) {
+        return movieRepository.getScreenings(id);
     }
 }

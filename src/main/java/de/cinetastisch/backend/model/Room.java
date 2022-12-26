@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -30,32 +28,10 @@ public class Room {
     @Column(name = "is_dolby_atmos", nullable = false, columnDefinition = "TEXT")
     private boolean isDolbyAtmos;
 
-    @JsonManagedReference
-    @OneToMany(
-            mappedBy = "room",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.LAZY,
-            orphanRemoval = true
-    )
-    @ToString.Exclude
-    private List<Screening> screenings = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "room",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.LAZY,
-            orphanRemoval = true
-    )
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private List<Seat> seats = new ArrayList<>();
-
-
     public Room(boolean isThreeD, boolean isDolbyAtmos) {
         this.isThreeD = isThreeD;
         this.isDolbyAtmos = isDolbyAtmos;
     }
-
 
     @Override
     public boolean equals(Object o) {

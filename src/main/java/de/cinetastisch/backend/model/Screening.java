@@ -15,7 +15,6 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @NoArgsConstructor
 @Entity(name = "Screening")
 @Table(name = "screening", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
-//@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Screening {
 
     @SequenceGenerator(name = "screening_sequence", sequenceName = "screening_sequence", allocationSize = 1)
@@ -23,7 +22,6 @@ public class Screening {
     @Column(name = "id")
     private @Id Long id;
 
-    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "movie_id", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_movie_id_fk"))
     @ToString.Exclude
@@ -40,15 +38,6 @@ public class Screening {
 
     @Column(name = "time_slot", nullable = false, columnDefinition = "TEXT")
     private String timeSlot;
-
-/*
-    @OneToMany(
-            cascade = {CascadeType.ALL},
-            mappedBy = "screening"
-    )
-    @ToString.Exclude
-    private List<Ticket> tickets = new ArrayList<>();
-*/
 
     public Screening(Movie movie, Room room, String date, String timeSlot) {
         this.movie = movie;

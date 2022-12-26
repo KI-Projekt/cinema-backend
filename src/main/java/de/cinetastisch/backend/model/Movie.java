@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -59,18 +57,6 @@ public class Movie {
 
     @Column(name = "imdb_rating_count",nullable = false,columnDefinition = "TEXT")
     private String imdbRatingCount;
-
-
-    @JsonManagedReference
-    @OneToMany(
-            mappedBy = "movie",
-            cascade = {CascadeType.PERSIST,CascadeType.MERGE},
-            fetch = FetchType.LAZY,
-            orphanRemoval = true
-    )
-    @ToString.Exclude
-    private List<Screening> screenings = new ArrayList<>();
-
 
     public Movie(String title, String releaseYear, String posterImage, String rated, String runtime, String genre, String actors, String plot, String trailer, String imdbId, String imdbRating, String imdbRatingCount) {
         this.title = title;
