@@ -1,79 +1,85 @@
 package de.cinetastisch.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-@Data // Erstellt Getter, Setter, ToString, Equals, Hashcode ... (und mehr)
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "User") // Best-Practice ist die explizite Namensgebung (auch um Klassennamen zu verkürzen)
-@Table(
-        name = "user", // Best-Practice (auch um reserved keywords zu umgehen)
-        uniqueConstraints = { // E-Mail soll eindeutig sein (pro User eine eindeutige E-Mail-Adresse)
-                @UniqueConstraint(name = "user_email_unique", columnNames = "email") // verkürzt den Namen des unique-identifiers von einem random String zu "user_email_unique"
+@Table(name = "user", /* Best-Practice (auch um reserved keywords zu umgehen) */
+        uniqueConstraints = { /* E-Mail soll eindeutig sein (pro User eine eindeutige E-Mail-Adresse) */
+                @UniqueConstraint(name = "user_email_unique", columnNames = "email") /* verkürzt den Namen des unique-identifiers von einem random String zu "user_email_unique" */
         }
-)
+    )
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
 
-    @Id
-    @SequenceGenerator(
-            name = "users_sequence",
-            sequenceName = "users_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = SEQUENCE,
-            generator = "users_sequence"
-    )
-    @Column(
-            name = "id"
-    )
-    private Long id;
+    @SequenceGenerator(name = "users_sequence", sequenceName = "users_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "users_sequence")
+    @Column(name = "id")
+    private @Id Long id;
 
-    @Column(
-            name = "first_name",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @Column(name = "first_name", nullable = false, columnDefinition = "TEXT")
     private String firstName;
 
-    @Column(
-            name = "last_name",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @Column(name = "last_name", nullable = false, columnDefinition = "TEXT")
     private String lastName;
 
-    @Column(
-            name = "email",
-            nullable = false,
-            columnDefinition = "VARCHAR(200)" // Sonst MySQL-Error "BLOB/TEXT column 'email' used in key specification without a key length"
-    )
+    @Column(name = "email", nullable = false, columnDefinition = "VARCHAR(200)" /* Sonst MySQL-Error "BLOB/TEXT column 'email' used in key specification without a key length" */)
     private String email;
 
-    @Column(
-            name = "password",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;
 
-//=== === === === === === === ===
-    @OneToMany(
-            cascade = {CascadeType.ALL}, // oder {CascadeType.PERSIST, CascadeType.REMOVE},
-            mappedBy = "user"
-    )
-    private List<Booking> bookings = new ArrayList<>();
-//=== === === === === === === ===
+    @Column(name = "birthday", nullable = true, columnDefinition = "TEXT")
+    private String birthday;
 
-    public User(String firstName, String lastName, String email, String password) {
+    @Column(name = "country",nullable = false,columnDefinition = "TEXT")
+    private String country;
+
+    @Column(name = "city",nullable = false,columnDefinition = "TEXT")
+    private String city;
+
+    @Column(name = "zip",nullable = false,columnDefinition = "TEXT")
+    private String zip;
+
+    @Column(name = "street",nullable = false,columnDefinition = "TEXT")
+    private String street;
+
+    @Column(name = "house_number",nullable = false)
+    private Integer houseNumber;
+
+    public User(String firstName, String lastName, String email, String password, String birthday, String country, String city, String zip, String street) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.birthday = birthday;
+        this.country = country;
+        this.city = city;
+        this.zip = zip;
+        this.street = street;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && email.equals(user.email) && Objects.equals(password, user.password) && Objects.equals(birthday, user.birthday) && Objects.equals(country, user.country) && Objects.equals(city, user.city) && Objects.equals(zip, user.zip) && Objects.equals(street, user.street) && Objects.equals(houseNumber, user.houseNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, email, password, birthday, country, city, zip, street, houseNumber);
     }
 }

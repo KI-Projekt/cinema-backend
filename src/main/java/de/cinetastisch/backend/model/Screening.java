@@ -1,78 +1,56 @@
 package de.cinetastisch.backend.model;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "Screening")
-@Table(name = "screening")
+@Table(name = "screening", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Screening {
 
-    @Id
-    @SequenceGenerator(
-            name = "screening_sequence",
-            sequenceName = "screening_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = SEQUENCE,
-            generator = "screening_sequence"
-    )
+    @SequenceGenerator(name = "screening_sequence", sequenceName = "screening_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "screening_sequence")
     @Column(name = "id")
-    private Long id;
+    private @Id Long id;
 
-    @ManyToOne
-    @MapsId("movieId")
-    @JoinColumn(
-            name = "movie_id",
-            foreignKey = @ForeignKey(name = "screening_movie_id_fk")
-    )
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "movie_id", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_movie_id_fk"))
+    @ToString.Exclude
     private Movie movie;
 
-    @ManyToOne
-    @MapsId("roomId")
-    @JoinColumn(
-            name = "room_id",
-            foreignKey = @ForeignKey(name = "screening_room_id_fk")
-    )
-    private Room room; //TODO: Filmsaal-Entität erstellen
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "room_id", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_room_id_fk"))
+    @ToString.Exclude
+    private Room room;
 
-    @Column(
-            name = "date",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
-    private String date;
+    @Column(name = "date", nullable = false, columnDefinition = "TEXT")
+    private java.time.LocalDate date;
 
-    @Column(
-            name = "time_slot",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @Column(name = "start_time", nullable = false, columnDefinition = "TEXT")
+    private java.time.LocalTime startTime;
 
-    // @ManyToOne
-    private String timeSlot; // statt genaue Uhrzeiten die Vorstellungen in Blöcke einteilen?
+    @Column(name = "end_time", nullable = false, columnDefinition = "TEXT")
+    private java.time.LocalTime endTime;
 
-
-    @OneToMany(
-            cascade = {CascadeType.ALL},
-            mappedBy = "screening"
-    )
-    private List<Ticket> tickets = new ArrayList<>();
-
-
-    public Screening(Movie movie, String date, Room room, String timeSlot) {
+    public Screening(Movie movie, Room room, LocalDate date, LocalTime startTime, LocalTime endTime) {
         this.movie = movie;
-        this.date = date;
         this.room = room;
-        this.timeSlot = timeSlot;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 }

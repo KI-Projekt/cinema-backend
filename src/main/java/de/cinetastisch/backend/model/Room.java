@@ -1,57 +1,48 @@
 package de.cinetastisch.backend.model;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "Room")
-@Table(name = "room")
+@Table(name = "room", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Room {
 
-    @Id
-    @SequenceGenerator(
-            name = "room_sequence",
-            sequenceName = "room_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = SEQUENCE,
-            generator = "room_sequence"
-    )
+    @SequenceGenerator(name = "room_sequence", sequenceName = "room_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "room_sequence")
     @Column(name = "id")
-    private Long id;
+    private @Id Long id;
 
-    @Column(
-            name = "is_three_d",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @Column(name = "is_three_d", nullable = false, columnDefinition = "TEXT")
     private boolean isThreeD;
 
-    @Column(
-            name = "is_dolby_atmos",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @Column(name = "is_dolby_atmos", nullable = false, columnDefinition = "TEXT")
     private boolean isDolbyAtmos;
 
+    public Room(boolean isThreeD, boolean isDolbyAtmos) {
+        this.isThreeD = isThreeD;
+        this.isDolbyAtmos = isDolbyAtmos;
+    }
 
-    @OneToMany(
-            cascade = {CascadeType.ALL},
-            mappedBy = "room" //OneToMany benutzt IMMER mappedBy
-    )
-    private List<Screening> screenings = new ArrayList<>();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Room room = (Room) o;
+        return isThreeD == room.isThreeD && isDolbyAtmos == room.isDolbyAtmos && id.equals(room.id);
+    }
 
-    @OneToMany(
-            cascade = {CascadeType.ALL},
-            mappedBy = "room" //OneToMany benutzt IMMER mappedBy
-    )
-    private List<Seat> seats = new ArrayList<>();
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, isThreeD, isDolbyAtmos);
+    }
 }

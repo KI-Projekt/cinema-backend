@@ -1,49 +1,64 @@
 package de.cinetastisch.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "Ticket")
 @Table(name = "ticket")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Ticket {
-    @Id
-    @SequenceGenerator(
-            name = "ticket_sequence",
-            sequenceName = "ticket_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = SEQUENCE,
-            generator = "ticket_sequence"
-    )
+
+    @SequenceGenerator(name = "ticket_sequence", sequenceName = "ticket_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "ticket_sequence")
     @Column(name = "id")
-    private Long id;
+    private @Id Long id;
 
     @ManyToOne
-    @MapsId("bookingId")
-    @JoinColumn(
-            name = "booking_id",
-            foreignKey = @ForeignKey(
-                    name = "ticket_booking_id_fk"
-            )
-    )
-    private Booking booking;
+    @JoinColumn(name = "orders_id", foreignKey = @ForeignKey(name = "ticket_orders_id_fk"))
+    @JsonIgnore
+    private Order order;
 
+    @Column(name = "price", nullable = false)
+    private Double price;
 
     @ManyToOne
     @MapsId("screeningId")
-    @JoinColumn(
-            name = "screening_id",
-            foreignKey = @ForeignKey(
-                    name = "ticket_screening_id_fk"
-            )
-    )
+    @JoinColumn(name = "screening_id", foreignKey = @ForeignKey(name = "ticket_screening_id_fk"))
     private Screening screening;
 
+    @ManyToOne
+    @MapsId("seatId")
+    @JoinColumn(name = "seat_id", foreignKey = @ForeignKey(name = "ticket_seat_id_fk"))
+    private Seat seat;
+
+    public Ticket(Order order, Screening screening, Seat seat, Double price) {
+        this.order = order;
+        this.screening = screening;
+        this.seat = seat;
+        this.price = price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ticket ticket = (Ticket) o;
+        return id.equals(ticket.id) && Objects.equals(order, ticket.order) && Objects.equals(price, ticket.price) && Objects.equals(screening, ticket.screening) && Objects.equals(seat, ticket.seat);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, order, price, screening, seat);
+    }
 }
