@@ -15,18 +15,6 @@ public class TicketService {
     }
 
     public void addTicket(Ticket ticket){
-        Ticket newTicket = new Ticket();
-
-        newTicket.setBooking(
-                new Booking(new User("Test", "TEst", "test", "test@test.de")));
-        newTicket.setSeat(new Seat(new Room(), 1, 2, "Standard"));
-        newTicket.setScreening(new Screening());
-
-        if (newTicket.getSeat().getSeatType() == "Standard"){
-            newTicket.setPrice(5.0);
-        } else {
-            newTicket.setPrice(10.0);
-        }
     }
 
     public List<Ticket> getAllTickets() {
