@@ -40,4 +40,9 @@ public class MovieController {
     public void deleteOne(@PathVariable("id") Long id){
         movieService.deleteMovie(id);
     }
+
+    @GetMapping("{id}/screenings") //TODO: set timespan
+    public List<Screening> getScreenings(@PathVariable("id") Long id){
+        return movieService.getScreeningsOfMovie(id);
+    }
 }

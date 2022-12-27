@@ -29,12 +29,12 @@ public class ScreeningController {
     }
 
     @GetMapping
-    public List<ScreeningDto> getAll(){
+    public List<Screening> getAll(){
         return screeningService.getAllScreenings();
     }
 
     @GetMapping("/{id}")
-    public ScreeningDto getOne(@PathVariable Long id){
+    public Screening getOne(@PathVariable Long id){
         return screeningService.getScreening(id);
     }
 }

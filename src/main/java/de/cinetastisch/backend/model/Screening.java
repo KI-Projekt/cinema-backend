@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -12,9 +14,11 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
+@EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "Screening")
 @Table(name = "screening", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Screening {
 
     @SequenceGenerator(name = "screening_sequence", sequenceName = "screening_sequence", allocationSize = 1)
@@ -34,28 +38,19 @@ public class Screening {
     private Room room;
 
     @Column(name = "date", nullable = false, columnDefinition = "TEXT")
-    private String date;
+    private java.time.LocalDate date;
 
-    @Column(name = "time_slot", nullable = false, columnDefinition = "TEXT")
-    private String timeSlot;
+    @Column(name = "start_time", nullable = false, columnDefinition = "TEXT")
+    private java.time.LocalTime startTime;
 
-    public Screening(Movie movie, Room room, String date, String timeSlot) {
+    @Column(name = "end_time", nullable = false, columnDefinition = "TEXT")
+    private java.time.LocalTime endTime;
+
+    public Screening(Movie movie, Room room, LocalDate date, LocalTime startTime, LocalTime endTime) {
         this.movie = movie;
         this.room = room;
         this.date = date;
-        this.timeSlot = timeSlot;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Screening screening = (Screening) o;
-        return id.equals(screening.id) && Objects.equals(date, screening.date) && Objects.equals(timeSlot, screening.timeSlot);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, date, timeSlot);
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 }

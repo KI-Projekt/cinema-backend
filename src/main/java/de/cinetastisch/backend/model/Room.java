@@ -11,10 +11,10 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "Room")
 @Table(name = "room", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
-@JsonIgnoreProperties({"hibernateLazyInitializer"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Room {
 
     @SequenceGenerator(name = "room_sequence", sequenceName = "room_sequence", allocationSize = 1)

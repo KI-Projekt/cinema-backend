@@ -15,12 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public void registerUser(User userCredentials){
-        User newUser = new User();
-        newUser.setFirstName(userCredentials.getFirstName());
-        newUser.setLastName(userCredentials.getLastName());
-        newUser.setEmail(userCredentials.getEmail());
-        newUser.setPassword(userCredentials.getPassword());
-        userRepository.save(newUser);
+        userRepository.save(userCredentials);
     }
 
     public User getUserById(Long id) {
@@ -33,13 +28,8 @@ public class UserService {
 
     public void replaceUser(Long id, User newUser){
         User oldUser = userRepository.findById(id).get();
-        oldUser.setFirstName(newUser.getFirstName());
-        oldUser.setLastName(newUser.getLastName());
-        oldUser.setAddress(newUser.getAddress());
-        oldUser.setBirthday(newUser.getBirthday());
-        oldUser.setPassword(newUser.getPassword());
-        oldUser.setEmail(newUser.getEmail());
-        userRepository.save(oldUser);
+        newUser.setId(id);
+        userRepository.save(newUser);
     }
 
     public void deleteUser(Long id) {
