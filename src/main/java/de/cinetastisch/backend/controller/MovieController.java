@@ -1,6 +1,7 @@
 package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.model.Movie;
+import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.service.MovieService;
 import org.springframework.web.bind.annotation.*;
 
