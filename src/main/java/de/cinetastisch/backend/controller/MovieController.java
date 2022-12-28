@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/movies")
+@RequestMapping("api/movies")
 public class MovieController {
 
     private final MovieService movieService;
@@ -27,9 +27,9 @@ public class MovieController {
         return movieService.getMovie(id);
     }
 
-    @PostMapping
-    public Movie addOne(@RequestBody Movie movie){
-        return movieService.addMovie(movie);
+    @PostMapping                            // POST http://localhost:8080/api/movies?title=Guardians of the Galaxy
+    public Movie addOne(@RequestParam("title") String movieTitle){
+        return movieService.addMovieByTitle(movieTitle);
     }
 
     @PutMapping("/{id}")
