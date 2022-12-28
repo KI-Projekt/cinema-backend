@@ -27,7 +27,12 @@ public class MovieController {
         return movieService.getMovie(id);
     }
 
-    @PostMapping                            // POST http://localhost:8080/api/movies?title=Guardians of the Galaxy
+    @GetMapping("/search")              // GET http://localhost:8080/api/movies/search?title=Guardians of the Galaxy
+    public Movie getOneByTitle(@RequestParam("title") String movieTitle){
+        return movieService.getMovieByTitle(movieTitle);
+    }
+
+    @PostMapping("/add")                // POST http://localhost:8080/api/movies/add?title=Guardians of the Galaxy
     public Movie addOne(@RequestParam("title") String movieTitle){
         return movieService.addMovieByTitle(movieTitle);
     }

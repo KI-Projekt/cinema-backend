@@ -29,6 +29,10 @@ public class MovieService {
                 .orElseThrow(() -> new ResourceNotFoundException("No movie with id [%s] found".formatted(id)));
     }
 
+    public Movie getMovieByTitle(String title){
+        return movieRepository.findByTitle(title);
+    }
+
     public Movie addMovieByTitle(String movieTitle){
         String uri = "https://www.omdbapi.com/?apikey=16be7c3b&t=\"" + movieTitle + "\"";
 
