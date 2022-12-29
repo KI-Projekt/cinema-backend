@@ -22,12 +22,12 @@ public class MovieController {
     }
 
     @GetMapping
-    public List<Movie> getAll(@RequestParam(value = "mt", required = false) String mt,
+    public List<Movie> getAll(@RequestParam(value = "title", required = false) String title,
                               @RequestParam(value = "genre", required = false) String g) {
         List<Movie> response = new ArrayList<>();
 
-        if(mt != null && !mt.isBlank()){
-            response.add(movieService.getMovieByTitle(mt));
+        if(title != null && !title.isBlank()){
+            response.add(movieService.getMovieByTitle(title));
         } else if (g != null && !g.isBlank()){
             response.addAll(movieService.getAllMoviesByGenre(g));
         } else {
