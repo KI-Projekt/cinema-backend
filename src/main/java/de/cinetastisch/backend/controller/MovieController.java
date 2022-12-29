@@ -81,17 +81,18 @@ public class MovieController {
     }
 
     @PutMapping("/{id}")
-    public void replaceOne(@PathVariable Long id, @RequestBody Movie movie){
-        movieService.replaceMovie(id, movie);
+    public ResponseEntity<?> replaceOne(@PathVariable Long id, @RequestBody Movie movie){
+        return ResponseEntity.ok(movieService.replaceMovie(id, movie));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteOne(@PathVariable("id") Long id){
+    public ResponseEntity<?> deleteOne(@PathVariable("id") Long id){
         movieService.deleteMovie(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("{id}/screenings") //TODO: set timespan
-    public List<Screening> getScreenings(@PathVariable("id") Long id){
-        return movieService.getScreeningsOfMovie(id);
+    public ResponseEntity<List<Screening>> getScreenings(@PathVariable("id") Long id){
+        return ResponseEntity.ok(movieService.getScreeningsOfMovie(id));
     }
 }

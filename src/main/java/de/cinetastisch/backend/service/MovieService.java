@@ -5,6 +5,7 @@ import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.pojo.OmdbMovieResponse;
 import de.cinetastisch.backend.repository.MovieRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -82,14 +83,18 @@ public class MovieService {
         return movie;
     }
 
-    public void replaceMovie(Long id, Movie movie){
-        Movie refMovie = movieRepository.getReferenceById(id);
-        refMovie.setTitle(movie.getTitle());
-        movieRepository.save(refMovie);
+    public Movie replaceMovie(Long id, Movie movie){
+        Movie refMovie = movieRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No movie with id [%s] found".formatted(id)));
+        movie.setId(refMovie.getId());
+        return movieRepository.save(movie);
     }
 
     public void deleteMovie(Long id){
-        movieRepository.deleteById(id);
+        try {
+            movieRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException ex){
+            throw new ResourceNotFoundException("No Movie found with given ID");
+        }
     }
 
     public List<Screening> getScreeningsOfMovie(Long id) {
