@@ -38,29 +38,39 @@ public class MovieController {
     @PostMapping("/add")                // POST http://localhost:8080/api/movies/add?title=Guardians of the Galaxy
     public ResponseEntity<Movie> addOne(@Valid @RequestParam(value = "imdbId", required = false) String imdbId,
                                         @Valid @RequestParam(value = "title", required = false) String movieTitle){
+        Movie newMovie;
+        Movie existingMovie;
 
-        if (imdbId != null && !imdbId.isBlank()) {
-            Movie existingMovie = movieService.getMovieByImdbId(imdbId);
+        if (imdbId != null && !imdbId.isBlank()) {      // If imdbID is given
 
+            existingMovie = movieService.getMovieByImdbId(imdbId);
             if (existingMovie != null){
                 return new ResponseEntity<>(existingMovie, HttpStatus.CONFLICT);
             }
 
-            return new ResponseEntity<>(movieService.addMovieByImdbId(imdbId), HttpStatus.CREATED);
+            newMovie = movieService.addMovieByImdbId(imdbId);
+            return new ResponseEntity<>(movieService.addMovie(newMovie), HttpStatus.CREATED);
 
-
-        } else if (movieTitle != null && !movieTitle.isBlank()) {
+        } else if (movieTitle != null && !movieTitle.isBlank()) {   // If only movieTitle is given
             movieTitle = movieTitle.replace("\"", "");
-            Movie existingMovie = movieService.getMovieByTitle(movieTitle); // Dieser Check ist zu streng, TODO: Fuzzy-Search?
+            existingMovie = movieService.getMovieByTitle(movieTitle); // Dieser Check ist zu streng, TODO: Fuzzy-Search?
 
             if (existingMovie != null){
                 return new ResponseEntity<>(existingMovie, HttpStatus.CONFLICT);
                 // The 409 (Conflict) status code indicates that the request could not be completed due to a conflict with the current state of the target resource.
             }
 
-            return new ResponseEntity<>(movieService.addMovieByTitle(movieTitle), HttpStatus.CREATED);
+            newMovie = movieService.addMovieByTitle(movieTitle);
+
+            // Secondary Check
+            existingMovie = movieService.getMovieByTitle(newMovie.getTitle());
+            if (existingMovie != null){
+                return new ResponseEntity<>(existingMovie, HttpStatus.CONFLICT);
+            }
+
+            return new ResponseEntity<>(movieService.addMovie(newMovie), HttpStatus.CREATED);
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.badRequest().build(); // If none given
     }
 
     @PutMapping("/{id}")
