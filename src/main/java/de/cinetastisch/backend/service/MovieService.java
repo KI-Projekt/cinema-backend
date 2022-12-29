@@ -33,11 +33,22 @@ public class MovieService {
         return movieRepository.findByTitle(title);
     }
 
+    public Movie getMovieByImdbId(String imdbId){
+        return movieRepository.findByImdbId(imdbId);
+    }
+
     public Movie addMovieByTitle(String movieTitle){
         String uri = "https://www.omdbapi.com/?apikey=16be7c3b&t=\"" + movieTitle + "\"";
+        return movieRepository.save(transformOmdbResponseToMovie(uri)); // Optional: abstract to DAO ("dao.addMovie(movie)")?
+    }
 
+    public Movie addMovieByImdbId(String imdbId) {
+        String uri = "https://www.omdbapi.com/?apikey=16be7c3b&i=" + imdbId;
+        return movieRepository.save(transformOmdbResponseToMovie(uri));
+    }
+
+    public Movie transformOmdbResponseToMovie(String uri){
         RestTemplate restTemplate = new RestTemplate();
-
         OmdbMovieResponse omdbMovieResponse = restTemplate.getForObject(uri, OmdbMovieResponse.class);
 
         Movie movie = new Movie(
@@ -53,10 +64,10 @@ public class MovieService {
                 omdbMovieResponse.getImdbID(),
                 omdbMovieResponse.getImdbRating(),
                 omdbMovieResponse.getImdbVotes()
-                );
-        System.out.println("SAVING " + movie);;
+        );
 
-        return movieRepository.save(movie); // Optional: abstract to DAO ("dao.addMovie(movie)")?
+        System.out.println("SAVING " + movie.getTitle());;
+        return movie;
     }
 
     public void replaceMovie(Long id, Movie movie){
@@ -72,4 +83,6 @@ public class MovieService {
     public List<Screening> getScreeningsOfMovie(Long id) {
         return movieRepository.getScreenings(id);
     }
+
+
 }

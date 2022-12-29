@@ -15,4 +15,6 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     List<Screening> getScreenings(Long id);
 
     Movie findByTitle(String title);
+
+    Movie findByImdbId(String imdbId);
 }

@@ -3,6 +3,9 @@ package de.cinetastisch.backend.controller;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.service.MovieService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,8 +36,31 @@ public class MovieController {
     }
 
     @PostMapping("/add")                // POST http://localhost:8080/api/movies/add?title=Guardians of the Galaxy
-    public Movie addOne(@RequestParam("title") String movieTitle){
-        return movieService.addMovieByTitle(movieTitle);
+    public ResponseEntity<Movie> addOne(@Valid @RequestParam(value = "imdbId", required = false) String imdbId,
+                                        @Valid @RequestParam(value = "title", required = false) String movieTitle){
+
+        if (imdbId != null && !imdbId.isBlank()) {
+            Movie existingMovie = movieService.getMovieByImdbId(imdbId);
+
+            if (existingMovie != null){
+                return new ResponseEntity<>(existingMovie, HttpStatus.CONFLICT);
+            }
+
+            return new ResponseEntity<>(movieService.addMovieByImdbId(imdbId), HttpStatus.CREATED);
+
+
+        } else if (movieTitle != null && !movieTitle.isBlank()) {
+            movieTitle = movieTitle.replace("\"", "");
+            Movie existingMovie = movieService.getMovieByTitle(movieTitle); // Dieser Check ist zu streng, TODO: Fuzzy-Search?
+
+            if (existingMovie != null){
+                return new ResponseEntity<>(existingMovie, HttpStatus.CONFLICT);
+                // The 409 (Conflict) status code indicates that the request could not be completed due to a conflict with the current state of the target resource.
+            }
+
+            return new ResponseEntity<>(movieService.addMovieByTitle(movieTitle), HttpStatus.CREATED);
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{id}")

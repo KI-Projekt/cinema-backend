@@ -9,12 +9,13 @@ import static jakarta.persistence.GenerationType.AUTO;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(name="imdb_id_unique", columnNames={"imdbId"}))
 public class Movie {
 
     @GeneratedValue(strategy = AUTO)
     private @Id Long id;
 
-    private @NonNull String title;
+    private @NonNull @Column(columnDefinition = "TEXT") String title;
     private String releaseYear;
     private String posterImage;
     private String rated;
