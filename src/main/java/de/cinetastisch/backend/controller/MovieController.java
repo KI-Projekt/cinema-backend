@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,18 +22,23 @@ public class MovieController {
     }
 
     @GetMapping
-    public List<Movie> getAll() {
-        return movieService.getAllMovies();
+    public List<Movie> getAll(@RequestParam(value = "mt", required = false) String mt,
+                              @RequestParam(value = "genre", required = false) String g) {
+        List<Movie> response = new ArrayList<>();
+
+        if(mt != null && !mt.isBlank()){
+            response.add(movieService.getMovieByTitle(mt));
+        } else if (g != null && !g.isBlank()){
+            response.addAll(movieService.getAllMoviesByGenre(g));
+        } else {
+            response.addAll(movieService.getAllMovies());
+        }
+        return response;
     }
 
     @GetMapping("/{id}")
     public Movie getOne(@PathVariable("id") Long id){
         return movieService.getMovie(id);
-    }
-
-    @GetMapping("/search")              // GET http://localhost:8080/api/movies/search?title=Guardians of the Galaxy
-    public Movie getOneByTitle(@RequestParam("title") String movieTitle){
-        return movieService.getMovieByTitle(movieTitle);
     }
 
     @PostMapping("/add")                // POST http://localhost:8080/api/movies/add?title=Guardians of the Galaxy
@@ -57,7 +63,8 @@ public class MovieController {
 
             if (existingMovie != null){
                 return new ResponseEntity<>(existingMovie, HttpStatus.CONFLICT);
-                // The 409 (Conflict) status code indicates that the request could not be completed due to a conflict with the current state of the target resource.
+                // The 409 (Conflict) status code indicates that the request could not be completed
+                // due to a conflict with the current state of the target resource.
             }
 
             newMovie = movieService.addMovieByTitle(movieTitle);
@@ -70,7 +77,7 @@ public class MovieController {
 
             return new ResponseEntity<>(movieService.addMovie(newMovie), HttpStatus.CREATED);
         }
-        return ResponseEntity.badRequest().build(); // If none given
+        return ResponseEntity.badRequest().build(); // Else none given
     }
 
     @PutMapping("/{id}")

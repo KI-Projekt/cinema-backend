@@ -37,6 +37,10 @@ public class MovieService {
         return movieRepository.findByImdbId(imdbId);
     }
 
+    public List<Movie> getAllMoviesByGenre(String genre){
+        return movieRepository.findAllByGenre(genre);
+    }
+
     public Movie addMovie(Movie movie){
         return movieRepository.save(movie);
     }
