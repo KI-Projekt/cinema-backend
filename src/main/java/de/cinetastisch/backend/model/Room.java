@@ -1,6 +1,8 @@
 package de.cinetastisch.backend.model;
 
 import com.fasterxml.jackson.annotation.*;
+import de.cinetastisch.backend.enumeration.RoomAudioExperience;
+import de.cinetastisch.backend.enumeration.RoomScreenExperience;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,15 +24,29 @@ public class Room {
     @Column(name = "id")
     private @Id Long id;
 
-    @Column(name = "is_three_d", nullable = false, columnDefinition = "TEXT")
-    private boolean isThreeD;
+    private String name;
 
-    @Column(name = "is_dolby_atmos", nullable = false, columnDefinition = "TEXT")
-    private boolean isDolbyAtmos;
+    @Enumerated(EnumType.STRING)
+    private RoomScreenExperience roomScreenExperience = RoomScreenExperience.TWO_D;
 
-    public Room(boolean isThreeD, boolean isDolbyAtmos) {
-        this.isThreeD = isThreeD;
-        this.isDolbyAtmos = isDolbyAtmos;
+    @Enumerated(EnumType.STRING)
+    private RoomAudioExperience roomAudioExperience = RoomAudioExperience.STANDARD;
+
+
+    public Room(RoomScreenExperience roomScreenExperience, RoomAudioExperience roomAudioExperience) {
+        this.roomScreenExperience = roomScreenExperience;
+        this.roomAudioExperience = roomAudioExperience;
+    }
+
+    public Room(String roomScreenExperience, String roomAudioExperience) { // Backup
+        this.roomScreenExperience = RoomScreenExperience.valueOf(roomScreenExperience);
+        this.roomAudioExperience = RoomAudioExperience.valueOf(roomAudioExperience);
+    }
+
+    public Room(String name, RoomScreenExperience roomScreenExperience, RoomAudioExperience roomAudioExperience) {
+        this.name = name;
+        this.roomScreenExperience = roomScreenExperience;
+        this.roomAudioExperience = roomAudioExperience;
     }
 
     @Override
@@ -38,11 +54,12 @@ public class Room {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Room room = (Room) o;
-        return isThreeD == room.isThreeD && isDolbyAtmos == room.isDolbyAtmos && id.equals(room.id);
+        return id.equals(room.id) && Objects.equals(name,
+                                                    room.name) && roomScreenExperience == room.roomScreenExperience && roomAudioExperience == room.roomAudioExperience;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, isThreeD, isDolbyAtmos);
+        return Objects.hash(id, name, roomScreenExperience, roomAudioExperience);
     }
 }

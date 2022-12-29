@@ -93,6 +93,6 @@ public class MovieController {
 
     @GetMapping("{id}/screenings") //TODO: set timespan
     public ResponseEntity<List<Screening>> getScreenings(@PathVariable("id") Long id){
-        return ResponseEntity.ok(movieService.getScreeningsOfMovie(id));
+        return ResponseEntity.ok(movieService.getAllScreeningsByMovie(id));
     }
 }

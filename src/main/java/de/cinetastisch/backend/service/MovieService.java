@@ -5,6 +5,7 @@ import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.pojo.OmdbMovieResponse;
 import de.cinetastisch.backend.repository.MovieRepository;
+import de.cinetastisch.backend.repository.ScreeningRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,9 +17,12 @@ import java.util.List;
 public class MovieService {
 
     private final MovieRepository movieRepository;
+    private final ScreeningRepository screeningRepository;
 
-    public MovieService(MovieRepository movieRepository) {
+    public MovieService(MovieRepository movieRepository,
+                        ScreeningRepository screeningRepository) {
         this.movieRepository = movieRepository;
+        this.screeningRepository = screeningRepository;
     }
 
     public List<Movie> getAllMovies(){
@@ -79,7 +83,7 @@ public class MovieService {
                 omdbMovieResponse.getImdbVotes()
         );
 
-        System.out.println("SAVING " + movie.getTitle());;
+        System.out.println("SAVING " + movie.getTitle());
         return movie;
     }
 
@@ -97,8 +101,11 @@ public class MovieService {
         }
     }
 
-    public List<Screening> getScreeningsOfMovie(Long id) {
-        return movieRepository.getScreenings(id);
+    public List<Screening> getAllScreeningsByMovie(Long id) {
+        Movie movie = movieRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Movie Not Found")
+        );
+        return screeningRepository.findAllByMovie(movie);
     }
 
 
