@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.controller;
 
+import de.cinetastisch.backend.exeption.ResourceNotFoundException;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.service.MovieService;
@@ -41,11 +42,13 @@ public class MovieController {
         return movieService.getMovie(id);
     }
 
-    @PostMapping("/add")                // POST http://localhost:8080/api/movies/add?title=Guardians of the Galaxy
+    @PostMapping()                // POST http://localhost:8080/api/movies/add?title=Guardians of the Galaxy
     public ResponseEntity<Movie> addOne(@Valid @RequestParam(value = "imdbId", required = false) String imdbId,
                                         @Valid @RequestParam(value = "title", required = false) String movieTitle){
         Movie newMovie;
         Movie existingMovie;
+
+        System.out.println("Accepted " + imdbId + " as imdbId and '" + movieTitle + "' as title");
 
         if (imdbId != null && !imdbId.isBlank()) {      // If imdbID is given
 
@@ -53,29 +56,29 @@ public class MovieController {
             if (existingMovie != null){
                 return new ResponseEntity<>(existingMovie, HttpStatus.CONFLICT);
             }
-
-            newMovie = movieService.addMovieByImdbId(imdbId);
+            newMovie = movieService.getOmdbMovieByImdbId(imdbId);
             return new ResponseEntity<>(movieService.addMovie(newMovie), HttpStatus.CREATED);
+
 
         } else if (movieTitle != null && !movieTitle.isBlank()) {   // If only movieTitle is given
+            System.out.println("Movie Title going to be processed!");
             movieTitle = movieTitle.replace("\"", "");
-            existingMovie = movieService.getMovieByTitle(movieTitle); // Dieser Check ist zu streng, TODO: Fuzzy-Search?
 
-            if (existingMovie != null){
-                return new ResponseEntity<>(existingMovie, HttpStatus.CONFLICT);
-                // The 409 (Conflict) status code indicates that the request could not be completed
-                // due to a conflict with the current state of the target resource.
-            }
+            try {
+                existingMovie = movieService.getMovieByTitle(movieTitle); // Dieser Check ist zu streng, TODO
+            } catch (ResourceNotFoundException ignore){
+                newMovie = movieService.getOmdbMovieByTitle(movieTitle);
 
-            newMovie = movieService.addMovieByTitle(movieTitle);
-
-            // Secondary Check
-            existingMovie = movieService.getMovieByTitle(newMovie.getTitle());
-            if (existingMovie != null){
+                try {
+                    existingMovie = movieService.getMovieByTitle(newMovie.getTitle());
+                } catch (ResourceNotFoundException ignore2){
+                    return new ResponseEntity<>(movieService.addMovie(newMovie), HttpStatus.CREATED);
+                }
                 return new ResponseEntity<>(existingMovie, HttpStatus.CONFLICT);
             }
-
-            return new ResponseEntity<>(movieService.addMovie(newMovie), HttpStatus.CREATED);
+            return new ResponseEntity<>(existingMovie, HttpStatus.CONFLICT);
+            // The 409 (Conflict) status code indicates that the request could not be completed
+            // due to a conflict with the current state of the target resource.
         }
         return ResponseEntity.badRequest().build(); // Else none given
     }
@@ -93,6 +96,6 @@ public class MovieController {
 
     @GetMapping("{id}/screenings") //TODO: set timespan
     public ResponseEntity<List<Screening>> getScreenings(@PathVariable("id") Long id){
-        return ResponseEntity.ok(movieService.getScreeningsOfMovie(id));
+        return ResponseEntity.ok(movieService.getAllScreeningsByMovie(id));
     }
 }

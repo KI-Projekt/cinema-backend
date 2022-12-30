@@ -1,11 +1,10 @@
 package de.cinetastisch.backend.model.info;
 
-import lombok.Data;
+import java.time.LocalDateTime;
 
-@Data
-public class ScreeningInfo {
-    private final Long movieId;
-    private final Long roomId;
-    private final String date;
-    private final String timeSlot;
-}
+public record ScreeningInfo(Long movieId,
+                            String movieTitle,
+                            Long roomId,
+                            String roomName,
+                            LocalDateTime startTime,
+                            LocalDateTime endTime) {} // record hat keine Setter-Methoden.

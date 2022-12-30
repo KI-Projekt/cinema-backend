@@ -13,6 +13,6 @@ public class ScreeningDto {
     private Movie movie;
     private Room room;
     private LocalDate date;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private LocalTime startDateTime;
+    private LocalTime endDateTime;
 }

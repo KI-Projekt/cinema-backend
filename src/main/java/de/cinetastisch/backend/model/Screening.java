@@ -1,56 +1,68 @@
 package de.cinetastisch.backend.model;
 
-import com.fasterxml.jackson.annotation.*;
+import de.cinetastisch.backend.enumeration.ScreeningStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.Hibernate;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-import static jakarta.persistence.GenerationType.SEQUENCE;
-
+import static jakarta.persistence.GenerationType.AUTO;
 
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "Screening")
+@Entity
 @Table(name = "screening", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Screening {
 
-    @SequenceGenerator(name = "screening_sequence", sequenceName = "screening_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = SEQUENCE, generator = "screening_sequence")
-    @Column(name = "id")
+    @GeneratedValue(strategy = AUTO)
     private @Id Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "movie_id", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_movie_id_fk"))
-    @ToString.Exclude
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
+    @JoinColumn(name = "movie_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_movie_id_fk"))
     private Movie movie;
 
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "room_id", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_room_id_fk"))
-    @ToString.Exclude
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
+    @JoinColumn(name = "room_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_room_id_fk"))
     private Room room;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
 
-    @Column(name = "date", nullable = false, columnDefinition = "TEXT")
-    private java.time.LocalDate date;
+    @Enumerated(EnumType.STRING)
+    private ScreeningStatus status = ScreeningStatus.TICKET_SALE_OPEN;
 
-    @Column(name = "start_time", nullable = false, columnDefinition = "TEXT")
-    private java.time.LocalTime startTime;
-
-    @Column(name = "end_time", nullable = false, columnDefinition = "TEXT")
-    private java.time.LocalTime endTime;
-
-    public Screening(Movie movie, Room room, LocalDate date, LocalTime startTime, LocalTime endTime) {
+    public Screening(Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this.movie = movie;
         this.room = room;
-        this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+    }
+
+    public Screening(Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime,
+                     ScreeningStatus status) {
+        this.movie = movie;
+        this.room = room;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Screening screening = (Screening) o;
+        return id != null && Objects.equals(id, screening.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
