@@ -35,7 +35,8 @@ public class MovieService {
     }
 
     public Movie getMovieByTitle(String title){
-        return movieRepository.findByTitle(title);
+        return movieRepository.findByTitle(title)
+                              .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
     }
 
     public Movie getMovieByImdbId(String imdbId){
@@ -50,19 +51,23 @@ public class MovieService {
         return movieRepository.save(movie);
     }
 
-    public Movie addMovieByTitle(String movieTitle){
-        String uri = "https://www.omdbapi.com/?apikey=16be7c3b&t=\"" + movieTitle + "\"";
+    public Movie getOmdbMovieByTitle(String movieTitle){
+        String uri = "https://www.omdbapi.com/?apikey=16be7c3b&t=" + movieTitle;
         return transformOmdbResponseToMovie(uri); // Optional: abstract to DAO ("dao.addMovie(movie)")?
     }
 
-    public Movie addMovieByImdbId(String imdbId){
+    public Movie getOmdbMovieByImdbId(String imdbId){
         String uri = "https://www.omdbapi.com/?apikey=16be7c3b&i=" + imdbId;
         return transformOmdbResponseToMovie(uri);
     }
 
     public Movie transformOmdbResponseToMovie(String uri){
+        System.out.println("Going to save " + uri);
+
         RestTemplate restTemplate = new RestTemplate();
         OmdbMovieResponse omdbMovieResponse = restTemplate.getForObject(uri, OmdbMovieResponse.class);
+
+        System.out.println("Response " + omdbMovieResponse);
 
         if (omdbMovieResponse.getResponse().equals("False")){
             throw new ResourceNotFoundException("No Movie found");

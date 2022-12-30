@@ -32,9 +32,6 @@ public class ScreeningController {
 
     @PostMapping
     public ResponseEntity<Screening> add(@Valid @RequestBody ScreeningInfo screeningInfo){
-        return new ResponseEntity<>(screeningService.addScreening(screeningInfo.movieId(),
-                                                                  screeningInfo.roomId(),
-                                                                  screeningInfo.startTime(),
-                                                                  screeningInfo.endTime()), HttpStatus.CREATED);
+        return new ResponseEntity<>(screeningService.addScreening(screeningInfo), HttpStatus.CREATED);
     }
 }

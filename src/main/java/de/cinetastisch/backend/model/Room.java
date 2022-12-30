@@ -14,14 +14,15 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Setter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "Room")
-@Table(name = "room", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+@Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"id"}),
+        @UniqueConstraint(columnNames = {"name"})
+        })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Room {
 
-    @SequenceGenerator(name = "room_sequence", sequenceName = "room_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = SEQUENCE, generator = "room_sequence")
-    @Column(name = "id")
+    @GeneratedValue
     private @Id Long id;
 
     private String name;

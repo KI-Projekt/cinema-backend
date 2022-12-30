@@ -5,6 +5,7 @@ import de.cinetastisch.backend.exeption.ResourceNotFoundException;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Screening;
+import de.cinetastisch.backend.model.info.ScreeningInfo;
 import de.cinetastisch.backend.repository.MovieRepository;
 import de.cinetastisch.backend.repository.RoomRepository;
 import de.cinetastisch.backend.repository.ScreeningRepository;
@@ -23,28 +24,49 @@ public class ScreeningService {
     private final RoomRepository roomRepository;
 
     public List<Screening> getAllScreenings(){
-        List<Screening> screenings = screeningRepository.findAll();
-        return screenings;
+        return screeningRepository.findAll();
     }
 
     public Screening getScreening(Long id){
-        Screening screening = screeningRepository.findById(id).get();
-        return screening;
+        return screeningRepository.findById(id).get();
     }
 
-    public Screening addScreening(Long movieId, Long roomId, LocalDateTime startTime, LocalDateTime endTime) {
-        Movie movie = movieRepository.findById(movieId)
-                                     .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
-        Room room = roomRepository.findById(roomId)
-                                  .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+    public Screening addScreening(ScreeningInfo screeningInfo) {
+        Movie movie;
+        Room room;
 
-        List<Screening> runningScreenings = screeningRepository.findAllByRoomAndTime(roomId, startTime, endTime);
-        if(runningScreenings.size() != 0){
-            throw new ResourceAlreadyReservedException("Screenings " + runningScreenings +
-                                                               " already occupy the room at the same time.");
+        // Check if Movie exists
+        if(screeningInfo.movieId() != null && screeningInfo.movieId().describeConstable().isPresent()){
+            movie = movieRepository.findById(screeningInfo.movieId())
+                                   .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
+        } else if (screeningInfo.movieTitle() != null && screeningInfo.movieTitle().describeConstable().isPresent()){
+            movie = movieRepository.findByTitle(screeningInfo.movieTitle())
+                                   .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
+        } else {
+            throw new ResourceNotFoundException("Movie not found");
         }
 
-        return screeningRepository.save(new Screening(movie, room, startTime, endTime));
+        // Check if Room exists
+        if(screeningInfo.roomId() != null && screeningInfo.roomId().describeConstable().isPresent()){
+            room = roomRepository.findById(screeningInfo.roomId())
+                                 .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+        } else if (screeningInfo.roomName() != null && screeningInfo.roomName().describeConstable().isPresent()){
+            room = roomRepository.findByName(screeningInfo.roomName())
+                                 .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+        } else {
+            throw new ResourceNotFoundException("Room not found");
+        }
+
+        // Check if room is already occupied for that time
+        List<Screening> runningScreenings = screeningRepository.findAllByRoomAndTime(room.getId(),
+                                                                                     screeningInfo.startTime(),
+                                                                                     screeningInfo.endTime());
+        if(runningScreenings.size() != 0){
+            throw new ResourceAlreadyReservedException("Screenings " + runningScreenings +
+                                                               " already occupy the room for that time.");
+        }
+
+        return screeningRepository.save(new Screening(movie, room, screeningInfo.startTime(), screeningInfo.endTime()));
     }
 
     public List<Screening> getAllScreeningsBetweenTimespan(LocalDateTime from, LocalDateTime to){
