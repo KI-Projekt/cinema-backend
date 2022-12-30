@@ -1,17 +1,13 @@
 package de.cinetastisch.backend;
-
-import de.cinetastisch.backend.model.Movie;
-import de.cinetastisch.backend.model.Room;
-import de.cinetastisch.backend.model.Screening;
-import de.cinetastisch.backend.service.MovieService;
-import de.cinetastisch.backend.service.RoomService;
-import de.cinetastisch.backend.service.ScreeningService;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
+//@OpenAPIDefinition(
+//		info = @Info(title = "Cinema API", version = "1.0.0"),
+//		servers = {@Server(url = "http://localhost:8080")},//, @Server(url = "http://oneoone.com")},
+//		tags = {@Tag(name = "Cinema", description = "This is the cinema desc.")}
+//)
 public class SpringAzureCinemaApplication {
 
 	public static void main(String[] args) {
@@ -28,5 +24,4 @@ public class SpringAzureCinemaApplication {
 //			Screening screening = screeningService.addScreening("01.01.2023","1", 1L, 1L);
 //		};
 //	}
-
 }
