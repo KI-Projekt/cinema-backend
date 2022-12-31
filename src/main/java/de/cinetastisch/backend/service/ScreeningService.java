@@ -1,6 +1,6 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.exeption.ResourceAlreadyReservedException;
+import de.cinetastisch.backend.exeption.ResourceAlreadyOccupiedException;
 import de.cinetastisch.backend.exeption.ResourceNotFoundException;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Room;
@@ -62,7 +62,7 @@ public class ScreeningService {
                                                                                      screeningInfo.startTime(),
                                                                                      screeningInfo.endTime());
         if(runningScreenings.size() != 0){
-            throw new ResourceAlreadyReservedException("Screenings " + runningScreenings +
+            throw new ResourceAlreadyOccupiedException("Screenings " + runningScreenings +
                                                                " already occupy the room for that time.");
         }
 
