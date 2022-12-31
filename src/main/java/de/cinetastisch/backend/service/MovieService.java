@@ -3,6 +3,7 @@ package de.cinetastisch.backend.service;
 import de.cinetastisch.backend.exeption.ResourceNotFoundException;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Screening;
+import de.cinetastisch.backend.pojo.MovieRequest;
 import de.cinetastisch.backend.pojo.OmdbMovieResponse;
 import de.cinetastisch.backend.repository.MovieRepository;
 import de.cinetastisch.backend.repository.ScreeningRepository;
@@ -36,15 +37,28 @@ public class MovieService {
 
     public Movie getMovieByTitle(String title){
         return movieRepository.findByTitle(title)
-                              .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Movie Not Found."));
+    }
+
+    public List<Movie> getAllMoviesByTitle(String title){
+        return movieRepository.findAllByTitle(title);
     }
 
     public Movie getMovieByImdbId(String imdbId){
-        return movieRepository.findByImdbId(imdbId);
+        return movieRepository.findByImdbId(imdbId).orElseThrow();
     }
 
     public List<Movie> getAllMoviesByGenre(String genre){
         return movieRepository.findAllByGenre(genre);
+    }
+
+    public Movie addMovieDto(MovieRequest movie){
+        return movieRepository.save(new Movie(
+                movie.imdbId(), movie.releaseYear(), movie.posterImage(),
+                movie.rated(), movie.runtime(), movie.genre(),
+                movie.actors(), movie.plot(), movie.trailer(),
+                movie.imdbId(), movie.imdbRating(),movie.imdbRatingCount()
+        ));
     }
 
     public Movie addMovie(Movie movie){

@@ -5,6 +5,7 @@ import de.cinetastisch.backend.enumeration.RoomScreenExperience;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.pojo.RoomInfo;
 import de.cinetastisch.backend.service.RoomService;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

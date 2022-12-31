@@ -13,7 +13,10 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     Optional<Movie> findByTitle(String title);
 
-    Movie findByImdbId(String imdbId);
+    Optional<Movie> findByImdbId(String imdbId);
+
+    @Query("FROM Movie m WHERE UPPER(m.title) LIKE CONCAT('%', UPPER(?1), '%')")
+    List<Movie> findAllByTitle(String title);
 
     @Query("FROM Movie m WHERE UPPER(m.genre) LIKE CONCAT('%', UPPER(?1), '%')")
     List<Movie> findAllByGenre(String genre);

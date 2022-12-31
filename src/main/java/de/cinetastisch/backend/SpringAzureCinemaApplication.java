@@ -1,13 +1,22 @@
 package de.cinetastisch.backend;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-//@OpenAPIDefinition(
-//		info = @Info(title = "Cinema API", version = "1.0.0"),
-//		servers = {@Server(url = "http://localhost:8080")},//, @Server(url = "http://oneoone.com")},
-//		tags = {@Tag(name = "Cinema", description = "This is the cinema desc.")}
-//)
+
+@OpenAPIDefinition(
+		info = @Info(title = "Cinema API", version = "1.0.0"),
+		servers = {@Server(url = "http://localhost:8080")},//, @Server(url = "http://asdasdasda.com")},
+		tags = {
+				@Tag(name = "Movies", description = "Alles über die gespeicherten Filme"),
+				@Tag(name = "Rooms", description = "Alles über die Filmsäle"),
+				@Tag(name = "Screenings", description = "Alles über die einzelnen Filmvorstellungen")
+		}
+)
 public class SpringAzureCinemaApplication {
 
 	public static void main(String[] args) {
