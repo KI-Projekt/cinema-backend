@@ -76,12 +76,9 @@ public class MovieService {
     }
 
     public Movie transformOmdbResponseToMovie(String uri){
-        System.out.println("Going to save " + uri);
 
         RestTemplate restTemplate = new RestTemplate();
         OmdbMovieResponse omdbMovieResponse = restTemplate.getForObject(uri, OmdbMovieResponse.class);
-
-        System.out.println("Response " + omdbMovieResponse);
 
         if (omdbMovieResponse.getResponse().equals("False")){
             throw new ResourceNotFoundException("No Movie found");

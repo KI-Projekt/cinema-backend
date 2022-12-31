@@ -3,12 +3,13 @@ package de.cinetastisch.backend.model;
 import com.fasterxml.jackson.annotation.*;
 import de.cinetastisch.backend.enumeration.RoomAudioExperience;
 import de.cinetastisch.backend.enumeration.RoomScreenExperience;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Objects;
 
-import static jakarta.persistence.GenerationType.SEQUENCE;
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 
 @Getter
 @Setter
@@ -22,6 +23,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Room {
 
+    @Schema(accessMode = READ_ONLY)
     @GeneratedValue
     private @Id Long id;
 
@@ -55,8 +57,7 @@ public class Room {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Room room = (Room) o;
-        return id.equals(room.id) && Objects.equals(name,
-                                                    room.name) && roomScreenExperience == room.roomScreenExperience && roomAudioExperience == room.roomAudioExperience;
+        return id.equals(room.id) && Objects.equals(name,room.name) && roomScreenExperience == room.roomScreenExperience && roomAudioExperience == room.roomAudioExperience;
     }
 
     @Override
