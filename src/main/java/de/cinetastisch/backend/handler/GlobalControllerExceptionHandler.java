@@ -37,4 +37,26 @@ public class GlobalControllerExceptionHandler {
                 webRequest.getDescription(false)
         );
     }
+
+    @ExceptionHandler(value = { ResourceAlreadyExists.class, IllegalArgumentException.class, IllegalStateException.class })
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorMessage handleResourceAlreadyExists(RuntimeException ex, WebRequest webRequest){
+        return new ErrorMessage(
+                HttpStatus.CONFLICT.value(),
+                LocalDateTime.now(),
+                ex.getMessage(),
+                webRequest.getDescription(false)
+        );
+    }
+
+    @ExceptionHandler(value = {NoResources.class })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<ErrorMessage> handleNoResources(RuntimeException ex, WebRequest webRequest){
+        return new ResponseEntity<>(new ErrorMessage(
+                HttpStatus.NO_CONTENT.value(),
+                LocalDateTime.now(),
+                ex.getMessage(),
+                webRequest.getDescription(false)), HttpStatus.NO_CONTENT);
+    }
+
 }

@@ -1,4 +1,4 @@
-package de.cinetastisch.backend.exeption;
+package de.cinetastisch.backend.exception;
 
 import java.time.LocalDateTime;
 
