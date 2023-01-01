@@ -1,22 +1,27 @@
 package de.cinetastisch.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Objects;
 
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
+@Builder
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "Seat")
 @Table(name = "seat")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Seat { // Nicht in relation zu den
+public class Seat {
 
+    @Schema(accessMode = READ_ONLY)
     @SequenceGenerator(name = "seat_sequence", sequenceName = "seat_sequence", allocationSize = 1)
     @GeneratedValue(strategy = SEQUENCE, generator = "seat_sequence")
     @Column(name = "id")

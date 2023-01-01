@@ -7,11 +7,13 @@ import lombok.*;
 import java.util.Objects;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
-import static jakarta.persistence.GenerationType.AUTO;
+import static jakarta.persistence.GenerationType.SEQUENCE;
 
+@Builder
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(uniqueConstraints = {
@@ -21,7 +23,9 @@ import static jakarta.persistence.GenerationType.AUTO;
 public class Movie {
 
     @Schema(accessMode = READ_ONLY)
-    @GeneratedValue(strategy = AUTO)
+    @SequenceGenerator(name = "movie_sequence", sequenceName = "movie_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "movie_sequence")
+    @Column(name = "id")
     private @Id Long id;
 
     private @NonNull @Column(columnDefinition = "TEXT") String title;

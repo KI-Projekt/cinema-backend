@@ -1,21 +1,23 @@
 package de.cinetastisch.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
+@Builder
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "User") // Best-Practice ist die explizite Namensgebung (auch um Klassennamen zu verkürzen)
-@Table(name = "user", /* Best-Practice (auch um reserved keywords zu umgehen) */
+@Entity(name = "User")
+@Table(name = "user",
         uniqueConstraints = { /* E-Mail soll eindeutig sein (pro User eine eindeutige E-Mail-Adresse) */
                 @UniqueConstraint(name = "user_email_unique", columnNames = "email") /* verkürzt den Namen des unique-identifiers von einem random String zu "user_email_unique" */
         }
@@ -23,6 +25,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
 
+    @Schema(accessMode = READ_ONLY)
     @SequenceGenerator(name = "users_sequence", sequenceName = "users_sequence", allocationSize = 1)
     @GeneratedValue(strategy = SEQUENCE, generator = "users_sequence")
     @Column(name = "id")

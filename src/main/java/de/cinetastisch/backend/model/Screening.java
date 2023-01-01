@@ -9,8 +9,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
-import static jakarta.persistence.GenerationType.AUTO;
+import static jakarta.persistence.GenerationType.SEQUENCE;
 
+@Builder
 @Getter
 @Setter
 @ToString
@@ -21,7 +22,9 @@ import static jakarta.persistence.GenerationType.AUTO;
 public class Screening {
 
     @Schema(accessMode = READ_ONLY)
-    @GeneratedValue(strategy = AUTO)
+    @SequenceGenerator(name = "screening_sequence", sequenceName = "screening_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "screening_sequence")
+    @Column(name = "id")
     private @Id Long id;
 
     @ManyToOne
