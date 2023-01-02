@@ -1,7 +1,7 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.exeption.ResourceAlreadyOccupiedException;
-import de.cinetastisch.backend.exeption.ResourceNotFoundException;
+import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
+import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Screening;
@@ -40,7 +40,7 @@ public class ScreeningService {
             movie = movieRepository.findById(screeningInfo.movieId())
                                    .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
         } else if (screeningInfo.movieTitle() != null && screeningInfo.movieTitle().describeConstable().isPresent()){
-            movie = movieRepository.findByTitle(screeningInfo.movieTitle())
+            movie = movieRepository.findByTitleIgnoreCase(screeningInfo.movieTitle())
                                    .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
         } else {
             throw new ResourceNotFoundException("Movie not found");
@@ -51,7 +51,7 @@ public class ScreeningService {
             room = roomRepository.findById(screeningInfo.roomId())
                                  .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
         } else if (screeningInfo.roomName() != null && screeningInfo.roomName().describeConstable().isPresent()){
-            room = roomRepository.findByName(screeningInfo.roomName())
+            room = roomRepository.findByNameIgnoreCase(screeningInfo.roomName())
                                  .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
         } else {
             throw new ResourceNotFoundException("Room not found");

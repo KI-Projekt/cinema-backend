@@ -1,8 +1,7 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.exeption.ResourceNotFoundException;
+import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.model.User;
-import de.cinetastisch.backend.repository.MovieRepository;
 import de.cinetastisch.backend.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

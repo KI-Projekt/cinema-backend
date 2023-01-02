@@ -4,10 +4,12 @@ import de.cinetastisch.backend.exception.*;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 
@@ -26,26 +28,22 @@ public class GlobalControllerExceptionHandler {
         );
     }
 
-    @ExceptionHandler(ResourceAlreadyOccupiedException.class)
+    @ExceptionHandler(value = {
+            ResourceAlreadyOccupiedException.class,
+            ResourceAlreadyExists.class,
+            IllegalArgumentException.class,
+            IllegalStateException.class,
+            MethodArgumentNotValidException.class,
+            MethodArgumentTypeMismatchException.class
+    })
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorMessage handleResourceAlreadyOccupied(RuntimeException ex, WebRequest webRequest){
-        return new ErrorMessage(
+    public ResponseEntity<ErrorMessage> handleConflicts(RuntimeException ex, WebRequest webRequest){
+        return new ResponseEntity<>(new ErrorMessage(
                 HttpStatus.CONFLICT.value(),
                 LocalDateTime.now(),
                 ex.getMessage(),
-                webRequest.getDescription(false)
-        );
-    }
-
-    @ExceptionHandler(value = { ResourceAlreadyExists.class, IllegalArgumentException.class, IllegalStateException.class })
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorMessage handleResourceAlreadyExists(RuntimeException ex, WebRequest webRequest){
-        return new ErrorMessage(
-                HttpStatus.CONFLICT.value(),
-                LocalDateTime.now(),
-                ex.getMessage(),
-                webRequest.getDescription(false)
-        );
+                webRequest.getDescription(true)
+        ), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(value = {NoResources.class })

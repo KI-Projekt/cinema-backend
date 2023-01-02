@@ -1,9 +1,9 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.exeption.ResourceNotFoundException;
+import de.cinetastisch.backend.exception.ResourceAlreadyExists;
+import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Screening;
-import de.cinetastisch.backend.pojo.MovieRequest;
 import de.cinetastisch.backend.pojo.OmdbMovieResponse;
 import de.cinetastisch.backend.repository.MovieRepository;
 import de.cinetastisch.backend.repository.ScreeningRepository;
@@ -35,33 +35,28 @@ public class MovieService {
                 .orElseThrow(() -> new ResourceNotFoundException("No movie with id [%s] found".formatted(id)));
     }
 
-    public Movie getMovieByTitle(String title){
-        return movieRepository.findByTitle(title)
-                .orElseThrow(() -> new ResourceNotFoundException("Movie Not Found."));
+    public Movie getOneMovieByImdbId(String imdbId){
+        return movieRepository.findByImdbIdIgnoreCase(imdbId)
+                              .orElseThrow(() -> new ResourceNotFoundException("Movie Not Found."));
+    }
+
+    public Movie getOneMovieByTitle(String title){
+        return movieRepository.findByTitleIgnoreCase(title)
+                              .orElseThrow(() -> new ResourceNotFoundException("Movie Not Found."));
     }
 
     public List<Movie> getAllMoviesByTitle(String title){
-        return movieRepository.findAllByTitle(title);
-    }
-
-    public Movie getMovieByImdbId(String imdbId){
-        return movieRepository.findByImdbId(imdbId).orElseThrow();
+        return movieRepository.findAllByTitleLikeIgnoreCase("%"+title+"%");
     }
 
     public List<Movie> getAllMoviesByGenre(String genre){
-        return movieRepository.findAllByGenre(genre);
-    }
-
-    public Movie addMovieDto(MovieRequest movie){
-        return movieRepository.save(new Movie(
-                movie.imdbId(), movie.releaseYear(), movie.posterImage(),
-                movie.rated(), movie.runtime(), movie.genre(),
-                movie.actors(), movie.plot(), movie.trailer(),
-                movie.imdbId(), movie.imdbRating(),movie.imdbRatingCount()
-        ));
+        return movieRepository.findAllByGenreLikeIgnoreCase("%"+genre+"%");
     }
 
     public Movie addMovie(Movie movie){
+        if (movieRepository.existsById(movie.getId())){
+            throw new ResourceAlreadyExists("Movie already exists");
+        }
         return movieRepository.save(movie);
     }
 
@@ -124,5 +119,36 @@ public class MovieService {
         return screeningRepository.findAllByMovie(movie);
     }
 
+    public void checkIfTitleAlreadyExists(String title){
+        if (movieRepository.existsByTitleIgnoreCase(title)){
+            throw new ResourceAlreadyExists("Movie already exists");
+        }
+    }
+
+    public void checkIfImdbIdAlreadyExists(String imdbId){
+        if (movieRepository.existsByImdbIdIgnoreCase(imdbId)){
+            throw new ResourceAlreadyExists("Movie already exists");
+        }
+    }
+
+    public Movie addMovieByParameters(Movie movie, String imdbId, String title){
+        if (imdbId != null && !imdbId.isBlank()) {
+            checkIfImdbIdAlreadyExists(imdbId);
+            Movie newMovie = getOmdbMovieByImdbId(imdbId);
+            return addMovie(newMovie);
+
+        } else if (title != null && !title.isBlank()) {
+            title = title.replace("\"", "");
+            checkIfTitleAlreadyExists(title);
+            Movie newMovie = getOmdbMovieByTitle(title);
+            checkIfTitleAlreadyExists(newMovie.getTitle());
+            return addMovie(newMovie);
+
+        } else if (movie != null && !movie.getTitle().equals("string")) {
+            addMovie(movie);
+        }
+
+        throw new IllegalArgumentException("No inputs given");
+    }
 
 }

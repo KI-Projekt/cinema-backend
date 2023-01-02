@@ -1,4 +1,4 @@
-package de.cinetastisch.backend.model.dto;
+package de.cinetastisch.backend.dto;
 
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Room;

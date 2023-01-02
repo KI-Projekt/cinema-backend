@@ -17,8 +17,8 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 public class Order {
 
     @Schema(accessMode = READ_ONLY)
-    @SequenceGenerator(name = "order_sequence", sequenceName = "order_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = SEQUENCE, generator = "order_sequence")
+    @SequenceGenerator(name = "orders_sequence", sequenceName = "orders_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "orders_sequence")
     @Column(name = "id")
     private @Id Long id;
 
