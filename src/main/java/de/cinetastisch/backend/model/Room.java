@@ -1,53 +1,44 @@
 package de.cinetastisch.backend.model;
 
 import com.fasterxml.jackson.annotation.*;
-import de.cinetastisch.backend.enumeration.RoomAudioExperience;
-import de.cinetastisch.backend.enumeration.RoomScreenExperience;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.lang.NonNull;
 
 import java.util.Objects;
 
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
+@Builder
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"id"}),
-        @UniqueConstraint(columnNames = {"name"})
+        @UniqueConstraint(name = "room_id_unique", columnNames = {"id"}),
+        @UniqueConstraint(name = "room_name_unique" , columnNames = {"name"})
         })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Room {
 
-    @GeneratedValue
+    @Schema(accessMode = READ_ONLY)
+    @SequenceGenerator(name = "room_sequence", sequenceName = "room_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "room_sequence")
+    @Column(name = "id")
     private @Id Long id;
 
-    private String name;
+    private @NonNull String name;
+    private Boolean hasThreeD;
+    private Boolean hasDolbyAtmos;
 
-    @Enumerated(EnumType.STRING)
-    private RoomScreenExperience roomScreenExperience = RoomScreenExperience.TWO_D;
-
-    @Enumerated(EnumType.STRING)
-    private RoomAudioExperience roomAudioExperience = RoomAudioExperience.STANDARD;
-
-
-    public Room(RoomScreenExperience roomScreenExperience, RoomAudioExperience roomAudioExperience) {
-        this.roomScreenExperience = roomScreenExperience;
-        this.roomAudioExperience = roomAudioExperience;
-    }
-
-    public Room(String roomScreenExperience, String roomAudioExperience) { // Backup
-        this.roomScreenExperience = RoomScreenExperience.valueOf(roomScreenExperience);
-        this.roomAudioExperience = RoomAudioExperience.valueOf(roomAudioExperience);
-    }
-
-    public Room(String name, RoomScreenExperience roomScreenExperience, RoomAudioExperience roomAudioExperience) {
+    public Room(Long id, @NonNull String name, Boolean hasThreeD, Boolean hasDolbyAtmos) {
+        this.id = id;
         this.name = name;
-        this.roomScreenExperience = roomScreenExperience;
-        this.roomAudioExperience = roomAudioExperience;
+        this.hasThreeD = hasThreeD;
+        this.hasDolbyAtmos = hasDolbyAtmos;
     }
 
     @Override
@@ -55,12 +46,13 @@ public class Room {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Room room = (Room) o;
-        return id.equals(room.id) && Objects.equals(name,
-                                                    room.name) && roomScreenExperience == room.roomScreenExperience && roomAudioExperience == room.roomAudioExperience;
+        return id.equals(room.id) && name.equals(room.name) && Objects.equals(hasThreeD,
+                                                                              room.hasThreeD) && Objects.equals(
+                hasDolbyAtmos, room.hasDolbyAtmos);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, roomScreenExperience, roomAudioExperience);
+        return Objects.hash(id, name, hasThreeD, hasDolbyAtmos);
     }
 }

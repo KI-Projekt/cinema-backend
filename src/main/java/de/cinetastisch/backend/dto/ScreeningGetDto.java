@@ -1,4 +1,4 @@
-package de.cinetastisch.backend.model.dto;
+package de.cinetastisch.backend.dto;
 
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Room;
@@ -8,11 +8,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-public class ScreeningDto {
+public class ScreeningGetDto {
     private Long id;
     private Movie movie;
     private Room room;
     private LocalDate date;
     private LocalTime startDateTime;
     private LocalTime endDateTime;
+
+    private LocalTime duration;
 }

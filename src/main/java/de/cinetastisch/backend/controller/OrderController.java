@@ -2,17 +2,21 @@ package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.model.Order;
 import de.cinetastisch.backend.service.OrderService;
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Hidden
 @RestController
 @RequestMapping("/api/")
-@AllArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @GetMapping("/orders")
     public List<Order> getAll(){

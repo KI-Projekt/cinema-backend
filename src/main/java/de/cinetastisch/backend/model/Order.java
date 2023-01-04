@@ -1,11 +1,14 @@
 package de.cinetastisch.backend.model;
 
 import de.cinetastisch.backend.enumeration.OrderStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 
-import static jakarta.persistence.GenerationType.AUTO;
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+import static jakarta.persistence.GenerationType.SEQUENCE;
 
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -13,7 +16,10 @@ import static jakarta.persistence.GenerationType.AUTO;
 @Table(name = "orders")
 public class Order {
 
-    @GeneratedValue(strategy = AUTO)
+    @Schema(accessMode = READ_ONLY)
+    @SequenceGenerator(name = "orders_sequence", sequenceName = "orders_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "orders_sequence")
+    @Column(name = "id")
     private @Id Long id;
 
     @ManyToOne
