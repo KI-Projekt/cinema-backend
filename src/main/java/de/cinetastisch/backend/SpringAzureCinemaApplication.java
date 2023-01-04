@@ -7,7 +7,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-
 @OpenAPIDefinition(
 		info = @Info(title = "Cinema API", version = "1.0.0"),
 		servers = {@Server(url = "https://api.c930.net/"), @Server(url = "http://localhost:8080/")},
