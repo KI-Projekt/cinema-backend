@@ -1,16 +1,10 @@
 package de.cinetastisch.backend;
-import de.cinetastisch.backend.mapper.MovieMapper;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.mapstruct.Mapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 
@@ -24,31 +18,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 		}
 )
 public class SpringAzureCinemaApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(SpringAzureCinemaApplication.class, args);
 	}
-
-//	@Bean
-//	CommandLineRunner runner(MovieService movieService,
-//							 ScreeningService screeningService,
-//							 RoomService roomService){
-//		return args -> {
-//			Movie testMovie = movieService.addMovie(new Movie("test Movie 1", "2020", "lo.png", "PG-18", "200 min", "Fantasy", "ka", "spoiler", "yt", "t023", "99", "6969"));
-//			Room testRoom = roomService.addRoom(false, false);
-//			Screening screening = screeningService.addScreening("01.01.2023","1", 1L, 1L);
-//		};
-//	}
-
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins("*");
-			}
-
-		};
-	}
-
 }
