@@ -73,7 +73,7 @@ public class MovieService {
             if(movie.getId() != null) {
                 throw new IllegalArgumentException("Please don't specify an id.");
             }
-            return movieRepository.save(movie);
+            return addMovie(movie);
         }
 
         if (imdbId != null && !imdbId.isBlank()) {

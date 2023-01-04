@@ -42,9 +42,6 @@ public class ScreeningService {
         if(screeningRequestDto.movieId() != null && screeningRequestDto.movieId().describeConstable().isPresent()){
             movie = movieRepository.findById(screeningRequestDto.movieId())
                                    .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
-//        } else if (screeningRequestDto.movieTitle() != null && screeningRequestDto.movieTitle().describeConstable().isPresent()){
-//            movie = movieRepository.findByTitleIgnoreCase(screeningRequestDto.movieTitle())
-//                                   .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
         } else {
             throw new ResourceNotFoundException("Movie not found");
         }
@@ -53,9 +50,6 @@ public class ScreeningService {
         if(screeningRequestDto.roomId() != null && screeningRequestDto.roomId().describeConstable().isPresent()){
             room = roomRepository.findById(screeningRequestDto.roomId())
                                  .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
-//        } else if (screeningRequestDto.roomName() != null && screeningRequestDto.roomName().describeConstable().isPresent()){
-//            room = roomRepository.findByNameIgnoreCase(screeningRequestDto.roomName())
-//                                 .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
         } else {
             throw new ResourceNotFoundException("Room not found");
         }
