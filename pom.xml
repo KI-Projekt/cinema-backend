@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.1</version>
+		<version>3.0.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>de.cinetastisch.backend</groupId>
@@ -17,7 +17,7 @@
 	<properties>
 		<java.version>17</java.version>
 		<org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
-		<spring-cloud-azure.version>6.0.0-beta.3</spring-cloud-azure.version>
+		<spring-cloud-azure.version>6.0.0-beta.4</spring-cloud-azure.version>
 	</properties>
 	<dependencies>
 		<dependency>
