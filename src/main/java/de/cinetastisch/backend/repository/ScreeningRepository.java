@@ -20,6 +20,9 @@ public interface ScreeningRepository extends JpaRepository<Screening, Long> {
             "OR s.endDateTime >= :from AND s.endDateTime <= :to")
     List<Screening> findAllByLocalDateTimes(@Param("from") LocalDateTime from,@Param("to") LocalDateTime to);
 
+    @Query("SELECT s FROM Screening s WHERE s.startDateTime >= :from")
+    List<Screening> findAllAfterStartDateTime(@Param("from") LocalDateTime from);
+
     @Query("SELECT s FROM Screening s WHERE s.room.id = :roomId AND (( s.startDateTime >= :from AND s.startDateTime <= :to ) " +
             "OR (s.endDateTime >= :from AND s.endDateTime <= :to))")
     List<Screening> findAllByRoomAndTime(@Param("roomId") Long roomId,

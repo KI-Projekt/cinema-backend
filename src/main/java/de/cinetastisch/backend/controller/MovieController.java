@@ -1,9 +1,7 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.dto.MovieDto;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Screening;
-import de.cinetastisch.backend.pojo.MovieRequest;
 import de.cinetastisch.backend.service.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,13 +10,11 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,11 +25,9 @@ public class MovieController {
     private final String exampleJsonNoId = "{\n  \"title\": \"Guardians of the Galaxy\",\n  \"releaseYear\": \"2014\",\n  \"posterImage\": \"https://m.media-amazon.com/images/M/MV5BZTkwZjU3MTctMGExMi00YjU5LTgwMDMtOWNkZDRlZjQ4NmZhXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg\",\n  \"rated\": \"PG-13\",\n  \"runtime\": \"121 min\",\n  \"genre\": \"Action, Adventure, Comedy\",\n  \"actors\": \"Chris Pratt, Vin Diesel, Bradley Cooper\",\n  \"plot\": \"A group of intergalactic criminals must pull together to stop a fanatical warrior with plans to purge the universe.\",\n  \"trailer\": \"TODO\",\n  \"imdbId\": \"tt2015381\",\n  \"imdbRating\": \"8.0\",\n  \"imdbRatingCount\": \"1,180,325\"\n}";
 
     private final MovieService movieService;
-    private final ModelMapper modelMapper;
 
-    public MovieController(MovieService movieService, ModelMapper modelMapper) {
+    public MovieController(MovieService movieService) {
         this.movieService = movieService;
-        this.modelMapper = modelMapper;
     }
 
     @Operation(
@@ -76,24 +70,10 @@ public class MovieController {
             }
     )
     @GetMapping
-    public ResponseEntity<List<MovieDto>> getAll(@RequestParam(value = "title", required = false) String title,
-                              @RequestParam(value = "genre", required = false) String g) {
-        List<Movie> response = new ArrayList<>();
-
-        if(title != null && !title.isBlank()){
-            response.addAll(movieService.getAllMoviesByTitle(title));
-        } else if (g != null && !g.isBlank()){
-            response.addAll(movieService.getAllMoviesByGenre(g));
-        } else {
-            response.addAll(movieService.getAllMovies());
-        }
-
-        if (response.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
-
-        List<MovieDto>responseDto = response.stream().map(this::convertToDto).toList();
-        return ResponseEntity.ok(responseDto);
+    public ResponseEntity<List<Movie>> getAll(@RequestParam(value = "title", required = false) String title,
+                                              @RequestParam(value = "genre", required = false) String genre,
+                                              @RequestParam(value = "imdbId", required = false) String imdbId) {
+        return new ResponseEntity<>(movieService.getAllMovies(title, genre, imdbId), HttpStatus.OK);
     }
 
     @Operation(
@@ -126,8 +106,8 @@ public class MovieController {
             }
     )
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public MovieDto getOne(@PathVariable("id") Long id){
-        return convertToDto(movieService.getMovie(id));
+    public ResponseEntity<?> getOne(@PathVariable("id") Long id){
+        return new ResponseEntity<>(movieService.getMovie(id), HttpStatus.OK);
     }
 
     @Operation(
@@ -173,11 +153,10 @@ public class MovieController {
             }
     )
     @PostMapping()
-    public ResponseEntity<MovieDto> addOne(@Valid @RequestBody(required = false) MovieDto movieDto,
-                                        @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
-                                        @Valid @RequestParam(value = "title", required = false) String title){
-        return new ResponseEntity<>(convertToDto(
-                movieService.addMovieByParameters(convertToEntity(movieDto), imdbId, title)), HttpStatus.CREATED);
+    public ResponseEntity<?> addOne(@Valid @RequestBody(required = false) Movie movie,
+                                           @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
+                                           @Valid @RequestParam(value = "title", required = false) String title){
+        return new ResponseEntity<>(movieService.addMovieByParameters(movie, imdbId, title), HttpStatus.CREATED);
     }
 
     @Operation(
@@ -286,27 +265,5 @@ public class MovieController {
     @GetMapping("{id}/screenings") //TODO: set timespan
     public ResponseEntity<List<Screening>> getScreenings(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.getAllScreeningsByMovie(id));
-    }
-
-
-    public Movie convertToEntity(MovieDto movieDto){
-        return Movie.builder()
-                    .title(movieDto.getTitle())
-                    .releaseYear(movieDto.getReleaseYear())
-                    .posterImage(movieDto.getPosterImage())
-                    .rated(movieDto.getRated())
-                    .runtime(movieDto.getRuntime())
-                    .genre(movieDto.getGenre())
-                    .actors(movieDto.getActors())
-                    .plot(movieDto.getPlot())
-                    .trailer(movieDto.getTrailer())
-                    .imdbId(movieDto.getImdbId())
-                    .imdbRating(movieDto.getImdbRating())
-                    .imdbRatingCount(movieDto.getImdbRatingCount())
-                    .build();
-    }
-
-    public MovieDto convertToDto(Movie movie){
-        return modelMapper.map(movie, MovieDto.class);
     }
 }

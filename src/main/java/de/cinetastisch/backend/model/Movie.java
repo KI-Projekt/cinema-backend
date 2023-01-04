@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,6 +35,8 @@ public class Movie {
     private String rated;
     private String runtime;
     private String genre;
+    private String director;
+    private String writer;
     private @Column(columnDefinition = "TEXT") String actors;
     private @Column(columnDefinition = "TEXT") String plot;
     private String trailer;
@@ -43,13 +46,16 @@ public class Movie {
 
     public Movie(@NonNull String title, String releaseYear, String posterImage, String rated, String runtime,
                  String genre,
-                 String actors, String plot, String trailer, String imdbId, String imdbRating, String imdbRatingCount) {
+                 String director, String writer, String actors, String plot, String trailer, String imdbId,
+                 String imdbRating, String imdbRatingCount) {
         this.title = title;
         this.releaseYear = releaseYear;
         this.posterImage = posterImage;
         this.rated = rated;
         this.runtime = runtime;
         this.genre = genre;
+        this.director = director;
+        this.writer = writer;
         this.actors = actors;
         this.plot = plot;
         this.trailer = trailer;

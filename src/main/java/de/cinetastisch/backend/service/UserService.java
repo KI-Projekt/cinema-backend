@@ -26,7 +26,7 @@ public class UserService {
     }
 
     public void replaceUser(Long id, User newUser){
-        User oldUser = userRepository.findById(id).get();
+        User oldUser = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         newUser.setId(id);
         userRepository.save(newUser);
     }

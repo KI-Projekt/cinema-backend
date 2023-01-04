@@ -1,9 +1,10 @@
 package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.model.Screening;
-import de.cinetastisch.backend.model.info.ScreeningInfo;
+import de.cinetastisch.backend.dto.ScreeningRequestDto;
 import de.cinetastisch.backend.service.ScreeningService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +23,18 @@ public class ScreeningController {
     }
 
     @Operation(
-            tags = {"Screenings"}
+            tags = {"Screenings"},
+            parameters = {
+                    @Parameter(
+                            name = "startTime",
+                            description = "Get all screenings after the specified start datetime",
+                            example = "2022-12-30T19:34:50.63"
+                    )
+            }
     )
     @GetMapping
-    public List<Screening> getAll(){
-        return screeningService.getAllScreenings();
+    public ResponseEntity<List<Screening>> getAll(@RequestParam(value = "startTime", required = false) String ldtStart){
+        return ResponseEntity.ok(screeningService.getAllScreenings(ldtStart));
     }
 
     @Operation(
@@ -41,8 +49,8 @@ public class ScreeningController {
             tags = {"Screenings"}
     )
     @PostMapping
-    public ResponseEntity<Screening> add(@Valid @RequestBody ScreeningInfo screeningInfo){
-        return new ResponseEntity<>(screeningService.addScreening(screeningInfo), HttpStatus.CREATED);
+    public ResponseEntity<Screening> add(@Valid @RequestBody ScreeningRequestDto screeningRequestDto){
+        return new ResponseEntity<>(screeningService.addScreening(screeningRequestDto), HttpStatus.CREATED);
     }
 
 

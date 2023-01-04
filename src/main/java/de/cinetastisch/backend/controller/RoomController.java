@@ -18,7 +18,7 @@ public class RoomController {
 
     private final RoomService roomService;
 
-    public RoomController(RoomService roomService, ModelMapper modelMapper) {
+    public RoomController(RoomService roomService) {
         this.roomService = roomService;
     }
 
