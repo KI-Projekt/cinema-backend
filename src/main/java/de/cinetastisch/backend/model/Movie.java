@@ -1,6 +1,7 @@
 package de.cinetastisch.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.cinetastisch.backend.enumeration.MovieStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -43,6 +44,9 @@ public class Movie {
     private String imdbId;
     private String imdbRating;
     private String imdbRatingCount;
+
+    @Enumerated(EnumType.STRING)
+    private MovieStatus movieStatus = MovieStatus.IN_CATALOG;
 
     public Movie(@NonNull String title, String releaseYear, String posterImage, String rated, String runtime,
                  String genre,

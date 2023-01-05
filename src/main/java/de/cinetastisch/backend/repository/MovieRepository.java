@@ -16,10 +16,12 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     List<Movie> findAllByTitleLikeIgnoreCase(String formattedTitle);
     List<Movie> findAllByImdbIdLikeIgnoreCase(String formattedImdbId);
     List<Movie> findAllByGenreLikeIgnoreCase(String formattedGenre);
+    List<Movie> findAllByRatedLikeIgnoreCase(String formattedRated);
     List<Movie> findAllByActorsIgnoreCase(String actor);
     List<Movie> findAllByReleaseYear(String year);
 
     Boolean existsByTitleIgnoreCase(String title);
     Boolean existsByImdbIdIgnoreCase(String imdbId);
+
 
 }

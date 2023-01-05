@@ -1,6 +1,7 @@
 package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.model.Order;
+import de.cinetastisch.backend.dto.OrderRequestDto;
 import de.cinetastisch.backend.service.OrderService;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class OrderController {
     }
 
     @PostMapping("/orders")
-    public Order placeOrder(@RequestBody de.cinetastisch.backend.pojo.Order order){
-        return orderService.createOrder(order);
+    public Order placeOrder(@RequestBody OrderRequestDto orderRequestDto){
+        return orderService.createOrder(orderRequestDto);
     }
 }
