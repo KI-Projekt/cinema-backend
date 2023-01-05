@@ -5,6 +5,9 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 @OpenAPIDefinition(
@@ -19,5 +22,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpringAzureCinemaApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringAzureCinemaApplication.class, args);
+	}
+
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/api/**")
+						.allowedMethods("*")
+						.exposedHeaders("*")
+						.maxAge(3600);
+			}
+		};
 	}
 }

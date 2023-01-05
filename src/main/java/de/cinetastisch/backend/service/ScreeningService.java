@@ -1,7 +1,9 @@
 package de.cinetastisch.backend.service;
 
+import de.cinetastisch.backend.dto.ScreeningDto;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
+import de.cinetastisch.backend.mapper.ScreeningMapper;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Screening;
@@ -22,6 +24,8 @@ public class ScreeningService {
     private final ScreeningRepository screeningRepository;
     private final MovieRepository movieRepository;
     private final RoomRepository roomRepository;
+
+    private final ScreeningMapper mapper;
 
     public List<Screening> getAllScreenings(String ldtStart){
         if (ldtStart != null && !ldtStart.isBlank()){
@@ -56,13 +60,13 @@ public class ScreeningService {
 
         // Check if room is already occupied for that time
         List<Screening> runningScreenings = screeningRepository.findAllByRoomAndTime(room.getId(),
-                                                                                     screeningRequestDto.startTime(),
-                                                                                     screeningRequestDto.endTime());
+                                                                                     screeningRequestDto.startDateTime(),
+                                                                                     screeningRequestDto.endDateTime());
         if(runningScreenings.size() != 0){
             throw new ResourceAlreadyOccupiedException("Screenings " + runningScreenings + " already occupy the room for that time.");
         }
 
-        return screeningRepository.save(new Screening(movie, room, screeningRequestDto.startTime(), screeningRequestDto.endTime()));
+        return screeningRepository.save(new Screening(movie, room, screeningRequestDto.startDateTime(), screeningRequestDto.endDateTime()));
     }
 
     public List<Screening> getAllScreeningsBetweenTimespan(LocalDateTime from, LocalDateTime to){
@@ -73,4 +77,17 @@ public class ScreeningService {
         roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("RoomID not found"));
         return screeningRepository.findAllByRoomAndTime(roomId, from, to);
     }
+
+    public Screening replaceScreening(Long id, ScreeningRequestDto screeningDto) {
+        Screening oldScreening = getScreening(id);
+        Screening newScreening = mapper.screeningRequestDtoToEntity(screeningDto);
+        return oldScreening;
+    }
+
+    public void deleteScreening(Long id){
+        Screening screening = screeningRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Screening Id not found"));
+        screeningRepository.delete(screening);
+    }
+
+
 }

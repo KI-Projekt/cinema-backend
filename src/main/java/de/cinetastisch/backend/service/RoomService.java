@@ -1,8 +1,8 @@
 package de.cinetastisch.backend.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.cinetastisch.backend.exception.NoResources;
-import de.cinetastisch.backend.exception.ResourceAlreadyExists;
+import de.cinetastisch.backend.exception.NoResourcesException;
+import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.repository.RoomRepository;
@@ -23,7 +23,7 @@ public class RoomService {
     public List<Room> getAllRooms(){
         List<Room> rooms = roomRepository.findAll();
         if (rooms.isEmpty()) {
-            throw new NoResources("Empty");
+            throw new NoResourcesException("Empty");
         }
         return rooms;
     }
@@ -35,7 +35,7 @@ public class RoomService {
 
     public Room addRoom(Room room){
         if(roomRepository.existsByNameIgnoreCase(room.getName())){
-            throw new ResourceAlreadyExists("Name is already taken");
+            throw new ResourceAlreadyExistsException("Name is already taken");
         }
         return roomRepository.save(room);
     }
@@ -45,7 +45,7 @@ public class RoomService {
         Room oldRoom = roomRepository.findById(id)
                                      .orElseThrow(() -> new ResourceNotFoundException("Room with ID " + id + " not found"));
         if(roomRepository.existsByNameIgnoreCase(newRoom.getName()) && !oldRoom.getName().equals(newRoom.getName())){
-            throw new ResourceAlreadyExists("Name is already taken by another room.");
+            throw new ResourceAlreadyExistsException("Name is already taken by another room.");
         }
         return roomRepository.save(newRoom);
     }

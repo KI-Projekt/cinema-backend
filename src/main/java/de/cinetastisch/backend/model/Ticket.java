@@ -2,6 +2,7 @@ package de.cinetastisch.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import de.cinetastisch.backend.enumeration.TicketCategory;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,6 +36,8 @@ public class Ticket {
 
     @Column(name = "price", nullable = false)
     private Double price;
+
+    private TicketCategory category = TicketCategory.ADULT;
 
     @ManyToOne
     @MapsId("screeningId")

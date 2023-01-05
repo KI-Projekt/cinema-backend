@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.controller;
 
+import de.cinetastisch.backend.dto.MovieRequestDto;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.service.MovieService;
@@ -35,26 +36,13 @@ public class MovieController {
             operationId = "getMovies",
             summary = "Fetch all movies",
             description = "Retrieve all movies from the database with optional query-parameters.",
-            parameters = {
-                    @Parameter(
-                            name = "title",
-                            description = "Query movies by title",
-                            example = "Galaxy"
-                    ),
-                    @Parameter(
-                            name = "genre",
-                            description = "Lists all movies with a specific genre",
-                            example = "Action"
-                    )
-            },
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Successful",
                             content = @Content(
                                     schema = @Schema(implementation = Movie.class),
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    examples = {@ExampleObject(name = "Successful Example", value = "[\n"+exampleJson+"\n]")}
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE
                             )
                     ),
                     @ApiResponse(
@@ -64,7 +52,7 @@ public class MovieController {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "Invalid input supplied",
+                            description = "Invalid inputs supplied",
                             content = @Content
                     )
             }
@@ -72,8 +60,9 @@ public class MovieController {
     @GetMapping
     public ResponseEntity<List<Movie>> getAll(@RequestParam(value = "title", required = false) String title,
                                               @RequestParam(value = "genre", required = false) String genre,
-                                              @RequestParam(value = "imdbId", required = false) String imdbId) {
-        return new ResponseEntity<>(movieService.getAllMovies(title, genre, imdbId), HttpStatus.OK);
+                                              @RequestParam(value = "imdbId", required = false) String imdbId,
+                                              @RequestParam(value = "rated", required = false) String rated) {
+        return new ResponseEntity<>(movieService.getAllMovies(title, genre, imdbId, rated), HttpStatus.OK);
     }
 
     @Operation(
@@ -81,7 +70,7 @@ public class MovieController {
             operationId = "getMovie",
             summary = "Get movie by id",
             parameters = {
-                    @Parameter(name = "id", example = "1")
+                    @Parameter(name = "id")
             },
             responses = {
                     @ApiResponse(
@@ -89,13 +78,12 @@ public class MovieController {
                             description = "Successful",
                             content = @Content(
                                     schema = @Schema(implementation = Movie.class),
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    examples = {@ExampleObject(name = "Successful Example", value = exampleJson)}
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE
                             )
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "Invalid input supplied",
+                            description = "Invalid inputs supplied",
                             content = @Content
                     ),
                     @ApiResponse(
@@ -106,9 +94,10 @@ public class MovieController {
             }
     )
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getOne(@PathVariable("id") Long id){
+    public ResponseEntity<Movie> getOne(@PathVariable("id") Long id){
         return new ResponseEntity<>(movieService.getMovie(id), HttpStatus.OK);
     }
+
 
     @Operation(
             tags = {"Movies"},
@@ -116,14 +105,13 @@ public class MovieController {
             summary = "Add movie by imdbId, title or your own json request body",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
-                            schema = @Schema(implementation = Movie.class),
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            examples = {@ExampleObject(name = "Movie Request Example", value = exampleJsonNoId)}
+                            schema = @Schema(implementation = MovieRequestDto.class),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
                     )
             ),
             parameters = {
                     @Parameter(name = "imdbId", example = "tt4154664"),
-                    @Parameter(name = "title", example = "Captain Marvel")
+                    @Parameter(name = "title")
             },
             responses = {
                     @ApiResponse(
@@ -136,7 +124,7 @@ public class MovieController {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "Invalid input supplied",
+                            description = "Invalid inputs supplied",
                             content = @Content
                     ),
                     @ApiResponse(
@@ -153,9 +141,9 @@ public class MovieController {
             }
     )
     @PostMapping()
-    public ResponseEntity<?> addOne(@Valid @RequestBody(required = false) Movie movie,
-                                           @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
-                                           @Valid @RequestParam(value = "title", required = false) String title){
+    public ResponseEntity<Movie> addOne(@Valid @RequestBody(required = false) MovieRequestDto movie,
+                                    @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
+                                    @Valid @RequestParam(value = "title", required = false) String title){
         return new ResponseEntity<>(movieService.addMovieByParameters(movie, imdbId, title), HttpStatus.CREATED);
     }
 
@@ -164,21 +152,26 @@ public class MovieController {
             operationId = "replaceMovie",
             summary = "Replace a movie by id with request body",
             parameters = {
-                    @Parameter(name = "id", example = "1")
+                    @Parameter(name = "id")
             },
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            schema = @Schema(implementation = MovieRequestDto.class),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            ),
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Successful",
                             content = @Content(
                                     schema = @Schema(implementation = Movie.class),
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    examples = {@ExampleObject(name = "Successful Example", value = exampleJson)}
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE
                             )
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "Invalid input supplied",
+                            description = "Invalid inputs supplied",
                             content = @Content
                     ),
                     @ApiResponse(
@@ -194,7 +187,8 @@ public class MovieController {
             }
     )
     @PutMapping("/{id}")
-    public ResponseEntity<?> replaceOne(@PathVariable Long id, @RequestBody Movie movie){
+    public ResponseEntity<Movie> replaceOne(@PathVariable Long id,
+                                        @RequestBody MovieRequestDto movie){
         return ResponseEntity.ok(movieService.replaceMovie(id, movie));
     }
 
@@ -203,7 +197,7 @@ public class MovieController {
             operationId = "deleteMovie",
             summary = "Delete movie by id",
             parameters = {
-                    @Parameter(name = "id", example = "1")
+                    @Parameter(name = "id")
             },
             responses = {
                     @ApiResponse(
@@ -230,12 +224,31 @@ public class MovieController {
     }
 
     @Operation(
+            tags = {"Movies"},
+            operationId = "archiveMovie",
+            summary = "Archive a movie by id",
+            description = "It's an alternative for deleting movies"
+    )
+    @GetMapping("/{id}/archive")
+    public ResponseEntity<Movie> archiveMovie(@PathVariable("id") Long id){
+        return ResponseEntity.ok(movieService.archive(id));
+    }
+
+    @Operation(
+            tags = {"Movies"},
+            operationId = "catalogMovie",
+            summary = "Catalog a movie by id"
+    )
+    @GetMapping("/{id}/catalog")
+    public ResponseEntity<Movie> catalogMovie(@PathVariable("id") Long id){
+        return ResponseEntity.ok(movieService.catalog(id));
+    }
+
+
+    @Operation(
             tags = {"Movies", "Screenings"},
             operationId = "getScreeningsOfMovie",
             summary = "Get Screenings of a movie",
-            parameters = {
-                    @Parameter(name = "id", example = "1")
-            },
             responses = {
                     @ApiResponse(
                             responseCode = "200",

@@ -1,6 +1,9 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.exception.ResourceAlreadyExists;
+import de.cinetastisch.backend.dto.MovieRequestDto;
+import de.cinetastisch.backend.enumeration.MovieStatus;
+import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
+import de.cinetastisch.backend.exception.ResourceHasChildrenException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.mapper.MovieMapper;
 import de.cinetastisch.backend.model.Movie;
@@ -8,14 +11,11 @@ import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.pojo.OmdbMovieResponse;
 import de.cinetastisch.backend.repository.MovieRepository;
 import de.cinetastisch.backend.repository.ScreeningRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-
-
 
 @Service
 public class MovieService {
@@ -39,7 +39,7 @@ public class MovieService {
     // #########################
 
 
-    public List<Movie> getAllMovies(String title, String genre, String imdbId){
+    public List<Movie> getAllMovies(String title, String genre, String imdbId, String rated){
         if (title != null && !title.isBlank() && genre != null && !genre.isBlank()){
             throw new IllegalArgumentException("Only one query parameter at a time supported.");
         }
@@ -50,11 +50,13 @@ public class MovieService {
             return movieRepository.findAllByTitleLikeIgnoreCase("%"+title+"%");
         } else if (genre != null && !genre.isBlank()){
             return movieRepository.findAllByGenreLikeIgnoreCase("%"+genre+"%");
+        } else if (rated != null && !rated.isBlank()){
+            return movieRepository.findAllByRatedLikeIgnoreCase("%"+rated+"%");
         } else {
             return movieRepository.findAll();
         }
 
-//        List<MovieDto>responseDto = response.stream().map(this::convertToDto).toList();
+//        List<MovieRequestDto>responseDto = response.stream().map(this::convertToDto).toList();
     }
 
     public Movie getMovie(Long id){
@@ -65,15 +67,15 @@ public class MovieService {
     public Movie addMovie(Movie movie){
         checkIfImdbIdAlreadyExists(movie.getImdbId());
         checkIfTitleAlreadyExists(movie.getTitle());
+        if (movie.getMovieStatus() == null){
+            movie.setMovieStatus(MovieStatus.IN_CATALOG);
+        }
         return movieRepository.save(movie);
     }
 
-    public Movie addMovieByParameters(Movie movie, String imdbId, String title){
+    public Movie addMovieByParameters(MovieRequestDto movie, String imdbId, String title){
         if (movie != null){
-            if(movie.getId() != null) {
-                throw new IllegalArgumentException("Please don't specify an id.");
-            }
-            return addMovie(movie);
+            return addMovie(mapper.dtoToEntity(movie));
         }
 
         if (imdbId != null && !imdbId.isBlank()) {
@@ -93,20 +95,26 @@ public class MovieService {
         throw new IllegalArgumentException("No inputs given");
     }
 
-    public Movie replaceMovie(Long id, Movie movie){
-        Movie refMovie = movieRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No movie with id [%s] found".formatted(id)));
-        movie.setId(refMovie.getId());
-        return movieRepository.save(movie);
+    public Movie replaceMovie(Long id, MovieRequestDto moviedto){
+        Movie newMovie = mapper.dtoToEntity(moviedto);
+        Movie refMovie = movieRepository.findById(id)
+                                        .orElseThrow(() -> new ResourceNotFoundException("No movie with id %s found".formatted(id)));
+        newMovie.setId(refMovie.getId());
+        return movieRepository.save(newMovie);
     }
 
     public void deleteMovie(Long id){
-        try {
-            movieRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException ex){
-            throw new ResourceNotFoundException("No Movie found with given ID");
+        Movie movie = movieRepository.findById(id)
+                                     .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
+        if(screeningRepository.existsByMovie(movie)){
+            throw new ResourceHasChildrenException("Movie can't be deleted because a screening is referencing it");
         }
+        movieRepository.delete(movie);
     }
 
+    // ##############
+    // Other
+    // ##############
 
     public List<Screening> getAllScreeningsByMovie(Long id) {
         Movie movie = movieRepository.findById(id).orElseThrow(
@@ -114,11 +122,6 @@ public class MovieService {
         );
         return screeningRepository.findAllByMovie(movie);
     }
-
-
-    // ##############
-    // Helper
-    // ##############
 
     public Movie getOmdbMovieByTitle(String movieTitle){
         String uri = "https://www.omdbapi.com/?apikey=16be7c3b&t=" + movieTitle;
@@ -144,16 +147,34 @@ public class MovieService {
 
     public void checkIfTitleAlreadyExists(String title){
         if (movieRepository.existsByTitleIgnoreCase(title)){
-            throw new ResourceAlreadyExists("Movie already exists");
+            throw new ResourceAlreadyExistsException("Movie already exists");
         }
     }
 
     public void checkIfImdbIdAlreadyExists(String imdbId){
         if (movieRepository.existsByImdbIdIgnoreCase(imdbId)){
-            throw new ResourceAlreadyExists("Movie already exists");
+            throw new ResourceAlreadyExistsException("Movie already exists");
         }
     }
 
 
+    public Movie archive(Long id) {
+        Movie movie = movieRepository.findById(id)
+                                     .orElseThrow(() -> new ResourceNotFoundException("Movie id not found."));
+        if (movie.getMovieStatus() != MovieStatus.ARCHIVED){
+            movie.setMovieStatus(MovieStatus.ARCHIVED);
+            return movieRepository.save(movie);
+        }
+        return movie;
+    }
 
+    public Movie catalog(Long id) {
+        Movie movie = movieRepository.findById(id)
+                                     .orElseThrow(() -> new ResourceNotFoundException("Movie id not found."));
+        if (movie.getMovieStatus() != MovieStatus.IN_CATALOG){
+            movie.setMovieStatus(MovieStatus.IN_CATALOG);
+            return movieRepository.save(movie);
+        }
+        return movie;
+    }
 }

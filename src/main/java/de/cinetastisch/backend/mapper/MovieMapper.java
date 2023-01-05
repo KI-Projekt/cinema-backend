@@ -1,24 +1,24 @@
 package de.cinetastisch.backend.mapper;
 
-import de.cinetastisch.backend.dto.MovieDto;
+import de.cinetastisch.backend.dto.MovieRequestDto;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.pojo.OmdbMovieResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.NullValueCheckStrategy;
 
 import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface MovieMapper {
 
-    Movie dtoToEntity(MovieDto movieDto);
-    List<Movie> dtoToEntity(Iterable<MovieDto> movieDto);
+    @Mapping(target = "id", ignore = true)
+    Movie dtoToEntity(MovieRequestDto movieRequestDto);
+    List<Movie> dtoToEntity(Iterable<MovieRequestDto> movieDto);
 
-    MovieDto entityToDto(Movie movie);
-    List<MovieDto> entityToDto(Iterable<Movie> movie);
-
-
+    @Mapping(target = "movieStatus", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "trailer", ignore = true)
     @Mapping(target = "releaseYear", source = "year")

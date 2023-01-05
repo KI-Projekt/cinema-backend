@@ -2,7 +2,9 @@ package de.cinetastisch.backend.service;
 
 
 import de.cinetastisch.backend.enumeration.OrderStatus;
+import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.model.Order;
+import de.cinetastisch.backend.dto.OrderRequestDto;
 import de.cinetastisch.backend.repository.OrderRepository;
 import de.cinetastisch.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -32,8 +34,8 @@ public class OrderService {
         return orderRepository.getOrdersByUserId(userId);
     }
 
-    public Order createOrder(de.cinetastisch.backend.pojo.Order newOrder){
-        Order order = new Order(userRepository.findById(newOrder.getUserId()).get());
+    public Order createOrder(OrderRequestDto newOrderRequestDto){
+        Order order = new Order(userRepository.findById(newOrderRequestDto.userId()).orElseThrow(() -> new ResourceNotFoundException("User ID not found")));
 //        order.setOrderStatus(OrderStatus.IN_PROGRESS); (ist default)
         return orderRepository.save(order);
     }
