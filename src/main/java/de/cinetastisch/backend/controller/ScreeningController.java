@@ -63,6 +63,9 @@ public class ScreeningController {
     }
 
 
+    @Operation(
+            tags = {"Screenings"}
+    )
     @PutMapping("{id}")
     public ResponseEntity<Screening> replaceOne(@Valid @RequestBody ScreeningRequestDto screeningDto,
                                                 @Valid @PathVariable("id") Long id){

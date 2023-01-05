@@ -11,7 +11,6 @@ import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.pojo.OmdbMovieResponse;
 import de.cinetastisch.backend.repository.MovieRepository;
 import de.cinetastisch.backend.repository.ScreeningRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

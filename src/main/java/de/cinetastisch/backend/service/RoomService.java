@@ -1,6 +1,5 @@
 package de.cinetastisch.backend.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.cinetastisch.backend.exception.NoResourcesException;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
@@ -13,11 +12,9 @@ import java.util.List;
 @Service
 public class RoomService {
     private final RoomRepository roomRepository;
-    private final ObjectMapper objectMapper;
 
-    public RoomService(RoomRepository roomRepository, ObjectMapper objectMapper) {
+    public RoomService(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
-        this.objectMapper = objectMapper;
     }
 
     public List<Room> getAllRooms(){

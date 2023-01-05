@@ -16,7 +16,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 		tags = {
 				@Tag(name = "Movies", description = "Alles über die gespeicherten Filme"),
 				@Tag(name = "Rooms", description = "Alles über die Filmsäle"),
-				@Tag(name = "Screenings", description = "Alles über die einzelnen Filmvorstellungen")
+				@Tag(name = "Screenings", description = "Alles über die einzelnen Filmvorstellungen"),
+				@Tag(name = "Seats")
 		}
 )
 public class SpringAzureCinemaApplication {

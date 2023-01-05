@@ -33,6 +33,7 @@ public class Room {
     private @NonNull String name;
     private Boolean hasThreeD;
     private Boolean hasDolbyAtmos;
+//    private RoomStatus roomStatus;
 
     public Room(Long id, @NonNull String name, Boolean hasThreeD, Boolean hasDolbyAtmos) {
         this.id = id;
