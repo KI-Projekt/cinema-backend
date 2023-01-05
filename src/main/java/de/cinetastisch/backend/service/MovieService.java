@@ -38,7 +38,7 @@ public class MovieService {
     // #########################
 
 
-    public List<Movie> getAllMovies(String title, String genre, String imdbId, String rated){
+    public List<Movie> getAllMovies(String title, String genre, String imdbId, Integer rated){
         if (title != null && !title.isBlank() && genre != null && !genre.isBlank()){
             throw new IllegalArgumentException("Only one query parameter at a time supported.");
         }
@@ -49,8 +49,8 @@ public class MovieService {
             return movieRepository.findAllByTitleLikeIgnoreCase("%"+title+"%");
         } else if (genre != null && !genre.isBlank()){
             return movieRepository.findAllByGenreLikeIgnoreCase("%"+genre+"%");
-        } else if (rated != null && !rated.isBlank()){
-            return movieRepository.findAllByRatedLikeIgnoreCase("%"+rated+"%");
+        } else if (rated != null && rated > 0){
+            return movieRepository.findAllByRatedLessThanEqual(rated);
         } else {
             return movieRepository.findAll();
         }

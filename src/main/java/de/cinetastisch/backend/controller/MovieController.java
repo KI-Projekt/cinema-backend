@@ -7,7 +7,6 @@ import de.cinetastisch.backend.service.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -61,7 +60,7 @@ public class MovieController {
     public ResponseEntity<List<Movie>> getAll(@RequestParam(value = "title", required = false) String title,
                                               @RequestParam(value = "genre", required = false) String genre,
                                               @RequestParam(value = "imdbId", required = false) String imdbId,
-                                              @RequestParam(value = "rated", required = false) String rated) {
+                                              @RequestParam(value = "rated", required = false) Integer rated) {
         return new ResponseEntity<>(movieService.getAllMovies(title, genre, imdbId, rated), HttpStatus.OK);
     }
 
@@ -142,8 +141,8 @@ public class MovieController {
     )
     @PostMapping()
     public ResponseEntity<Movie> addOne(@Valid @RequestBody(required = false) MovieRequestDto movie,
-                                    @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
-                                    @Valid @RequestParam(value = "title", required = false) String title){
+                                        @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
+                                        @Valid @RequestParam(value = "title", required = false) String title){
         return new ResponseEntity<>(movieService.addMovieByParameters(movie, imdbId, title), HttpStatus.CREATED);
     }
 
@@ -188,7 +187,7 @@ public class MovieController {
     )
     @PutMapping("/{id}")
     public ResponseEntity<Movie> replaceOne(@PathVariable Long id,
-                                        @RequestBody MovieRequestDto movie){
+                                            @RequestBody MovieRequestDto movie){
         return ResponseEntity.ok(movieService.replaceMovie(id, movie));
     }
 

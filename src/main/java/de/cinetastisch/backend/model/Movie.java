@@ -1,12 +1,9 @@
 package de.cinetastisch.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import de.cinetastisch.backend.enumeration.MovieStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Objects;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -15,6 +12,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -33,7 +31,7 @@ public class Movie {
     private @NonNull @Column(columnDefinition = "TEXT") String title;
     private String releaseYear;
     private String posterImage;
-    private String rated;
+    private Integer rated;
     private String runtime;
     private String genre;
     private String director;
@@ -48,7 +46,7 @@ public class Movie {
     @Enumerated(EnumType.STRING)
     private MovieStatus movieStatus = MovieStatus.IN_CATALOG;
 
-    public Movie(@NonNull String title, String releaseYear, String posterImage, String rated, String runtime,
+    public Movie(@NonNull String title, String releaseYear, String posterImage, Integer rated, String runtime,
                  String genre,
                  String director, String writer, String actors, String plot, String trailer, String imdbId,
                  String imdbRating, String imdbRatingCount) {
@@ -68,15 +66,4 @@ public class Movie {
         this.imdbRatingCount = imdbRatingCount;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Movie movie = (Movie) o;
-        return id.equals(movie.id) && title.equals(movie.title) && Objects.equals(releaseYear, movie.releaseYear) && Objects.equals(posterImage, movie.posterImage) && Objects.equals(rated, movie.rated) && Objects.equals(runtime, movie.runtime) && Objects.equals(genre, movie.genre) && Objects.equals(actors, movie.actors) && Objects.equals(plot, movie.plot) && Objects.equals(trailer, movie.trailer) && Objects.equals(imdbId, movie.imdbId) && Objects.equals(imdbRating, movie.imdbRating) && Objects.equals(imdbRatingCount, movie.imdbRatingCount);}
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, releaseYear, posterImage, rated, runtime, genre, actors, plot, trailer, imdbId, imdbRating, imdbRatingCount);
-    }
 }

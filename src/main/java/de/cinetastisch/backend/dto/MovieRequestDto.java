@@ -7,7 +7,7 @@ public record MovieRequestDto(
         String title,
         String releaseYear,
         String posterImage,
-        String rated,
+        Integer rated,
         String runtime,
         String genre,
         String director,
