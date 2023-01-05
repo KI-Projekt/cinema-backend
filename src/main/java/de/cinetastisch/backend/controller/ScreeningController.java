@@ -5,8 +5,11 @@ import de.cinetastisch.backend.dto.ScreeningRequestDto;
 import de.cinetastisch.backend.service.ScreeningService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,12 +49,24 @@ public class ScreeningController {
     }
 
     @Operation(
-            tags = {"Screenings"}
+            tags = {"Screenings"},
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            schema = @Schema(implementation = ScreeningRequestDto.class),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            )
     )
     @PostMapping
     public ResponseEntity<Screening> add(@Valid @RequestBody ScreeningRequestDto screeningRequestDto){
         return new ResponseEntity<>(screeningService.addScreening(screeningRequestDto), HttpStatus.CREATED);
     }
 
+
+    @PutMapping("{id}")
+    public ResponseEntity<Screening> replaceOne(@Valid @RequestBody ScreeningRequestDto screeningDto,
+                                                @Valid @PathVariable("id") Long id){
+        return new ResponseEntity<>(screeningService.replaceScreening(id, screeningDto), HttpStatus.OK);
+    }
 
 }
