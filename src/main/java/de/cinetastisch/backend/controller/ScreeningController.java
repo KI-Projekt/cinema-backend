@@ -72,4 +72,13 @@ public class ScreeningController {
         return new ResponseEntity<>(screeningService.replaceScreening(id, screeningDto), HttpStatus.OK);
     }
 
+    @Operation(
+            tags = {"Screenings"}
+    )
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> delete(@Valid @PathVariable("id") Long id){
+        screeningService.deleteScreening(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

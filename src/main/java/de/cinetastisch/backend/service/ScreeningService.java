@@ -35,7 +35,8 @@ public class ScreeningService {
     }
 
     public Screening getScreening(Long id){
-        return screeningRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Screening Not Found"));
+        return screeningRepository.findById(id)
+                                  .orElseThrow(() -> new ResourceNotFoundException("Screening Not Found"));
     }
 
     public Screening addScreening(ScreeningRequestDto screeningRequestDto) {
@@ -81,11 +82,12 @@ public class ScreeningService {
     public Screening replaceScreening(Long id, ScreeningRequestDto screeningDto) {
         Screening oldScreening = getScreening(id);
         Screening newScreening = mapper.screeningRequestDtoToEntity(screeningDto);
-        return oldScreening;
+        newScreening.setId(oldScreening.getId());
+        return screeningRepository.save(newScreening);
     }
 
     public void deleteScreening(Long id){
-        Screening screening = screeningRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Screening Id not found"));
+        Screening screening = getScreening(id);
         screeningRepository.delete(screening);
     }
 
