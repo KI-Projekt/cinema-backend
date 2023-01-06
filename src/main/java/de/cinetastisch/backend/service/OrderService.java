@@ -3,10 +3,12 @@ package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
+import de.cinetastisch.backend.mapper.OrderMapper;
 import de.cinetastisch.backend.model.Order;
 import de.cinetastisch.backend.dto.OrderRequestDto;
+import de.cinetastisch.backend.model.Screening;
+import de.cinetastisch.backend.model.Seat;
 import de.cinetastisch.backend.repository.OrderRepository;
-import de.cinetastisch.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,39 +16,57 @@ import java.util.List;
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
+    private final OrderMapper mapper;
+    private final UserService userService;
+    private final SeatService seatService;
+    private final TicketService ticketService;
+    private final ScreeningService screeningService;
 
     public OrderService(OrderRepository orderRepository,
-                        UserRepository userRepository) {
+                        OrderMapper mapper,
+                        UserService userService,
+                        SeatService seatService,
+                        TicketService ticketService,
+                        ScreeningService screeningService) {
         this.orderRepository = orderRepository;
-        this.userRepository = userRepository;
+        this.mapper = mapper;
+        this.userService = userService;
+        this.seatService = seatService;
+        this.ticketService = ticketService;
+        this.screeningService = screeningService;
     }
 
     public List<Order> getAllOrders(){
         return orderRepository.findAll();
     }
 
-    public Order getOrderById(Long bookingId){
-        return orderRepository.findById(bookingId).get();
+    public Order getOrder(Long orderId){
+        return orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("User ID not found"));
     }
 
     public List<Order> getOrderByUserId(Long userId){
-        return orderRepository.getOrdersByUserId(userId);
+        return orderRepository.findAllByUser(userService.getUserById(userId));
     }
 
     public Order createOrder(OrderRequestDto newOrderRequestDto){
-        Order order = new Order(userRepository.findById(newOrderRequestDto.userId()).orElseThrow(() -> new ResourceNotFoundException("User ID not found")));
-//        order.setOrderStatus(OrderStatus.IN_PROGRESS); (ist default)
+        Order order = mapper.dtoToEntity(newOrderRequestDto);
+        Screening screening = screeningService.getScreening(newOrderRequestDto.screeningId());
+
+        for( Long s : newOrderRequestDto.seatIds()){
+            Seat seat = seatService.getSeat(s);
+            ticketService.saveTicket(order, screening, seat);
+        }
+
         return orderRepository.save(order);
     }
 
-    public void cancelOrder(Long bookingId){
-        Order orderToCancel = orderRepository.findById(bookingId).get();
-        orderToCancel.setOrderStatus(OrderStatus.CANCELLED); // keine Löschungen
+    public void cancelOrder(Long id){
+        Order orderToCancel = getOrder(id);
+        orderToCancel.setOrderStatus(OrderStatus.CANCELLED);
     }
 
     public void payOrder(Long bookingId){
         Order paidOrder = orderRepository.findById(bookingId).get();
-        paidOrder.setOrderStatus(OrderStatus.PAID); // 💸💶💸💸💸💶💸💸💶
+        paidOrder.setOrderStatus(OrderStatus.PAID);
     }
 }

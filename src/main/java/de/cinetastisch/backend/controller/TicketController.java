@@ -23,8 +23,4 @@ public class TicketController {
         return ticketService.getAllTickets();
     }
 
-    @PostMapping
-    public void addTicket(@RequestBody Ticket ticket){
-        ticketService.addTicket(ticket);
-    }
 }

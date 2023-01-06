@@ -96,15 +96,13 @@ public class MovieService {
 
     public Movie replaceMovie(Long id, MovieRequestDto moviedto){
         Movie newMovie = mapper.dtoToEntity(moviedto);
-        Movie refMovie = movieRepository.findById(id)
-                                        .orElseThrow(() -> new ResourceNotFoundException("No movie with id %s found".formatted(id)));
+        Movie refMovie = getMovie(id);
         newMovie.setId(refMovie.getId());
         return movieRepository.save(newMovie);
     }
 
     public void deleteMovie(Long id){
-        Movie movie = movieRepository.findById(id)
-                                     .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
+        Movie movie = getMovie(id);
         if(screeningRepository.existsByMovie(movie)){
             throw new ResourceHasChildrenException("Movie can't be deleted because a screening is referencing it");
         }
