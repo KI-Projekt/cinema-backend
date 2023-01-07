@@ -16,16 +16,15 @@ public interface ScreeningRepository extends JpaRepository<Screening, Long> {
     List<Screening> findAllByMovie(Movie movie);
     List<Screening> findAllByRoom(Room room);
 
-    @Query("SELECT s FROM Screening s WHERE ( s.startDateTime >= :from AND s.startDateTime <= :to ) " +
-            "OR s.endDateTime >= :from AND s.endDateTime <= :to")
-    List<Screening> findAllByLocalDateTimes(@Param("from") LocalDateTime from,@Param("to") LocalDateTime to);
+    @Query("SELECT s FROM Screening s WHERE ( s.startDateTime >= :from AND s.startDateTime <= :to ) OR ( s.endDateTime >= :from AND s.endDateTime <= :to ) OR (:from >= s.startDateTime AND :to <= s.endDateTime)")
+    List<Screening> findAllByLocalDateTimes(@Param("from") LocalDateTime from,
+                                            @Param("to") LocalDateTime to);
 
     @Query("SELECT s FROM Screening s WHERE s.startDateTime >= :from")
     List<Screening> findAllAfterStartDateTime(@Param("from") LocalDateTime from);
 
-    @Query("SELECT s FROM Screening s WHERE s.room.id = :roomId AND (( s.startDateTime >= :from AND s.startDateTime <= :to ) " +
-            "OR (s.endDateTime >= :from AND s.endDateTime <= :to))")
-    List<Screening> findAllByRoomAndTime(@Param("roomId") Long roomId,
+    @Query("SELECT s FROM Screening s WHERE s.room = :room AND (( s.startDateTime >= :from AND s.startDateTime <= :to ) OR ( s.endDateTime >= :from AND s.endDateTime <= :to ) OR (:from >= s.startDateTime AND :to <= s.endDateTime))")
+    List<Screening> findAllByRoomAndTime(@Param("room") Room room,
                                          @Param("from") LocalDateTime from,
                                          @Param("to") LocalDateTime to);
 

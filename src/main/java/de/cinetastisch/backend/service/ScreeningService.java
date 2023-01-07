@@ -1,6 +1,5 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.dto.ScreeningDto;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.mapper.ScreeningMapper;
@@ -8,8 +7,6 @@ import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.dto.ScreeningRequestDto;
-import de.cinetastisch.backend.repository.MovieRepository;
-import de.cinetastisch.backend.repository.RoomRepository;
 import de.cinetastisch.backend.repository.ScreeningRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,8 +19,8 @@ import java.util.List;
 public class ScreeningService {
 
     private final ScreeningRepository screeningRepository;
-    private final MovieRepository movieRepository;
-    private final RoomRepository roomRepository;
+    private final MovieService movieService;
+    private final RoomService roomService;
 
     private final ScreeningMapper mapper;
 
@@ -40,34 +37,17 @@ public class ScreeningService {
     }
 
     public Screening addScreening(ScreeningRequestDto screeningRequestDto) {
-        Movie movie;
-        Room room;
-
-        // Check if Movie exists
-        if(screeningRequestDto.movieId() != null && screeningRequestDto.movieId().describeConstable().isPresent()){
-            movie = movieRepository.findById(screeningRequestDto.movieId())
-                                   .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
-        } else {
-            throw new ResourceNotFoundException("Movie not found");
-        }
-
-        // Check if Room exists
-        if(screeningRequestDto.roomId() != null && screeningRequestDto.roomId().describeConstable().isPresent()){
-            room = roomRepository.findById(screeningRequestDto.roomId())
-                                 .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
-        } else {
-            throw new ResourceNotFoundException("Room not found");
-        }
+        Screening screening = mapper.screeningRequestDtoToEntity(screeningRequestDto);
 
         // Check if room is already occupied for that time
-        List<Screening> runningScreenings = screeningRepository.findAllByRoomAndTime(room.getId(),
-                                                                                     screeningRequestDto.startDateTime(),
-                                                                                     screeningRequestDto.endDateTime());
+        List<Screening> runningScreenings = screeningRepository.findAllByRoomAndTime(screening.getRoom(),
+                                                                                     screening.getStartDateTime(),
+                                                                                     screening.getEndDateTime());
         if(runningScreenings.size() != 0){
             throw new ResourceAlreadyOccupiedException("Screenings " + runningScreenings + " already occupy the room for that time.");
         }
 
-        return screeningRepository.save(new Screening(movie, room, screeningRequestDto.startDateTime(), screeningRequestDto.endDateTime()));
+        return screeningRepository.save(screening);
     }
 
     public List<Screening> getAllScreeningsBetweenTimespan(LocalDateTime from, LocalDateTime to){
@@ -75,8 +55,8 @@ public class ScreeningService {
     }
 
     public List<Screening> checkRoomForReservations(Long roomId, LocalDateTime from, LocalDateTime to){
-        roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("RoomID not found"));
-        return screeningRepository.findAllByRoomAndTime(roomId, from, to);
+        Room room = roomService.getRoom(roomId);
+        return screeningRepository.findAllByRoomAndTime(room, from, to);
     }
 
     public Screening replaceScreening(Long id, ScreeningRequestDto screeningDto) {
@@ -91,5 +71,10 @@ public class ScreeningService {
         screeningRepository.delete(screening);
     }
 
+    public LocalDateTime calculateEndDateTime(LocalDateTime start, Long movieId){
+        Movie movie = movieService.getMovie(movieId);
+        LocalDateTime newTime = start.plusMinutes(Long.parseLong(movie.getRuntime().split(" ")[0]));
+        return newTime.plusMinutes(30L); // + Ads + Cleaning
+    }
 
 }
