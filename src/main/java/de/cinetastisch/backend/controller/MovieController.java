@@ -60,7 +60,7 @@ public class MovieController {
     public ResponseEntity<List<Movie>> getAll(@RequestParam(value = "title", required = false) String title,
                                               @RequestParam(value = "genre", required = false) String genre,
                                               @RequestParam(value = "imdbId", required = false) String imdbId,
-                                              @RequestParam(value = "rated", required = false) Integer rated) {
+                                              @RequestParam(value = "rated", required = false) String rated) {
         return new ResponseEntity<>(movieService.getAllMovies(title, genre, imdbId, rated), HttpStatus.OK);
     }
 

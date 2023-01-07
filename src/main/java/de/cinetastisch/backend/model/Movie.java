@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.model;
 
+import de.cinetastisch.backend.enumeration.MovieRating;
 import de.cinetastisch.backend.enumeration.MovieStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -31,7 +32,7 @@ public class Movie {
     private @NonNull @Column(columnDefinition = "TEXT") String title;
     private String releaseYear;
     private String posterImage;
-    private Integer rated;
+    private MovieRating rated;
     private String runtime;
     private String genre;
     private String director;
@@ -46,7 +47,7 @@ public class Movie {
     @Enumerated(EnumType.STRING)
     private MovieStatus movieStatus = MovieStatus.IN_CATALOG;
 
-    public Movie(@NonNull String title, String releaseYear, String posterImage, Integer rated, String runtime,
+    public Movie(@NonNull String title, String releaseYear, String posterImage, MovieRating rated, String runtime,
                  String genre,
                  String director, String writer, String actors, String plot, String trailer, String imdbId,
                  String imdbRating, String imdbRatingCount) {
@@ -66,4 +67,7 @@ public class Movie {
         this.imdbRatingCount = imdbRatingCount;
     }
 
+    public String getRated() {
+        return rated.label;
+    }
 }

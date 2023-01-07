@@ -1,6 +1,7 @@
 package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.dto.MovieRequestDto;
+import de.cinetastisch.backend.enumeration.MovieRating;
 import de.cinetastisch.backend.enumeration.MovieStatus;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.exception.ResourceHasChildrenException;
@@ -38,7 +39,7 @@ public class MovieService {
     // #########################
 
 
-    public List<Movie> getAllMovies(String title, String genre, String imdbId, Integer rated){
+    public List<Movie> getAllMovies(String title, String genre, String imdbId, String rated){
         if (title != null && !title.isBlank() && genre != null && !genre.isBlank()){
             throw new IllegalArgumentException("Only one query parameter at a time supported.");
         }
@@ -49,8 +50,9 @@ public class MovieService {
             return movieRepository.findAllByTitleLikeIgnoreCase("%"+title+"%");
         } else if (genre != null && !genre.isBlank()){
             return movieRepository.findAllByGenreLikeIgnoreCase("%"+genre+"%");
-        } else if (rated != null && rated > 0){
-            return movieRepository.findAllByRatedLessThanEqual(rated);
+        } else if (rated != null){
+            MovieRating movieRating = MovieRating.valueOfLabel(rated);
+            return movieRepository.findAllByRatedLessThanEqual(movieRating);
         } else {
             return movieRepository.findAll();
         }
@@ -88,7 +90,6 @@ public class MovieService {
             Movie newMovie = getOmdbMovieByTitle(title);
             checkIfTitleAlreadyExists(newMovie.getTitle());
             return addMovie(newMovie);
-
         }
 
         throw new IllegalArgumentException("No inputs given");

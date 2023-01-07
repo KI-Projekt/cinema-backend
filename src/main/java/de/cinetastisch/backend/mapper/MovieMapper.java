@@ -19,7 +19,7 @@ public interface MovieMapper {
 
     List<Movie> dtoToEntity(Iterable<MovieRequestDto> movieDto);
 
-    @Mapping(target = "rated", expression = "java(Integer.parseInt(response.getRated().substring(3, 5)))")
+    @Mapping(target = "rated", expression = "java(MovieRating.valueOfLabel(response.getRated().substring(0,5)))")
     @Mapping(target = "movieStatus", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "trailer", ignore = true)

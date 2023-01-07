@@ -3,12 +3,10 @@ package de.cinetastisch.backend.controller;
 import de.cinetastisch.backend.model.Order;
 import de.cinetastisch.backend.dto.OrderRequestDto;
 import de.cinetastisch.backend.service.OrderService;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Hidden
 @RestController
 @RequestMapping("/api/")
 public class OrderController {

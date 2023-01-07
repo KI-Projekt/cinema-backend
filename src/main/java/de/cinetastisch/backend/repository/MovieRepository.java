@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.repository;
 
+import de.cinetastisch.backend.enumeration.MovieRating;
 import de.cinetastisch.backend.model.Movie;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -17,13 +18,10 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     List<Movie> findAllByImdbIdLikeIgnoreCase(String formattedImdbId);
     List<Movie> findAllByGenreLikeIgnoreCase(String formattedGenre);
 //    List<Movie> findAllByRatedLikeIgnoreCase(String formattedRated);
-    List<Movie> findAllByRatedLessThanEqual(Integer maxRated);
+    List<Movie> findAllByRatedLessThanEqual(MovieRating rated);
     List<Movie> findAllByActorsIgnoreCase(String actor);
     List<Movie> findAllByReleaseYear(String year);
 
     Boolean existsByTitleIgnoreCase(String title);
     Boolean existsByImdbIdIgnoreCase(String imdbId);
-
-
-
 }
