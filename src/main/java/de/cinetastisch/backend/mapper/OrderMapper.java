@@ -16,7 +16,7 @@ public abstract class OrderMapper {
     @Autowired
     protected UserService userService;
 
-    @Mapping(target = "user", expression = "java(userService.getUserById(orderRequestDto.userId()))")
+    @Mapping(target = "user", expression = "java(userService.getUser(orderRequestDto.userId()))")
     @Mapping(target = "orderStatus", ignore = true)
     @Mapping(target = "id", ignore = true)
     public abstract Order dtoToEntity(OrderRequestDto orderRequestDto);

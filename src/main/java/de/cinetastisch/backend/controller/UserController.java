@@ -2,12 +2,10 @@ package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.model.User;
 import de.cinetastisch.backend.service.UserService;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Hidden
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
@@ -25,7 +23,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getOne(@PathVariable("id") Long id) {
-        return userService.getUserById(id);
+        return userService.getUser(id);
     }
 
     @PostMapping

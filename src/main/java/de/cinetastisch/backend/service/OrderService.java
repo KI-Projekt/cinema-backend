@@ -7,7 +7,6 @@ import de.cinetastisch.backend.mapper.OrderMapper;
 import de.cinetastisch.backend.model.Order;
 import de.cinetastisch.backend.dto.OrderRequestDto;
 import de.cinetastisch.backend.model.Screening;
-import de.cinetastisch.backend.model.Seat;
 import de.cinetastisch.backend.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
@@ -45,17 +44,16 @@ public class OrderService {
     }
 
     public List<Order> getOrderByUserId(Long userId){
-        return orderRepository.findAllByUser(userService.getUserById(userId));
+        return orderRepository.findAllByUser(userService.getUser(userId));
     }
 
     public Order createOrder(OrderRequestDto newOrderRequestDto){
         Order order = mapper.dtoToEntity(newOrderRequestDto);
         Screening screening = screeningService.getScreening(newOrderRequestDto.screeningId());
 
-        for( Long s : newOrderRequestDto.seatIds()){
-            Seat seat = seatService.getSeat(s);
-            ticketService.saveTicket(order, screening, seat);
-        }
+//        for( Long t : newOrderRequestDto.tickets()){
+//            ticketService.saveTicket(tickets());
+//        }
 
         return orderRepository.save(order);
     }

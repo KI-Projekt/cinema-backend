@@ -7,6 +7,7 @@ public record OrderRequestDto(
         Long screeningId,
 //        List<Map<Long, TicketCategory>> seatIds
 //        List<Ticket> tickets
-        List<Long> seatIds
+//        List<Long> seatIds
+        List<TicketRequestDto> tickets
 ) {
 }
