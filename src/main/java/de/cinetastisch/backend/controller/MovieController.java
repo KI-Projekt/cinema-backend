@@ -228,7 +228,7 @@ public class MovieController {
             summary = "Archive a movie by id",
             description = "It's an alternative for deleting movies"
     )
-    @GetMapping("/{id}/archive")
+    @PutMapping("/{id}/archive")
     public ResponseEntity<Movie> archiveMovie(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.archive(id));
     }
@@ -238,7 +238,7 @@ public class MovieController {
             operationId = "catalogMovie",
             summary = "Catalog a movie by id"
     )
-    @GetMapping("/{id}/catalog")
+    @PutMapping("/{id}/catalog")
     public ResponseEntity<Movie> catalogMovie(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.catalog(id));
     }

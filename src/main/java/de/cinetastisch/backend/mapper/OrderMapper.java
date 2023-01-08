@@ -17,7 +17,7 @@ public abstract class OrderMapper {
     protected UserService userService;
 
     @Mapping(target = "user", expression = "java(userService.getUser(orderRequestDto.userId()))")
-    @Mapping(target = "orderStatus", ignore = true)
+    @Mapping(target = "orderStatus", defaultValue = "IN_PROGRESS", ignore = true)
     @Mapping(target = "id", ignore = true)
     public abstract Order dtoToEntity(OrderRequestDto orderRequestDto);
 }

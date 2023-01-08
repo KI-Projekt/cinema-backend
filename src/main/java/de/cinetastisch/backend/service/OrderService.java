@@ -2,69 +2,61 @@ package de.cinetastisch.backend.service;
 
 
 import de.cinetastisch.backend.enumeration.OrderStatus;
+import de.cinetastisch.backend.enumeration.TicketCategory;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
-import de.cinetastisch.backend.mapper.OrderMapper;
-import de.cinetastisch.backend.model.Order;
-import de.cinetastisch.backend.dto.OrderRequestDto;
-import de.cinetastisch.backend.model.Screening;
+import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.OrderRepository;
+import de.cinetastisch.backend.repository.ReservationRepository;
+import de.cinetastisch.backend.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final OrderMapper mapper;
-    private final UserService userService;
-    private final SeatService seatService;
-    private final TicketService ticketService;
-    private final ScreeningService screeningService;
+    private final UserRepository userRepository;
+    private final ReservationRepository reservationRepository;
 
-    public OrderService(OrderRepository orderRepository,
-                        OrderMapper mapper,
-                        UserService userService,
-                        SeatService seatService,
-                        TicketService ticketService,
-                        ScreeningService screeningService) {
-        this.orderRepository = orderRepository;
-        this.mapper = mapper;
-        this.userService = userService;
-        this.seatService = seatService;
-        this.ticketService = ticketService;
-        this.screeningService = screeningService;
-    }
-
-    public List<Order> getAllOrders(){
+    public List<Order> getAllOrders(Long userId){
+        if(userId != null){
+            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Id Not found"));
+            return orderRepository.findAllByUser(user);
+        }
         return orderRepository.findAll();
     }
 
     public Order getOrder(Long orderId){
-        return orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("User ID not found"));
+        return orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order ID not found"));
     }
 
-    public List<Order> getOrderByUserId(Long userId){
-        return orderRepository.findAllByUser(userService.getUser(userId));
+    public Order cancelOrder(Long id){
+        Order orderToCancel = getOrder(id);
+        orderToCancel.setOrderStatus(OrderStatus.CANCELLED);
+        return orderRepository.save(orderToCancel);
     }
 
-    public Order createOrder(OrderRequestDto newOrderRequestDto){
-        Order order = mapper.dtoToEntity(newOrderRequestDto);
-        Screening screening = screeningService.getScreening(newOrderRequestDto.screeningId());
-
-//        for( Long t : newOrderRequestDto.tickets()){
-//            ticketService.saveTicket(tickets());
-//        }
-
+    public Order cancelOrder(Order order){
+        order.setOrderStatus(OrderStatus.CANCELLED);
         return orderRepository.save(order);
     }
 
-    public void cancelOrder(Long id){
-        Order orderToCancel = getOrder(id);
-        orderToCancel.setOrderStatus(OrderStatus.CANCELLED);
-    }
+    public Order payOrder(Long id){
+        Order paidOrder = getOrder(id);
+        paidOrder.setOrderStatus(OrderStatus.PAID);// Tickets sind jetzt reserviert
 
-    public void payOrder(Long bookingId){
-        Order paidOrder = orderRepository.findById(bookingId).get();
-        paidOrder.setOrderStatus(OrderStatus.PAID);
+        // Der Ticketkauf wird in Ticket-Service abgewickelt
+        // Hier findet nur die Validierung statt, dass der OrderStatus auf PAID festgelegt wird
+
+//        List<Reservation> reservations = reservationService.getAllReservations(paidOrder);
+//
+//        for(Reservation r : reservations) {
+//            Ticket newTicket = new Ticket(paidOrder, r.getScreening(), r.getSeat(), TicketCategory.ADULT);
+//            ticketService.addTicket()
+//        }
+
+        return orderRepository.save(paidOrder);
     }
 }

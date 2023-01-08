@@ -40,8 +40,12 @@ public class Reservation {
     @JoinColumn(name = "seat_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "reservation_seat_id_fk"))
     private Seat seat;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "reservation_order_id_fk"))
+    private Order order;
+
     private final LocalDateTime createdAt = LocalDateTime.now();
-    private final LocalDateTime expireAt = LocalDateTime.now().plusSeconds(10L);
+    private LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(10L);
 
 }
 

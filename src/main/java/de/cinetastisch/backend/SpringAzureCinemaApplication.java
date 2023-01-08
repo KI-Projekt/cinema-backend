@@ -18,7 +18,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 				@Tag(name = "Movies", description = "Alles über die gespeicherten Filme"),
 				@Tag(name = "Rooms", description = "Alles über die Filmsäle"),
 				@Tag(name = "Screenings", description = "Alles über die einzelnen Filmvorstellungen"),
-				@Tag(name = "Seats")
+				@Tag(name = "Seats"),
+				@Tag(name = "Reservations"),
+				@Tag(name = "Orders", description = "Weil die Order nicht nur auf den Ticketkauf spezialisiert ist, implementiert jedes eigene Produkt den Kauf"),
+				@Tag(name = "Tickets"),
+				@Tag(name = "Users")
 		}
 )
 @EnableScheduling

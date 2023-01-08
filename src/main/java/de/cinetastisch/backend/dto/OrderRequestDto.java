@@ -1,13 +1,11 @@
 package de.cinetastisch.backend.dto;
 
-import java.util.List;
+
+import java.time.LocalDateTime;
 
 public record OrderRequestDto(
         Long userId,
         Long screeningId,
-//        List<Map<Long, TicketCategory>> seatIds
-//        List<Ticket> tickets
-//        List<Long> seatIds
-        List<TicketRequestDto> tickets
+        LocalDateTime created
 ) {
 }

@@ -1,33 +1,50 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
+import de.cinetastisch.backend.dto.PayTicketsRequestDto;
+import de.cinetastisch.backend.enumeration.OrderStatus;
+import de.cinetastisch.backend.enumeration.TicketCategory;
+import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.model.*;
+import de.cinetastisch.backend.repository.OrderRepository;
+import de.cinetastisch.backend.repository.ReservationRepository;
 import de.cinetastisch.backend.repository.TicketRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class TicketService {
     private final TicketRepository ticketRepository;
+    private final ReservationRepository reservationRepository;
+    private final OrderRepository orderRepository;
 
-    public TicketService(TicketRepository ticketRepository) {
-        this.ticketRepository = ticketRepository;
-    }
 
     public List<Ticket> getAllTickets() {
         return ticketRepository.findAll();
     }
 
-    public boolean checkIfSeatIsAlreadyBooked(Screening screening, Seat seat){
-        return ticketRepository.existsByScreeningAndSeat(screening, seat);
-    }
+    @Transactional
+    public List<Ticket> buyTickets(PayTicketsRequestDto ticketOrder) {
+        Order order = orderRepository.findById(ticketOrder.orderId())
+                                     .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+        order.setOrderStatus(OrderStatus.PAID);
+        orderRepository.save(order);
 
-    public Ticket saveTicket(Order order, Screening screening, Seat seat) {
-        if(ticketRepository.existsByScreeningAndSeat(screening, seat)){
-            throw new ResourceAlreadyOccupiedException("Ticket is already reserved");
+        List<Ticket> tickets = new ArrayList<>();
+
+        // Reservations -> Tickets
+        List<Reservation> reservations = reservationRepository.findAllByOrder(order);
+        for(Reservation r : reservations) {
+            Ticket newTicket = new Ticket(order, r.getScreening(), r.getSeat(), TicketCategory.ADULT);
+            tickets.add(ticketRepository.save(newTicket));
         }
-        Ticket newTicket = new Ticket(order, screening, seat);
-        return ticketRepository.save(newTicket);
+
+        // Clean up Reservations
+        reservationRepository.deleteAllByOrder(order);
+        return tickets;
     }
 }
