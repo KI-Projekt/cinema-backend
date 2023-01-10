@@ -1,31 +1,27 @@
 package de.cinetastisch.backend.mapper;
 
-import de.cinetastisch.backend.dto.ScreeningDto;
 import de.cinetastisch.backend.dto.ScreeningRequestDto;
+import de.cinetastisch.backend.dto.ScreeningResponseDto;
 import de.cinetastisch.backend.model.Screening;
-import de.cinetastisch.backend.service.MovieService;
-import de.cinetastisch.backend.service.RoomService;
-import de.cinetastisch.backend.service.ScreeningService;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.NullValueCheckStrategy;
+import org.mapstruct.*;
+
+import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
-        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-public abstract class ScreeningMapper {
+        uses = {ReferenceMapper.class, RoomMapper.class, MovieMapper.class})
+public interface ScreeningMapper {
 
-    protected MovieService movieService;
-    protected RoomService roomService;
-
-    @Mapping(target = "room", expression = "java(roomService.getRoom(screeningRequestDto.roomId()))")
-    @Mapping(target = "movie", expression = "java(movieService.getMovie(screeningRequestDto.movieId()))")
+    @Mapping(target = "startDateTime", source="startDateTime", defaultExpression = "java(LocalDateTime.now())")
+    @Mapping(target = "status", source = "status", defaultValue = "TICKET_SALE_OPEN")
+    @Mapping(target = "room", source="roomId")
+    @Mapping(target = "movie", source="movieId")
     @Mapping(target = "id", ignore = true)
-    public abstract Screening screeningRequestDtoToEntity(ScreeningRequestDto screeningRequestDto);
+    Screening dtoToEntity(ScreeningRequestDto request);
+    List<Screening> dtoToEntity(Iterable<ScreeningRequestDto> requests);
 
-
-    @Mapping(target = "movie", expression = "java(movieService.getMovie(screeningDto.movieId()))")
-    @Mapping(target = "room", expression = "java(roomService.getRoom(screeningDto.roomId()))")
-    @Mapping(target = "id", ignore = true)
-    public abstract Screening dtoToEntity(ScreeningDto screeningDto);
+    @Mapping(target = "id", expression = "java(screening.getId())")
+    @Mapping(target = "movieId", expression = "java(screening.getMovie().getId())")
+    @Mapping(target = "duration", expression= "java(java.time.temporal.ChronoUnit.MINUTES.between(screening.getStartDateTime(), screening.getEndDateTime()))")
+    ScreeningResponseDto entityToDto(Screening screening);
+    List<ScreeningResponseDto> entityToDto(Iterable<Screening> screenings);
 }

@@ -1,52 +1,61 @@
 package de.cinetastisch.backend.service;
 
 
+import de.cinetastisch.backend.dto.OrderResponseDto;
 import de.cinetastisch.backend.enumeration.OrderStatus;
+import de.cinetastisch.backend.enumeration.TicketCategory;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
-import de.cinetastisch.backend.model.Order;
-import de.cinetastisch.backend.dto.OrderRequestDto;
+import de.cinetastisch.backend.mapper.OrderMapper;
+import de.cinetastisch.backend.mapper.ReferenceMapper;
+import de.cinetastisch.backend.mapper.UserMapper;
+import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.OrderRepository;
+import de.cinetastisch.backend.repository.ReservationRepository;
 import de.cinetastisch.backend.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
+    private final OrderMapper orderMapper;
+    private final ReferenceMapper referenceMapper;
 
-    public OrderService(OrderRepository orderRepository,
-                        UserRepository userRepository) {
-        this.orderRepository = orderRepository;
-        this.userRepository = userRepository;
+    public List<OrderResponseDto> getAllOrders(Long userId){
+        if(userId != null){
+            User user = referenceMapper.map(userId, User.class);
+            return orderMapper.entityToDto(orderRepository.findAllByUser(user));
+        }
+        return orderMapper.entityToDto(orderRepository.findAll());
     }
 
-    public List<Order> getAllOrders(){
-        return orderRepository.findAll();
+    public OrderResponseDto getOrder(Long id){
+        return orderMapper.entityToDto(orderRepository.getReferenceById(id));
     }
 
-    public Order getOrderById(Long bookingId){
-        return orderRepository.findById(bookingId).get();
+    public OrderResponseDto cancelOrder(Long id){
+        Order orderToCancel = orderRepository.getReferenceById(id);
+        orderToCancel.setOrderStatus(OrderStatus.CANCELLED);
+        return orderMapper.entityToDto(orderRepository.save(orderToCancel));
     }
 
-    public List<Order> getOrderByUserId(Long userId){
-        return orderRepository.getOrdersByUserId(userId);
-    }
+    public OrderResponseDto payOrder(Long id){
+        Order paidOrder = orderRepository.getReferenceById(id);
+        paidOrder.setOrderStatus(OrderStatus.PAID);// Tickets sind jetzt reserviert
 
-    public Order createOrder(OrderRequestDto newOrderRequestDto){
-        Order order = new Order(userRepository.findById(newOrderRequestDto.userId()).orElseThrow(() -> new ResourceNotFoundException("User ID not found")));
-//        order.setOrderStatus(OrderStatus.IN_PROGRESS); (ist default)
-        return orderRepository.save(order);
-    }
+        // Der Ticketkauf wird in Ticket-Service abgewickelt
+        // Hier findet nur die Validierung statt, dass der OrderStatus auf PAID festgelegt wird
 
-    public void cancelOrder(Long bookingId){
-        Order orderToCancel = orderRepository.findById(bookingId).get();
-        orderToCancel.setOrderStatus(OrderStatus.CANCELLED); // keine Löschungen
-    }
+//        List<Reservation> reservations = reservationService.getAllReservations(paidOrder);
+//
+//        for(Reservation r : reservations) {
+//            Ticket newTicket = new Ticket(paidOrder, r.getScreening(), r.getSeat(), TicketCategory.ADULT);
+//            ticketService.addTicket()
+//        }
 
-    public void payOrder(Long bookingId){
-        Order paidOrder = orderRepository.findById(bookingId).get();
-        paidOrder.setOrderStatus(OrderStatus.PAID); // 💸💶💸💸💸💶💸💸💶
+        return orderMapper.entityToDto(orderRepository.save(paidOrder));
     }
 }

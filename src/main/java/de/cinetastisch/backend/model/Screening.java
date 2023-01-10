@@ -11,11 +11,9 @@ import java.util.Objects;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-@Builder
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "screening", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
@@ -27,11 +25,11 @@ public class Screening {
     @Column(name = "id")
     private @Id Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_movie_id_fk"))
     private Movie movie;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_room_id_fk"))
     private Room room;
     private LocalDateTime startDateTime;
@@ -39,13 +37,6 @@ public class Screening {
 
     @Enumerated(EnumType.STRING)
     private ScreeningStatus status = ScreeningStatus.TICKET_SALE_OPEN;
-
-    public Screening(Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        this.movie = movie;
-        this.room = room;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
-    }
 
     public Screening(Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime,
                      ScreeningStatus status) {

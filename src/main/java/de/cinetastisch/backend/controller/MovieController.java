@@ -7,7 +7,6 @@ import de.cinetastisch.backend.service.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -142,8 +141,8 @@ public class MovieController {
     )
     @PostMapping()
     public ResponseEntity<Movie> addOne(@Valid @RequestBody(required = false) MovieRequestDto movie,
-                                    @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
-                                    @Valid @RequestParam(value = "title", required = false) String title){
+                                        @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
+                                        @Valid @RequestParam(value = "title", required = false) String title){
         return new ResponseEntity<>(movieService.addMovieByParameters(movie, imdbId, title), HttpStatus.CREATED);
     }
 
@@ -188,7 +187,7 @@ public class MovieController {
     )
     @PutMapping("/{id}")
     public ResponseEntity<Movie> replaceOne(@PathVariable Long id,
-                                        @RequestBody MovieRequestDto movie){
+                                            @RequestBody MovieRequestDto movie){
         return ResponseEntity.ok(movieService.replaceMovie(id, movie));
     }
 
@@ -229,7 +228,7 @@ public class MovieController {
             summary = "Archive a movie by id",
             description = "It's an alternative for deleting movies"
     )
-    @GetMapping("/{id}/archive")
+    @PutMapping("/{id}/archive")
     public ResponseEntity<Movie> archiveMovie(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.archive(id));
     }
@@ -239,7 +238,7 @@ public class MovieController {
             operationId = "catalogMovie",
             summary = "Catalog a movie by id"
     )
-    @GetMapping("/{id}/catalog")
+    @PutMapping("/{id}/catalog")
     public ResponseEntity<Movie> catalogMovie(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.catalog(id));
     }
@@ -275,7 +274,7 @@ public class MovieController {
                     )
             }
     )
-    @GetMapping("{id}/screenings") //TODO: set timespan
+    @GetMapping("{id}/screenings")
     public ResponseEntity<List<Screening>> getScreenings(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.getAllScreeningsByMovie(id));
     }

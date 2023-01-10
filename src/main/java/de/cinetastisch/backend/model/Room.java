@@ -11,7 +11,6 @@ import java.util.Objects;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-@Builder
 @Getter
 @Setter
 @ToString
@@ -34,8 +33,8 @@ public class Room {
     private Boolean hasThreeD;
     private Boolean hasDolbyAtmos;
 
-    public Room(Long id, @NonNull String name, Boolean hasThreeD, Boolean hasDolbyAtmos) {
-        this.id = id;
+
+    public Room(@NonNull String name, Boolean hasThreeD, Boolean hasDolbyAtmos) {
         this.name = name;
         this.hasThreeD = hasThreeD;
         this.hasDolbyAtmos = hasDolbyAtmos;

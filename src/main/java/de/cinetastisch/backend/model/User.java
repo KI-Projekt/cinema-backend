@@ -10,11 +10,9 @@ import java.util.Objects;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-@Builder
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "User")
 @Table(name = "user",
@@ -22,7 +20,6 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                 @UniqueConstraint(name = "user_email_unique", columnNames = "email") /* verkürzt den Namen des unique-identifiers von einem random String zu "user_email_unique" */
         }
     )
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
 
     @Schema(accessMode = READ_ONLY)
@@ -30,38 +27,20 @@ public class User {
     @GeneratedValue(strategy = SEQUENCE, generator = "users_sequence")
     @Column(name = "id")
     private @Id Long id;
-
-    @Column(name = "first_name", nullable = false, columnDefinition = "TEXT")
     private String firstName;
-
-    @Column(name = "last_name", nullable = false, columnDefinition = "TEXT")
     private String lastName;
-
     @Column(name = "email", nullable = false, columnDefinition = "VARCHAR(200)" /* Sonst MySQL-Error "BLOB/TEXT column 'email' used in key specification without a key length" */)
     private String email;
-
-    @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;
-
-    @Column(name = "birthday", nullable = true, columnDefinition = "TEXT")
     private String birthday;
-
-    @Column(name = "country",nullable = false,columnDefinition = "TEXT")
     private String country;
-
-    @Column(name = "city",nullable = false,columnDefinition = "TEXT")
     private String city;
-
-    @Column(name = "zip",nullable = false,columnDefinition = "TEXT")
     private String zip;
-
-    @Column(name = "street",nullable = false,columnDefinition = "TEXT")
     private String street;
-
-    @Column(name = "house_number",nullable = false)
     private Integer houseNumber;
 
-    public User(String firstName, String lastName, String email, String password, String birthday, String country, String city, String zip, String street) {
+    public User(String firstName, String lastName, String email, String password, String birthday, String country,
+                String city, String zip, String street, Integer houseNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -71,6 +50,7 @@ public class User {
         this.city = city;
         this.zip = zip;
         this.street = street;
+        this.houseNumber = houseNumber;
     }
 
     @Override

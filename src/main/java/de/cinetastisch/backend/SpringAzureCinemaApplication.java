@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -16,9 +17,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 		tags = {
 				@Tag(name = "Movies", description = "Alles über die gespeicherten Filme"),
 				@Tag(name = "Rooms", description = "Alles über die Filmsäle"),
-				@Tag(name = "Screenings", description = "Alles über die einzelnen Filmvorstellungen")
+				@Tag(name = "Screenings", description = "Alles über die einzelnen Filmvorstellungen"),
+				@Tag(name = "Seats"),
+				@Tag(name = "Reservations"),
+				@Tag(name = "Orders", description = "Weil die Order nicht nur auf den Ticketkauf spezialisiert ist, implementiert jedes eigene Produkt den Kauf"),
+				@Tag(name = "Tickets"),
+				@Tag(name = "Users")
 		}
 )
+@EnableScheduling
 public class SpringAzureCinemaApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringAzureCinemaApplication.class, args);
