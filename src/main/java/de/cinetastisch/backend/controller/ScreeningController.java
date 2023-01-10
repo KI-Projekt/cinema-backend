@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.controller;
 
+import de.cinetastisch.backend.dto.RoomPlanResponseDto;
 import de.cinetastisch.backend.dto.ScreeningResponseDto;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.dto.ScreeningRequestDto;
@@ -84,6 +85,12 @@ public class ScreeningController {
     public ResponseEntity<?> delete(@Valid @PathVariable("id") Long id){
         screeningService.deleteScreening(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @GetMapping("{id}/seatingplan")
+    public ResponseEntity<RoomPlanResponseDto> getSeatingPlan(@PathVariable("id") Long id){
+        return new ResponseEntity<>(screeningService.getSeatingPlan(id), HttpStatus.OK);
     }
 
 }

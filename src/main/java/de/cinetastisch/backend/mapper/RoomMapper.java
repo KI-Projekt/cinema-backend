@@ -15,16 +15,11 @@ import java.util.List;
         uses = {ReferenceMapper.class})
 public interface RoomMapper {
 
-    @Mapping(target = "name", ignore = true)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "hasThreeD", ignore = true)
-    @Mapping(target = "hasDolbyAtmos", ignore = true)
-    Room toEntity(Long id);
-
     @Mapping(target = "id", ignore = true)
     Room dtoToEntity(RoomRequestDto roomRequestDto);
     List<Room> dtoToEntity(Iterable<RoomRequestDto> roomRequestDtos);
 
-    RoomResponseDto EntityToDto(Room room);
-    List<RoomResponseDto> EntityToDto(Iterable<Room> rooms);
+    @Mapping(target = "id", expression = "java(room.getId())")
+    RoomResponseDto entityToDto(Room room);
+    List<RoomResponseDto> entityToDto(Iterable<Room> rooms);
 }

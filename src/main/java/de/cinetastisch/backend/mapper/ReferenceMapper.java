@@ -18,7 +18,7 @@ public class ReferenceMapper {
 //        return entityManager.getReference(type, id);
 //    }
 
-    public <T> T map(@NonNull final Long id, Class<T> type) {
+    public <T> T map(@NonNull final Long id, @TargetType Class<T> type) {
         return entityManager.getReference(type, id);
     }
 }

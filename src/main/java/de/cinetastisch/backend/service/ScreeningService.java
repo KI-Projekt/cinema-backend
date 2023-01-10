@@ -1,30 +1,35 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.dto.ScreeningResponseDto;
+import de.cinetastisch.backend.dto.*;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
+import de.cinetastisch.backend.mapper.ReferenceMapper;
 import de.cinetastisch.backend.mapper.ScreeningMapper;
-import de.cinetastisch.backend.model.Movie;
-import de.cinetastisch.backend.model.Screening;
-import de.cinetastisch.backend.dto.ScreeningRequestDto;
+import de.cinetastisch.backend.mapper.SeatMapper;
+import de.cinetastisch.backend.model.*;
+import de.cinetastisch.backend.repository.ReservationRepository;
 import de.cinetastisch.backend.repository.ScreeningRepository;
+import de.cinetastisch.backend.repository.SeatRepository;
+import de.cinetastisch.backend.repository.TicketRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class ScreeningService {
 
     private final ScreeningRepository screeningRepository;
     private final ScreeningMapper mapper;
-
-    @Autowired
-    public ScreeningService(ScreeningRepository screeningRepository, ScreeningMapper mapper) {
-        this.screeningRepository = screeningRepository;
-        this.mapper = mapper;
-    }
+    private final ReferenceMapper referenceMapper;
+    private final SeatRepository seatRepository;
+    private final SeatMapper seatMapper;
+    private final TicketRepository ticketRepository;
+    private final ReservationRepository reservationRepository;
 
     public List<ScreeningResponseDto> getAllScreenings(String startTime, Long movieId){
         if ((startTime != null && !startTime.isBlank()) && (movieId != null)){
@@ -62,14 +67,14 @@ public class ScreeningService {
     }
 
     public ScreeningResponseDto replaceScreening(Long id, ScreeningRequestDto screeningDto) {
-        Screening oldScreening = mapper.toEntity(id);
+        Screening oldScreening = screeningRepository.getReferenceById(id);
         Screening newScreening = mapper.dtoToEntity(screeningDto);
         newScreening.setId(oldScreening.getId());
         return mapper.entityToDto(screeningRepository.save(newScreening));
     }
 
     public void deleteScreening(Long id){
-        Screening screening = mapper.toEntity(id);
+        Screening screening = screeningRepository.getReferenceById(id);
         screeningRepository.delete(screening);
     }
 
@@ -78,4 +83,29 @@ public class ScreeningService {
         return newTime.plusMinutes(30L); // + Ads + Cleaning
     }
 
+    public RoomPlanResponseDto getSeatingPlan(Long id) {
+        Screening screening = screeningRepository.getReferenceById(id);
+        Room room = screening.getRoom();
+        List<SeatingRowsDto> seatingRowsDtos = new ArrayList<>();
+
+        Integer rows = seatRepository.findAllByRoomOrderByRowDesc(room).get(0).getRow();
+        for(int i = 1; i <= rows; i++){
+
+            List<Seat> seatsByRow = seatRepository.findAllByRoomAndRowOrderByColumnDesc(room, i);
+            List<ScreeningSeatDto> screeningSeatDtos = new ArrayList<>();
+            if(seatsByRow == null || seatsByRow.size() == 0){
+                seatingRowsDtos.add(new SeatingRowsDto("Row " + i + " (empty)", screeningSeatDtos));
+                continue;
+            }
+            for (Seat s : seatsByRow) { //COLUMNS, einzelne Seats
+                boolean isReserved = reservationRepository.existsByScreeningAndSeatAndExpiresAtIsGreaterThanEqual(screening, s, LocalDateTime.now())
+                        || ticketRepository.existsByScreeningAndSeat(screening, s);
+                screeningSeatDtos.add(new ScreeningSeatDto(seatMapper.entityToDto(s),isReserved));
+            }
+
+            seatingRowsDtos.add(new SeatingRowsDto("Row " + i, screeningSeatDtos));
+        }
+
+        return new RoomPlanResponseDto(id, room.getId(), seatingRowsDtos);
+    }
 }

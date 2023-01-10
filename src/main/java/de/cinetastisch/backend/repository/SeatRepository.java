@@ -15,6 +15,11 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     List<Seat> findAllByCategory(SeatCategory category);
     List<Seat> findAllByRoomAndCategory(Room room, SeatCategory category);
 
+    List<Seat> findAllByRoomOrderByRowDesc(Room room);
+    List<Seat> findAllByRoomOrderByColumnDesc(Room room);
+
+    List<Seat> findAllByRoomAndRowOrderByColumnDesc(Room room, Integer row);
+
     Optional<Seat> findByRowAndColumn(Integer seatRow, Integer seatColumn);
 
     boolean existsByRowAndColumn(Integer row, Integer column);

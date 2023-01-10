@@ -29,21 +29,21 @@ public class SeatService {
     public List<SeatDto> getAllSeats(Long roomId, String category){
         if(roomId != null && category != null){
             Room room = roomRepository.getReferenceById(roomId);
-            return mapper.EntityToDto(seatRepository.findAllByRoomAndCategory(room, SeatCategory.valueOf(category)));
+            return mapper.entityToDto(seatRepository.findAllByRoomAndCategory(room, SeatCategory.valueOf(category)));
         } else if (roomId != null){
             Room room = roomRepository.getReferenceById(roomId);
-            return mapper.EntityToDto(seatRepository.findAllByRoom(room));
+            return mapper.entityToDto(seatRepository.findAllByRoom(room));
         } else if (category != null){
-            return mapper.EntityToDto(seatRepository.findAllByCategory(SeatCategory.valueOf(category)));
+            return mapper.entityToDto(seatRepository.findAllByCategory(SeatCategory.valueOf(category)));
         }
-        return mapper.EntityToDto(seatRepository.findAll());
+        return mapper.entityToDto(seatRepository.findAll());
     }
 
     @Operation(
             tags = {"Seats"}
     )
     public SeatDto getSeat(Long id){
-        return mapper.EntityToDto(seatRepository.getReferenceById(id));
+        return mapper.entityToDto(seatRepository.getReferenceById(id));
     }
 
     @Operation(
@@ -51,7 +51,7 @@ public class SeatService {
     )
     public SeatDto addSeat(SeatDto seatRequest){
         Seat newSeat = mapper.dtoToEntity(seatRequest);
-        return mapper.EntityToDto(saveSeat(newSeat));
+        return mapper.entityToDto(saveSeat(newSeat));
     }
 
     @Operation(
@@ -62,7 +62,7 @@ public class SeatService {
         Seat newSeat = mapper.dtoToEntity(seatRequest);
         newSeat.setId(oldSeat.getId());
 
-        return mapper.EntityToDto(saveSeat(newSeat));
+        return mapper.entityToDto(saveSeat(newSeat));
     }
 
     @Operation(

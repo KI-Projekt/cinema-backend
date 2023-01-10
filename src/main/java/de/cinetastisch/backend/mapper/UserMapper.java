@@ -12,18 +12,5 @@ import org.mapstruct.NullValueCheckStrategy;
         uses = {ReferenceMapper.class})
 public interface UserMapper {
 
-    @Mapping(target = "zip", ignore = true)
-    @Mapping(target = "street", ignore = true)
-    @Mapping(target = "password", ignore = true)
-    @Mapping(target = "lastName", ignore = true)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "houseNumber", ignore = true)
-    @Mapping(target = "firstName", ignore = true)
-    @Mapping(target = "email", ignore = true)
-    @Mapping(target = "country", ignore = true)
-    @Mapping(target = "city", ignore = true)
-    @Mapping(target = "birthday", ignore = true)
-    User toEntity(Long id);
-
     User dtoToEntity(UserRequestDto userRequestDto);
 }

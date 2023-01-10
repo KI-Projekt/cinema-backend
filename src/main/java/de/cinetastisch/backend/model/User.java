@@ -10,11 +10,9 @@ import java.util.Objects;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-@Builder
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "User")
 @Table(name = "user",
@@ -22,7 +20,6 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                 @UniqueConstraint(name = "user_email_unique", columnNames = "email") /* verkürzt den Namen des unique-identifiers von einem random String zu "user_email_unique" */
         }
     )
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
 
     @Schema(accessMode = READ_ONLY)

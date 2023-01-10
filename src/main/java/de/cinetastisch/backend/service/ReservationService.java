@@ -5,6 +5,7 @@ import de.cinetastisch.backend.dto.ReservationResponseDto;
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
+import de.cinetastisch.backend.mapper.ReferenceMapper;
 import de.cinetastisch.backend.mapper.ReservationMapper;
 import de.cinetastisch.backend.mapper.ScreeningMapper;
 import de.cinetastisch.backend.mapper.UserMapper;
@@ -28,8 +29,7 @@ public class ReservationService {
     private final OrderRepository orderRepository;
     private final TicketRepository ticketRepository;
     private final ReservationMapper mapper;
-    private final ScreeningMapper screeningMapper;
-    private final UserMapper userMapper;
+    private final ReferenceMapper referenceMapper;
 
     @Scheduled(fixedRate = 30000)
     @Transactional
@@ -57,11 +57,11 @@ public class ReservationService {
 
     public List<ReservationResponseDto> getAllReservations(Long userId, Long screeningId){
         if (userId != null && screeningId != null){
-            return mapper.entityToDto(reservationRepository.findAllByUserAndScreening(userMapper.toEntity(userId), screeningMapper.toEntity(screeningId)));
+            return mapper.entityToDto(reservationRepository.findAllByUserAndScreening(referenceMapper.map(userId, User.class), referenceMapper.map(screeningId, Screening.class)));
         } else if (userId != null){
-            return mapper.entityToDto(reservationRepository.findAllByUser(userMapper.toEntity(userId)));
+            return mapper.entityToDto(reservationRepository.findAllByUser(referenceMapper.map(userId, User.class)));
         } else if(screeningId != null){
-            return mapper.entityToDto(reservationRepository.findAllByScreening(screeningMapper.toEntity(screeningId)));
+            return mapper.entityToDto(reservationRepository.findAllByScreening(referenceMapper.map(screeningId, Screening.class)));
         }
         return mapper.entityToDto(reservationRepository.findAll());
     }

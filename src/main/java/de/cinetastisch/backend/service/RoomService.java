@@ -29,11 +29,11 @@ public class RoomService {
         if (rooms.isEmpty()) {
             throw new NoResourcesException("Empty");
         }
-        return mapper.EntityToDto(rooms);
+        return mapper.entityToDto(rooms);
     }
 
     public RoomResponseDto getRoom(Long id){
-        return mapper.EntityToDto(roomRepository.getReferenceById(id));
+        return mapper.entityToDto(roomRepository.getReferenceById(id));
     }
 
     public Room getRoomEntity(Long id){
@@ -62,7 +62,7 @@ public class RoomService {
                 }
             }
         }
-        return mapper.EntityToDto(newRoom);
+        return mapper.entityToDto(newRoom);
     }
 
     public RoomResponseDto replaceRoom(Long id, RoomRequestDto request) {
@@ -72,7 +72,7 @@ public class RoomService {
         if(roomRepository.existsByNameIgnoreCase(newRoom.getName()) && !oldRoom.getName().equals(newRoom.getName())){
             throw new ResourceAlreadyExistsException("Name is already taken by another room.");
         }
-        return mapper.EntityToDto(roomRepository.save(newRoom));
+        return mapper.entityToDto(roomRepository.save(newRoom));
     }
 
     public void deleteRoom(Long id){

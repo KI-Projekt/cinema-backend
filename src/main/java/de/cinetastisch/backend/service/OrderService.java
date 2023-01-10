@@ -4,6 +4,7 @@ package de.cinetastisch.backend.service;
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.TicketCategory;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
+import de.cinetastisch.backend.mapper.ReferenceMapper;
 import de.cinetastisch.backend.mapper.UserMapper;
 import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.OrderRepository;
@@ -18,12 +19,11 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final UserMapper userMapper;
-    private final ReservationRepository reservationRepository;
+    private final ReferenceMapper referenceMapper;
 
     public List<Order> getAllOrders(Long userId){
         if(userId != null){
-            User user = userMapper.toEntity(userId);
+            User user = referenceMapper.map(userId, User.class);
             return orderRepository.findAllByUser(user);
         }
         return orderRepository.findAll();
