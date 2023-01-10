@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.controller;
 
+import de.cinetastisch.backend.dto.OrderResponseDto;
 import de.cinetastisch.backend.model.Order;
 import de.cinetastisch.backend.dto.OrderRequestDto;
 import de.cinetastisch.backend.service.OrderService;
@@ -22,7 +23,7 @@ public class OrderController {
             tags = {"Orders"}
     )
     @GetMapping("/orders")
-    public List<Order> getAll(@RequestParam(value = "userId", required = false) Long userId){
+    public List<OrderResponseDto> getAll(@RequestParam(value = "userId", required = false) Long userId){
         return orderService.getAllOrders(userId);
     }
 
@@ -30,7 +31,7 @@ public class OrderController {
             tags = {"Orders"}
     )
     @GetMapping("/orders/{id}")
-    public Order getOne(@PathVariable("id") Long id){
+    public OrderResponseDto getOne(@PathVariable("id") Long id){
         return orderService.getOrder(id);
     }
 
@@ -38,7 +39,7 @@ public class OrderController {
             tags = {"Orders"}
     )
     @GetMapping("/users/{userId}/orders")
-    public List<Order> getAllByUserId(@PathVariable("userId") Long userId){
+    public List<OrderResponseDto> getAllByUserId(@PathVariable("userId") Long userId){
         return orderService.getAllOrders(userId);
     }
 
@@ -46,7 +47,7 @@ public class OrderController {
             tags = {"Orders"}
     )
     @PutMapping("/orders/{id}/cancel")
-    public Order cancel(@PathVariable("id") Long id){
+    public OrderResponseDto cancel(@PathVariable("id") Long id){
         return orderService.cancelOrder(id);
     }
 

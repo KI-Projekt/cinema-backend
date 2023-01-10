@@ -1,6 +1,7 @@
 package de.cinetastisch.backend.mapper;
 
 import de.cinetastisch.backend.dto.MovieRequestDto;
+import de.cinetastisch.backend.dto.MovieResponseDto;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.pojo.OmdbMovieResponse;
 import org.mapstruct.Mapper;
@@ -28,4 +29,9 @@ public interface MovieMapper {
     @Mapping(target = "imdbRatingCount", source = "imdbVotes")
     @Mapping(target = "imdbId", source = "imdbID")
     Movie omdbMovieResponseToEntity(OmdbMovieResponse response);
+
+    @Mapping(target = "id", expression = "java(movie.getId())")
+    MovieResponseDto entityToDto(Movie movie);
+    List<MovieResponseDto> entityToDto(Iterable<Movie> movies);
+
 }

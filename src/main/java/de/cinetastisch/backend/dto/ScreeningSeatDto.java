@@ -1,7 +1,7 @@
 package de.cinetastisch.backend.dto;
 
 public record ScreeningSeatDto(
-        SeatDto seat,
+        SeatResponseDto seat,
         boolean reserved
 ){
 }

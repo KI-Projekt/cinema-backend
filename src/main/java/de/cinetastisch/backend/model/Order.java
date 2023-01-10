@@ -25,7 +25,7 @@ public class Order {
     @Column(name = "id")
     private @Id Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",foreignKey = @ForeignKey(name = "order_user_id_fk"))
     private User user;
 

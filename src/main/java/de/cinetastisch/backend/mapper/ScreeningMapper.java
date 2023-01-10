@@ -11,15 +11,17 @@ import java.util.List;
         uses = {ReferenceMapper.class, RoomMapper.class, MovieMapper.class})
 public interface ScreeningMapper {
 
+    @Mapping(target = "startDateTime", source="startDateTime", defaultExpression = "java(LocalDateTime.now())")
+    @Mapping(target = "status", source = "status", defaultValue = "TICKET_SALE_OPEN")
     @Mapping(target = "room", source="roomId")
     @Mapping(target = "movie", source="movieId")
     @Mapping(target = "id", ignore = true)
-    Screening dtoToEntity(ScreeningRequestDto screeningRequestDto);
-    List<Screening> dtoToEntity(Iterable<ScreeningRequestDto> screeningRequestDtos);
+    Screening dtoToEntity(ScreeningRequestDto request);
+    List<Screening> dtoToEntity(Iterable<ScreeningRequestDto> requests);
 
     @Mapping(target = "id", expression = "java(screening.getId())")
     @Mapping(target = "movieId", expression = "java(screening.getMovie().getId())")
-    @Mapping(target = "duration", ignore = true, defaultExpression = "java(ChronoUnit.MINUTES.between(screening.startDateTime, screening.endDateTime))")
+    @Mapping(target = "duration", expression= "java(java.time.temporal.ChronoUnit.MINUTES.between(screening.getStartDateTime(), screening.getEndDateTime()))")
     ScreeningResponseDto entityToDto(Screening screening);
     List<ScreeningResponseDto> entityToDto(Iterable<Screening> screenings);
 }

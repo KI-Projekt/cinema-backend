@@ -39,7 +39,8 @@ public class User {
     private String street;
     private Integer houseNumber;
 
-    public User(String firstName, String lastName, String email, String password, String birthday, String country, String city, String zip, String street) {
+    public User(String firstName, String lastName, String email, String password, String birthday, String country,
+                String city, String zip, String street, Integer houseNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -49,6 +50,7 @@ public class User {
         this.city = city;
         this.zip = zip;
         this.street = street;
+        this.houseNumber = houseNumber;
     }
 
     @Override

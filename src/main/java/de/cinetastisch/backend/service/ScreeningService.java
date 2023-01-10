@@ -2,7 +2,6 @@ package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.dto.*;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
-import de.cinetastisch.backend.mapper.ReferenceMapper;
 import de.cinetastisch.backend.mapper.ScreeningMapper;
 import de.cinetastisch.backend.mapper.SeatMapper;
 import de.cinetastisch.backend.model.*;
@@ -11,7 +10,6 @@ import de.cinetastisch.backend.repository.ScreeningRepository;
 import de.cinetastisch.backend.repository.SeatRepository;
 import de.cinetastisch.backend.repository.TicketRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +23,6 @@ public class ScreeningService {
 
     private final ScreeningRepository screeningRepository;
     private final ScreeningMapper mapper;
-    private final ReferenceMapper referenceMapper;
     private final SeatRepository seatRepository;
     private final SeatMapper seatMapper;
     private final TicketRepository ticketRepository;

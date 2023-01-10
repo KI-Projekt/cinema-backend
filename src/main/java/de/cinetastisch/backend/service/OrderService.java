@@ -1,9 +1,11 @@
 package de.cinetastisch.backend.service;
 
 
+import de.cinetastisch.backend.dto.OrderResponseDto;
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.TicketCategory;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
+import de.cinetastisch.backend.mapper.OrderMapper;
 import de.cinetastisch.backend.mapper.ReferenceMapper;
 import de.cinetastisch.backend.mapper.UserMapper;
 import de.cinetastisch.backend.model.*;
@@ -19,33 +21,29 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
     private final ReferenceMapper referenceMapper;
 
-    public List<Order> getAllOrders(Long userId){
+    public List<OrderResponseDto> getAllOrders(Long userId){
         if(userId != null){
             User user = referenceMapper.map(userId, User.class);
-            return orderRepository.findAllByUser(user);
+            return orderMapper.entityToDto(orderRepository.findAllByUser(user));
         }
-        return orderRepository.findAll();
+        return orderMapper.entityToDto(orderRepository.findAll());
     }
 
-    public Order getOrder(Long orderId){
-        return orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order ID not found"));
+    public OrderResponseDto getOrder(Long id){
+        return orderMapper.entityToDto(orderRepository.getReferenceById(id));
     }
 
-    public Order cancelOrder(Long id){
-        Order orderToCancel = getOrder(id);
+    public OrderResponseDto cancelOrder(Long id){
+        Order orderToCancel = orderRepository.getReferenceById(id);
         orderToCancel.setOrderStatus(OrderStatus.CANCELLED);
-        return orderRepository.save(orderToCancel);
+        return orderMapper.entityToDto(orderRepository.save(orderToCancel));
     }
 
-    public Order cancelOrder(Order order){
-        order.setOrderStatus(OrderStatus.CANCELLED);
-        return orderRepository.save(order);
-    }
-
-    public Order payOrder(Long id){
-        Order paidOrder = getOrder(id);
+    public OrderResponseDto payOrder(Long id){
+        Order paidOrder = orderRepository.getReferenceById(id);
         paidOrder.setOrderStatus(OrderStatus.PAID);// Tickets sind jetzt reserviert
 
         // Der Ticketkauf wird in Ticket-Service abgewickelt
@@ -58,6 +56,6 @@ public class OrderService {
 //            ticketService.addTicket()
 //        }
 
-        return orderRepository.save(paidOrder);
+        return orderMapper.entityToDto(orderRepository.save(paidOrder));
     }
 }

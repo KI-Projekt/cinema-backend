@@ -12,14 +12,9 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-        uses = {ReferenceMapper.class, ScreeningMapper.class, SeatMapper.class, UserMapper.class})
+        uses = {ReferenceMapper.class, OrderMapper.class, UserMapper.class, SeatMapper.class})
 public interface ReservationMapper {
 
-    @Mapping(target = "seatRow", source = "seat.row")
-    @Mapping(target = "seatColumn", source = "seat.column")
-    @Mapping(target = "screeningId", source = "screening.id")
-    ReservationResponseDto entityToDto(Reservation reservation);
-    List<ReservationResponseDto> entityToDto(Iterable<Reservation> reservations);
 
 
     @Mapping(target = "user", source = "userId")
@@ -30,4 +25,11 @@ public interface ReservationMapper {
     @Mapping(target = "expiresAt", ignore = true)
     Reservation dtoToEntity(ReservationRequestDto reservationRequestDto);
     List<Reservation> dtoToEntity(Iterable<ReservationRequestDto> reservationRequestDtos);
+
+
+
+    @Mapping(target = "screeningId", expression = "java(reservation.getScreening().getId())")
+    @Mapping(target  = "id", expression = "java(reservation.getId())")
+    ReservationResponseDto entityToDto(Reservation reservation);
+    List<ReservationResponseDto> entityToDto(Iterable<Reservation> reservations);
 }

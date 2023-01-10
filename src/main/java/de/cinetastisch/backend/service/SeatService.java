@@ -1,6 +1,7 @@
 package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.dto.SeatDto;
+import de.cinetastisch.backend.dto.SeatResponseDto;
 import de.cinetastisch.backend.enumeration.SeatCategory;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
@@ -26,7 +27,7 @@ public class SeatService {
     @Operation(
             tags = {"Seats"}
     )
-    public List<SeatDto> getAllSeats(Long roomId, String category){
+    public List<SeatResponseDto> getAllSeats(Long roomId, String category){
         if(roomId != null && category != null){
             Room room = roomRepository.getReferenceById(roomId);
             return mapper.entityToDto(seatRepository.findAllByRoomAndCategory(room, SeatCategory.valueOf(category)));
@@ -42,14 +43,14 @@ public class SeatService {
     @Operation(
             tags = {"Seats"}
     )
-    public SeatDto getSeat(Long id){
+    public SeatResponseDto getSeat(Long id){
         return mapper.entityToDto(seatRepository.getReferenceById(id));
     }
 
     @Operation(
             tags = {"Seats"}
     )
-    public SeatDto addSeat(SeatDto seatRequest){
+    public SeatResponseDto addSeat(SeatDto seatRequest){
         Seat newSeat = mapper.dtoToEntity(seatRequest);
         return mapper.entityToDto(saveSeat(newSeat));
     }
@@ -57,7 +58,7 @@ public class SeatService {
     @Operation(
             tags = {"Seats"}
     )
-    public SeatDto replaceSeat(Long id, SeatDto seatRequest){
+    public SeatResponseDto replaceSeat(Long id, SeatDto seatRequest){
         Seat oldSeat = seatRepository.getReferenceById(id);
         Seat newSeat = mapper.dtoToEntity(seatRequest);
         newSeat.setId(oldSeat.getId());

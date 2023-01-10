@@ -1,9 +1,11 @@
 package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.dto.PayTicketsRequestDto;
+import de.cinetastisch.backend.dto.TicketResponseDto;
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.TicketCategory;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
+import de.cinetastisch.backend.mapper.TicketMapper;
 import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.OrderRepository;
 import de.cinetastisch.backend.repository.ReservationRepository;
@@ -19,16 +21,17 @@ import java.util.List;
 @Service
 public class TicketService {
     private final TicketRepository ticketRepository;
+    private final TicketMapper ticketMapper;
     private final ReservationRepository reservationRepository;
     private final OrderRepository orderRepository;
 
 
-    public List<Ticket> getAllTickets() {
-        return ticketRepository.findAll();
+    public List<TicketResponseDto> getAllTickets() {
+        return ticketMapper.entityToDto(ticketRepository.findAll());
     }
 
     @Transactional
-    public List<Ticket> buyTickets(PayTicketsRequestDto ticketOrder) {
+    public List<TicketResponseDto> buyTickets(PayTicketsRequestDto ticketOrder) {
         Order order = orderRepository.findById(ticketOrder.orderId())
                                      .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         order.setOrderStatus(OrderStatus.PAID);
@@ -45,6 +48,6 @@ public class TicketService {
 
         // Clean up Reservations
         reservationRepository.deleteAllByOrder(order);
-        return tickets;
+        return ticketMapper.entityToDto(tickets);
     }
 }

@@ -74,11 +74,16 @@ public class ReservationService {
         return reservationRepository.findByUserAndScreeningAndSeat(user, screening, seat).orElseThrow(() -> new ResourceNotFoundException("Reservation not found"));
     }
 
-    public Reservation addReservation(ReservationRequestDto request){
-        Reservation reservation = mapper.dtoToEntity(request);
+    @Transactional
+    public ReservationResponseDto addReservation(ReservationRequestDto request){
         deleteExpiredReservations();
-
+        Reservation reservation = mapper.dtoToEntity(request);
         // Check for reservations
+        if(reservation.getSeat().getRoom() != reservation.getScreening().getRoom()){
+            throw new IllegalArgumentException("Seat ID not in Screening");
+        }
+
+
         if((reservationRepository.existsByScreeningAndSeatAndExpiresAtIsGreaterThanEqual(reservation.getScreening(), reservation.getSeat(), LocalDateTime.now()))
                 || ticketRepository.existsByScreeningAndSeat(reservation.getScreening(), reservation.getSeat())){
             throw new ResourceAlreadyOccupiedException("Seat is currently reserved");
@@ -92,7 +97,8 @@ public class ReservationService {
             reservation.setOrder(firstReservation.getOrder());
             reservation.setExpiresAt(firstReservation.getExpiresAt());
         }
-        return reservationRepository.save(reservation);
+        System.out.println(reservation);
+        return mapper.entityToDto(reservationRepository.save(reservation));
     }
 
     public List<Reservation> getAllReservations(Order order) {

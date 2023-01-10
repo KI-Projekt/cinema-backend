@@ -1,6 +1,7 @@
 package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.dto.PayTicketsRequestDto;
+import de.cinetastisch.backend.dto.TicketResponseDto;
 import de.cinetastisch.backend.model.Ticket;
 import de.cinetastisch.backend.service.TicketService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,7 +23,7 @@ public class TicketController {
             tags = {"Tickets"}
     )
     @GetMapping
-    public List<Ticket> getTickets(){
+    public List<TicketResponseDto> getTickets(){
         return ticketService.getAllTickets();
     }
 
@@ -30,7 +31,7 @@ public class TicketController {
             tags = {"Tickets"}
     )
     @PostMapping()
-    public List<Ticket> buyTickets(PayTicketsRequestDto order){
+    public List<TicketResponseDto> buyTickets(PayTicketsRequestDto order){
         return ticketService.buyTickets(order);
     }
 

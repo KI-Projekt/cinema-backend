@@ -1,6 +1,7 @@
 package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.dto.SeatDto;
+import de.cinetastisch.backend.dto.SeatResponseDto;
 import de.cinetastisch.backend.service.SeatService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
@@ -23,8 +24,8 @@ public class SeatController {
             tags = {"Seats"}
     )
     @GetMapping
-    public ResponseEntity<List<SeatDto>> getAll(@RequestParam(value = "roomId", required = false) Long roomId,
-                                             @RequestParam(value = "category", required = false) String category){
+    public ResponseEntity<List<SeatResponseDto>> getAll(@RequestParam(value = "roomId", required = false) Long roomId,
+                                                        @RequestParam(value = "category", required = false) String category){
         return ResponseEntity.ok(seatService.getAllSeats(roomId, category));
     }
 
@@ -32,7 +33,7 @@ public class SeatController {
             tags = {"Seats"}
     )
     @GetMapping("/{id}")
-    public ResponseEntity<SeatDto> getOne(@PathVariable("id") Long id){
+    public ResponseEntity<SeatResponseDto> getOne(@PathVariable("id") Long id){
         return ResponseEntity.ok(seatService.getSeat(id));
     }
 
@@ -40,7 +41,7 @@ public class SeatController {
             tags = {"Seats"}
     )
     @PostMapping
-    public ResponseEntity<SeatDto> addOne(@RequestBody SeatDto seat){
+    public ResponseEntity<SeatResponseDto> addOne(@RequestBody SeatDto seat){
         return new ResponseEntity<>(seatService.addSeat(seat), HttpStatus.CREATED);
     }
 
@@ -48,7 +49,7 @@ public class SeatController {
             tags = {"Seats"}
     )
     @PutMapping("/{id}")
-    public ResponseEntity<SeatDto> getOne(@PathVariable("id") Long id,
+    public ResponseEntity<SeatResponseDto> getOne(@PathVariable("id") Long id,
                                           @RequestBody SeatDto seat){
         return ResponseEntity.ok(seatService.replaceSeat(id, seat));
     }

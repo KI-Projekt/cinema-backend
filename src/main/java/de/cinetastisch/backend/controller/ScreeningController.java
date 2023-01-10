@@ -88,6 +88,9 @@ public class ScreeningController {
     }
 
 
+    @Operation(
+            tags = {"Screenings"}
+    )
     @GetMapping("{id}/seatingplan")
     public ResponseEntity<RoomPlanResponseDto> getSeatingPlan(@PathVariable("id") Long id){
         return new ResponseEntity<>(screeningService.getSeatingPlan(id), HttpStatus.OK);
