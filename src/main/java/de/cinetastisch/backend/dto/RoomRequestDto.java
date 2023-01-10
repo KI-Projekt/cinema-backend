@@ -6,15 +6,16 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record RoomDto(
-
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        Long id,
-
+public record RoomRequestDto(
         @NotNull
         @NotBlank(message = "Name can't be empty.")
         String name,
 
         String hasThreeD,
-        String hasDolbyAtmos
+        String hasDolbyAtmos,
+
+        @Schema(nullable = true)
+        Integer numberOfRows,
+        @Schema(nullable = true)
+        Integer numberOfColumns
 ) {}

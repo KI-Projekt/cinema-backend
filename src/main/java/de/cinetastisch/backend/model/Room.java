@@ -15,6 +15,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(uniqueConstraints = {
@@ -33,10 +34,9 @@ public class Room {
     private @NonNull String name;
     private Boolean hasThreeD;
     private Boolean hasDolbyAtmos;
-//    private RoomStatus roomStatus;
 
-    public Room(Long id, @NonNull String name, Boolean hasThreeD, Boolean hasDolbyAtmos) {
-        this.id = id;
+
+    public Room(@NonNull String name, Boolean hasThreeD, Boolean hasDolbyAtmos) {
         this.name = name;
         this.hasThreeD = hasThreeD;
         this.hasDolbyAtmos = hasDolbyAtmos;

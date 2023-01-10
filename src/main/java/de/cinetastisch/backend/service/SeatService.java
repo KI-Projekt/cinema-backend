@@ -1,81 +1,75 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.dto.SeatRequestDto;
+import de.cinetastisch.backend.dto.SeatDto;
 import de.cinetastisch.backend.enumeration.SeatCategory;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.mapper.SeatMapper;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Seat;
+import de.cinetastisch.backend.repository.RoomRepository;
 import de.cinetastisch.backend.repository.SeatRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class SeatService {
 
     private final SeatRepository seatRepository;
-    private final RoomService roomService;
-    private final TicketService ticketService;
+    private final RoomRepository roomRepository;
     private final SeatMapper mapper;
 
-    public SeatService(SeatRepository seatRepository, RoomService roomService,
-                       TicketService ticketService, SeatMapper mapper) {
-        this.seatRepository = seatRepository;
-        this.roomService = roomService;
-        this.ticketService = ticketService;
-        this.mapper = mapper;
-    }
-
     @Operation(
             tags = {"Seats"}
     )
-    public List<Seat> getAllSeats(Long roomId, String category){
+    public List<SeatDto> getAllSeats(Long roomId, String category){
         if(roomId != null && category != null){
-            Room room = roomService.getRoom(roomId);
-            return seatRepository.findAllByRoomAndCategory(room, SeatCategory.valueOf(category));
+            Room room = roomRepository.getReferenceById(roomId);
+            return mapper.EntityToDto(seatRepository.findAllByRoomAndCategory(room, SeatCategory.valueOf(category)));
         } else if (roomId != null){
-            Room room = roomService.getRoom(roomId);
-            return seatRepository.findAllByRoom(room);
+            Room room = roomRepository.getReferenceById(roomId);
+            return mapper.EntityToDto(seatRepository.findAllByRoom(room));
         } else if (category != null){
-            return seatRepository.findAllByCategory(SeatCategory.valueOf(category));
+            return mapper.EntityToDto(seatRepository.findAllByCategory(SeatCategory.valueOf(category)));
         }
-        return seatRepository.findAll();
+        return mapper.EntityToDto(seatRepository.findAll());
     }
 
     @Operation(
             tags = {"Seats"}
     )
-    public Seat getSeat(Long id){
-        return seatRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Seat not found"));
+    public SeatDto getSeat(Long id){
+        return mapper.EntityToDto(seatRepository.getReferenceById(id));
     }
 
     @Operation(
             tags = {"Seats"}
     )
-    public Seat addSeat(SeatRequestDto seatRequest){
+    public SeatDto addSeat(SeatDto seatRequest){
         Seat newSeat = mapper.dtoToEntity(seatRequest);
-        return saveSeat(newSeat);
+        return mapper.EntityToDto(saveSeat(newSeat));
     }
 
     @Operation(
             tags = {"Seats"}
     )
-    public Seat replaceSeat(Long id, SeatRequestDto seatRequest){
-        Seat oldSeat = getSeat(id);
+    public SeatDto replaceSeat(Long id, SeatDto seatRequest){
+        Seat oldSeat = seatRepository.getReferenceById(id);
         Seat newSeat = mapper.dtoToEntity(seatRequest);
         newSeat.setId(oldSeat.getId());
 
-        return saveSeat(newSeat);
+        return mapper.EntityToDto(saveSeat(newSeat));
     }
 
     @Operation(
             tags = {"Seats"}
     )
     public void deleteSeat(Long id){
-        Seat seat = getSeat(id);
+        Seat seat = seatRepository.getReferenceById(id);
         seatRepository.delete(seat);
     }
 

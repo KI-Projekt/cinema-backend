@@ -7,6 +7,7 @@ import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.dto.ScreeningRequestDto;
+import de.cinetastisch.backend.repository.RoomRepository;
 import de.cinetastisch.backend.repository.ScreeningRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class ScreeningService {
 
     private final ScreeningRepository screeningRepository;
     private final MovieService movieService;
-    private final RoomService roomService;
+    private final RoomRepository roomRepository;
 
     private final ScreeningMapper mapper;
 
@@ -37,7 +38,7 @@ public class ScreeningService {
     }
 
     public Screening addScreening(ScreeningRequestDto screeningRequestDto) {
-        Screening screening = mapper.screeningRequestDtoToEntity(screeningRequestDto);
+        Screening screening = mapper.dtoToEntity(screeningRequestDto);
 
         // Check if room is already occupied for that time
         List<Screening> runningScreenings = screeningRepository.findAllByRoomAndTime(screening.getRoom(),
@@ -55,13 +56,13 @@ public class ScreeningService {
     }
 
     public List<Screening> checkRoomForReservations(Long roomId, LocalDateTime from, LocalDateTime to){
-        Room room = roomService.getRoom(roomId);
+        Room room = roomRepository.getReferenceById(roomId);
         return screeningRepository.findAllByRoomAndTime(room, from, to);
     }
 
     public Screening replaceScreening(Long id, ScreeningRequestDto screeningDto) {
         Screening oldScreening = getScreening(id);
-        Screening newScreening = mapper.screeningRequestDtoToEntity(screeningDto);
+        Screening newScreening = mapper.dtoToEntity(screeningDto);
         newScreening.setId(oldScreening.getId());
         return screeningRepository.save(newScreening);
     }

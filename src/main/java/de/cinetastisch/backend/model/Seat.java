@@ -27,7 +27,7 @@ public class Seat {
     @Column(name = "id")
     private @Id Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", foreignKey = @ForeignKey(name = "seat_room_id_fk"))
     private Room room;
 

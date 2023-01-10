@@ -2,6 +2,7 @@ package de.cinetastisch.backend.handler;
 
 import de.cinetastisch.backend.exception.*;
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalControllerExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler({ResourceNotFoundException.class, EntityNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessage handleResourceNotFound(RuntimeException ex, WebRequest webRequest){
         return new ErrorMessage(
@@ -34,20 +35,11 @@ public class GlobalControllerExceptionHandler {
     })
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<?> handleResourceConflicts(RuntimeException ex, WebRequest webRequest){
-//        return new ResponseEntity<>(new ErrorMessage(
-//                HttpStatus.CONFLICT.value(),
-//                LocalDateTime.now(),
-//                ex.getMessage(),
-//                webRequest.getDescription(true)
-//        ) ,HttpStatus.CONFLICT);
-
         return ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT)
-//                             .header(HttpHeaders.LOCATION, ex.getRedirectUrl)
                              .body(new ErrorMessage(HttpStatus.CONFLICT.value(),
                                                     LocalDateTime.now(),
                                                     ex.getMessage(),
                                                     webRequest.getDescription(true)));
-//                             .build();
     }
 
     @ExceptionHandler(value = {

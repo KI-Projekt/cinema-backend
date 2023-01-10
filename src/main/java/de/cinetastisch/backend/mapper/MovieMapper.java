@@ -11,8 +11,26 @@ import org.mapstruct.NullValueCheckStrategy;
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
-        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+        uses = {ReferenceMapper.class})
 public interface MovieMapper {
+    @Mapping(target = "writer", ignore = true)
+    @Mapping(target = "trailer", ignore = true)
+    @Mapping(target = "title", ignore = true)
+    @Mapping(target = "runtime", ignore = true)
+    @Mapping(target = "releaseYear", ignore = true)
+    @Mapping(target = "rated", ignore = true)
+    @Mapping(target = "posterImage", ignore = true)
+    @Mapping(target = "plot", ignore = true)
+    @Mapping(target = "movieStatus", ignore = true)
+    @Mapping(target = "imdbRatingCount", ignore = true)
+    @Mapping(target = "imdbRating", ignore = true)
+    @Mapping(target = "imdbId", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "genre", ignore = true)
+    @Mapping(target = "director", ignore = true)
+    @Mapping(target = "actors", ignore = true)
+    Movie toEntity(Long id);
 
     @Mapping(target = "id", ignore = true)
     Movie dtoToEntity(MovieRequestDto movieRequestDto);

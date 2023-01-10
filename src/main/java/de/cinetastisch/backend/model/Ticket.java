@@ -37,17 +37,8 @@ public class Ticket {
     @JoinColumn(name = "seat_id", foreignKey = @ForeignKey(name = "ticket_seat_id_fk"))
     private Seat seat;
 
-//    @Column(name = "price", nullable = false)
-//    private Double price;
-
     @Enumerated(EnumType.STRING)
     private TicketCategory category = TicketCategory.ADULT;
-
-    public Ticket(Order order, Screening screening, Seat seat) {
-        this.order = order;
-        this.screening = screening;
-        this.seat = seat;
-    }
 
     public Ticket(Order order, Screening screening, Seat seat, TicketCategory category) {
         this.order = order;

@@ -45,7 +45,13 @@ public class Reservation {
     private Order order;
 
     private final LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(10L);
+    private LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(20L);
 
+    public Reservation(User user, Screening screening, Seat seat, Order order) {
+        this.user = user;
+        this.screening = screening;
+        this.seat = seat;
+        this.order = order;
+    }
 }
 

@@ -9,6 +9,7 @@ import de.cinetastisch.backend.mapper.ReservationMapper;
 import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.OrderRepository;
 import de.cinetastisch.backend.repository.ReservationRepository;
+import de.cinetastisch.backend.repository.SeatRepository;
 import de.cinetastisch.backend.repository.TicketRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,27 +24,16 @@ import java.util.List;
 public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final UserService userService;
-    private final SeatService seatService;
+    private final SeatRepository seatRepository;
     private final ScreeningService screeningService;
     private final OrderRepository orderRepository;
     private final TicketRepository ticketRepository;
     private final ReservationMapper mapper;
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 30000)
     @Transactional
     public void deleteExpiredReservations(){
         if(reservationRepository.existsByExpiresAtIsLessThanEqual(LocalDateTime.now())){
-//            List<Reservation> reservationsToDelete = reservationRepository.findAllByExpireAtLessThanEqual(LocalDateTime.now());
-
-//            List<Reservation> uniqueReservationsToDelete = reservationsToDelete.stream()
-//                                                                               .collect(
-//                                                                                       collectingAndThen(
-//                                                                                               toCollection( () -> new TreeSet<>(comparingLong(Order::getId)) ),
-//                                                                                               ArrayList::new
-//                                                                                       )
-//                                                                               );
-
-
             List<Order> ordersOfReservations = reservationRepository.getAllDistinctOrdersOfReservationsToDelete(LocalDateTime.now());
 
             for (Order o : ordersOfReservations){
@@ -76,7 +66,7 @@ public class ReservationService {
     }
 
     public Reservation getReservation(Long id){
-        return reservationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Reservation not found"));
+        return reservationRepository.getReferenceById(id);
     }
 
     public Reservation getReservation(User user, Screening screening, Seat seat){
@@ -84,12 +74,7 @@ public class ReservationService {
     }
 
     public Reservation addReservation(ReservationRequestDto request){
-        Reservation reservation = Reservation.builder()
-                                             .user(userService.getUser(request.userId()))
-                                             .screening(screeningService.getScreening(request.screeningId()))
-                                             .seat(seatService.getSeat(request.seatId()))
-                                             .expiresAt(LocalDateTime.now().plusSeconds(20))
-                                             .build();
+        Reservation reservation = mapper.dtoToEntity(request);
         deleteExpiredReservations();
 
         // Check for reservations
