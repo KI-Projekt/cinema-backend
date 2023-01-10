@@ -1,44 +1,54 @@
 package de.cinetastisch.backend.service;
 
+import de.cinetastisch.backend.dto.ScreeningResponseDto;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
-import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.mapper.ScreeningMapper;
 import de.cinetastisch.backend.model.Movie;
-import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.dto.ScreeningRequestDto;
-import de.cinetastisch.backend.repository.RoomRepository;
 import de.cinetastisch.backend.repository.ScreeningRepository;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class ScreeningService {
 
     private final ScreeningRepository screeningRepository;
-    private final MovieService movieService;
-    private final RoomRepository roomRepository;
-
     private final ScreeningMapper mapper;
 
-    public List<Screening> getAllScreenings(String ldtStart){
-        if (ldtStart != null && !ldtStart.isBlank()){
-            return screeningRepository.findAllAfterStartDateTime(LocalDateTime.parse(ldtStart));
+    @Autowired
+    public ScreeningService(ScreeningRepository screeningRepository, ScreeningMapper mapper) {
+        this.screeningRepository = screeningRepository;
+        this.mapper = mapper;
+    }
+
+    public List<ScreeningResponseDto> getAllScreenings(String startTime, Long movieId){
+        if ((startTime != null && !startTime.isBlank()) && (movieId != null)){
+
         }
-        return screeningRepository.findAll();
+
+        if (startTime != null && !startTime.isBlank()){
+            return mapper.entityToDto(screeningRepository.findAllAfterStartDateTime(LocalDateTime.parse(startTime)));
+        }
+        return mapper.entityToDto(screeningRepository.findAll());
     }
 
-    public Screening getScreening(Long id){
-        return screeningRepository.findById(id)
-                                  .orElseThrow(() -> new ResourceNotFoundException("Screening Not Found"));
+    public ScreeningResponseDto getScreening(Long id){
+        return mapper.entityToDto(screeningRepository.getReferenceById(id));
     }
 
-    public Screening addScreening(ScreeningRequestDto screeningRequestDto) {
+    @Transactional
+    public ScreeningResponseDto addScreening(ScreeningRequestDto screeningRequestDto) {
+        System.out.println(screeningRequestDto);
         Screening screening = mapper.dtoToEntity(screeningRequestDto);
+        System.out.println(screening);
+        if (screeningRequestDto.endDateTime() == null){
+            screening.setEndDateTime(calculateEndDateTime(screening.getStartDateTime(), screening.getMovie()));
+        }
 
         // Check if room is already occupied for that time
         List<Screening> runningScreenings = screeningRepository.findAllByRoomAndTime(screening.getRoom(),
@@ -48,32 +58,22 @@ public class ScreeningService {
             throw new ResourceAlreadyOccupiedException("Screenings " + runningScreenings + " already occupy the room for that time.");
         }
 
-        return screeningRepository.save(screening);
+        return mapper.entityToDto(screeningRepository.save(screening));
     }
 
-    public List<Screening> getAllScreeningsBetweenTimespan(LocalDateTime from, LocalDateTime to){
-        return screeningRepository.findAllByLocalDateTimes(from, to);
-    }
-
-    public List<Screening> checkRoomForReservations(Long roomId, LocalDateTime from, LocalDateTime to){
-        Room room = roomRepository.getReferenceById(roomId);
-        return screeningRepository.findAllByRoomAndTime(room, from, to);
-    }
-
-    public Screening replaceScreening(Long id, ScreeningRequestDto screeningDto) {
-        Screening oldScreening = getScreening(id);
+    public ScreeningResponseDto replaceScreening(Long id, ScreeningRequestDto screeningDto) {
+        Screening oldScreening = mapper.toEntity(id);
         Screening newScreening = mapper.dtoToEntity(screeningDto);
         newScreening.setId(oldScreening.getId());
-        return screeningRepository.save(newScreening);
+        return mapper.entityToDto(screeningRepository.save(newScreening));
     }
 
     public void deleteScreening(Long id){
-        Screening screening = getScreening(id);
+        Screening screening = mapper.toEntity(id);
         screeningRepository.delete(screening);
     }
 
-    public LocalDateTime calculateEndDateTime(LocalDateTime start, Long movieId){
-        Movie movie = movieService.getMovie(movieId);
+    public LocalDateTime calculateEndDateTime(LocalDateTime start, Movie movie){
         LocalDateTime newTime = start.plusMinutes(Long.parseLong(movie.getRuntime().split(" ")[0]));
         return newTime.plusMinutes(30L); // + Ads + Cleaning
     }

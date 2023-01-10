@@ -28,19 +28,19 @@ public class Reservation {
     @Column(name = "id")
     private @Id Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "reservation_user_id_fk"))
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "screening_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "reservation_screening_id_fk"))
     private Screening screening;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "seat_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "reservation_seat_id_fk"))
     private Seat seat;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "reservation_order_id_fk"))
     private Order order;
 

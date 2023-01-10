@@ -13,8 +13,12 @@ public class ReferenceMapper {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @ObjectFactory
-    public <T> T map(@NonNull final Long id, @TargetType Class<T> type) {
+//    @ObjectFactory
+//    public <T> T map(@NonNull final Long id, @TargetType Class<T> type) {
+//        return entityManager.getReference(type, id);
+//    }
+
+    public <T> T map(@NonNull final Long id, Class<T> type) {
         return entityManager.getReference(type, id);
     }
 }

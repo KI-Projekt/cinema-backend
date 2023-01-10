@@ -13,6 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Hidden
 @RestControllerAdvice
@@ -43,7 +44,7 @@ public class GlobalControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = {
-            IllegalArgumentException.class,
+//            IllegalArgumentException.class,
             IllegalStateException.class,
             MethodArgumentNotValidException.class,
             MethodArgumentTypeMismatchException.class

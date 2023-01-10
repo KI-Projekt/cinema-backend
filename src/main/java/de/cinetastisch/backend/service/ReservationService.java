@@ -6,6 +6,8 @@ import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.mapper.ReservationMapper;
+import de.cinetastisch.backend.mapper.ScreeningMapper;
+import de.cinetastisch.backend.mapper.UserMapper;
 import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.OrderRepository;
 import de.cinetastisch.backend.repository.ReservationRepository;
@@ -23,12 +25,11 @@ import java.util.List;
 @AllArgsConstructor
 public class ReservationService {
     private final ReservationRepository reservationRepository;
-    private final UserService userService;
-    private final SeatRepository seatRepository;
-    private final ScreeningService screeningService;
     private final OrderRepository orderRepository;
     private final TicketRepository ticketRepository;
     private final ReservationMapper mapper;
+    private final ScreeningMapper screeningMapper;
+    private final UserMapper userMapper;
 
     @Scheduled(fixedRate = 30000)
     @Transactional
@@ -56,11 +57,11 @@ public class ReservationService {
 
     public List<ReservationResponseDto> getAllReservations(Long userId, Long screeningId){
         if (userId != null && screeningId != null){
-            return mapper.entityToDto(reservationRepository.findAllByUserAndScreening(userService.getUser(userId), screeningService.getScreening(screeningId)));
+            return mapper.entityToDto(reservationRepository.findAllByUserAndScreening(userMapper.toEntity(userId), screeningMapper.toEntity(screeningId)));
         } else if (userId != null){
-            return mapper.entityToDto(reservationRepository.findAllByUser(userService.getUser(userId)));
+            return mapper.entityToDto(reservationRepository.findAllByUser(userMapper.toEntity(userId)));
         } else if(screeningId != null){
-            return mapper.entityToDto(reservationRepository.findAllByScreening(screeningService.getScreening(screeningId)));
+            return mapper.entityToDto(reservationRepository.findAllByScreening(screeningMapper.toEntity(screeningId)));
         }
         return mapper.entityToDto(reservationRepository.findAll());
     }

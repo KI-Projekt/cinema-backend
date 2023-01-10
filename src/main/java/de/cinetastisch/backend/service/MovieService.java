@@ -7,31 +7,26 @@ import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.exception.ResourceHasChildrenException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.mapper.MovieMapper;
+import de.cinetastisch.backend.mapper.ScreeningMapper;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.pojo.OmdbMovieResponse;
 import de.cinetastisch.backend.repository.MovieRepository;
 import de.cinetastisch.backend.repository.ScreeningRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class MovieService {
 
     private final MovieRepository movieRepository;
+    private final MovieMapper movieMapper;
     private final ScreeningRepository screeningRepository;
-    private final MovieMapper mapper;
 
-
-    public MovieService(MovieRepository movieRepository,
-                        ScreeningRepository screeningRepository,
-                        MovieMapper mapper) {
-        this.movieRepository = movieRepository;
-        this.screeningRepository = screeningRepository;
-        this.mapper = mapper;
-    }
 
 
     // #########################
@@ -76,7 +71,7 @@ public class MovieService {
 
     public Movie addMovieByParameters(MovieRequestDto movie, String imdbId, String title){
         if (movie != null){
-            return addMovie(mapper.dtoToEntity(movie));
+            return addMovie(movieMapper.dtoToEntity(movie));
         }
 
         if (imdbId != null && !imdbId.isBlank()) {
@@ -96,7 +91,7 @@ public class MovieService {
     }
 
     public Movie replaceMovie(Long id, MovieRequestDto moviedto){
-        Movie newMovie = mapper.dtoToEntity(moviedto);
+        Movie newMovie = movieMapper.dtoToEntity(moviedto);
         Movie refMovie = getMovie(id);
         newMovie.setId(refMovie.getId());
         return movieRepository.save(newMovie);
@@ -140,7 +135,7 @@ public class MovieService {
             throw new ResourceNotFoundException("No Movie found");
         }
 
-        return mapper.omdbMovieResponseToEntity(omdbMovieResponse);
+        return movieMapper.omdbMovieResponseToEntity(omdbMovieResponse);
     }
 
     public void checkIfTitleAlreadyExists(String title){

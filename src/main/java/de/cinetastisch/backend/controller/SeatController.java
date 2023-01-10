@@ -49,7 +49,7 @@ public class SeatController {
     )
     @PutMapping("/{id}")
     public ResponseEntity<SeatDto> getOne(@PathVariable("id") Long id,
-                                       @RequestBody SeatDto seat){
+                                          @RequestBody SeatDto seat){
         return ResponseEntity.ok(seatService.replaceSeat(id, seat));
     }
 }

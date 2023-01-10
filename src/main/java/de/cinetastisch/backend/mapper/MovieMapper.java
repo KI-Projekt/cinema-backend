@@ -14,6 +14,7 @@ import java.util.List;
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {ReferenceMapper.class})
 public interface MovieMapper {
+
     @Mapping(target = "writer", ignore = true)
     @Mapping(target = "trailer", ignore = true)
     @Mapping(target = "title", ignore = true)
@@ -34,7 +35,6 @@ public interface MovieMapper {
 
     @Mapping(target = "id", ignore = true)
     Movie dtoToEntity(MovieRequestDto movieRequestDto);
-
     List<Movie> dtoToEntity(Iterable<MovieRequestDto> movieDto);
 
     @Mapping(target = "rated", expression = "java(MovieRating.valueOfLabel(response.getRated().substring(0,5)))")

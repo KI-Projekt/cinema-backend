@@ -9,8 +9,9 @@ import java.time.LocalTime;
 
 public record ScreeningResponseDto(Long id,
                                    ScreeningStatus status,
-                                   Movie movie,
-                                   Room room,
+                                   Long movieId,
+                                   RoomResponseDto room,
                                    LocalDateTime startDateTime,
-                                   LocalDateTime endDateTime) {
+                                   LocalDateTime endDateTime,
+                                   Long duration) {
 }

@@ -27,16 +27,17 @@ public class Screening {
     @Column(name = "id")
     private @Id Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_movie_id_fk"))
     private Movie movie;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_room_id_fk"))
     private Room room;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private ScreeningStatus status = ScreeningStatus.TICKET_SALE_OPEN;
 
