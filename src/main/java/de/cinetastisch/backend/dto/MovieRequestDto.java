@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
 public record MovieRequestDto(
@@ -18,5 +19,6 @@ public record MovieRequestDto(
         String imdbId,
         String imdbRating,
         String imdbRatingCount,
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         String movieStatus
 ){}
