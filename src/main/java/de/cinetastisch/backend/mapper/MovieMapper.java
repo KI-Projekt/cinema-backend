@@ -16,9 +16,10 @@ import java.util.List;
         uses = {ReferenceMapper.class})
 public interface MovieMapper {
 
+    @Mapping(target = "rated", expression = "java(MovieRating.valueOfLabel(request.rated().substring(0,5)))")
     @Mapping(target = "id", ignore = true)
-    Movie dtoToEntity(MovieRequestDto movieRequestDto);
-    List<Movie> dtoToEntity(Iterable<MovieRequestDto> movieDto);
+    Movie dtoToEntity(MovieRequestDto request);
+    List<Movie> dtoToEntity(Iterable<MovieRequestDto> requests);
 
     @Mapping(target = "rated", expression = "java(MovieRating.valueOfLabel(response.getRated().substring(0,5)))")
     @Mapping(target = "movieStatus", ignore = true)
@@ -29,6 +30,7 @@ public interface MovieMapper {
     @Mapping(target = "imdbRatingCount", source = "imdbVotes")
     @Mapping(target = "imdbId", source = "imdbID")
     Movie omdbMovieResponseToEntity(OmdbMovieResponse response);
+
 
     @Mapping(target = "id", expression = "java(movie.getId())")
     MovieResponseDto entityToDto(Movie movie);
