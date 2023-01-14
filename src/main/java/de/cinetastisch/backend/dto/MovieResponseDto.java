@@ -1,5 +1,7 @@
 package de.cinetastisch.backend.dto;
 
+import de.cinetastisch.backend.enumeration.MovieStatus;
+
 public record MovieResponseDto(
         Long id,
         String title,
@@ -16,5 +18,5 @@ public record MovieResponseDto(
         String imdbId,
         String imdbRating,
         String imdbRatingCount,
-        String movieStatus
+        MovieStatus movieStatus
 ){}
