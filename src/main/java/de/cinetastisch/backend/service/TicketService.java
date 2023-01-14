@@ -26,7 +26,10 @@ public class TicketService {
     private final OrderRepository orderRepository;
 
 
-    public List<TicketResponseDto> getAllTickets() {
+    public List<TicketResponseDto> getAllTickets(Long orderId) {
+        if(orderId != null){
+            return ticketMapper.entityToDto(ticketRepository.findAllByOrder(orderRepository.getReferenceById(orderId)));
+        }
         return ticketMapper.entityToDto(ticketRepository.findAll());
     }
 

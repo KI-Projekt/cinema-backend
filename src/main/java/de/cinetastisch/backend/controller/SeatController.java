@@ -48,9 +48,18 @@ public class SeatController {
     @Operation(
             tags = {"Seats"}
     )
+    @PutMapping
+    public ResponseEntity<List<SeatResponseDto>> replaceMultiple(@RequestBody List<SeatDto> request){
+        return new ResponseEntity<>(seatService.replaceSeats(request), HttpStatus.CREATED);
+    }
+
+
+    @Operation(
+            tags = {"Seats"}
+    )
     @PutMapping("/{id}")
-    public ResponseEntity<SeatResponseDto> getOne(@PathVariable("id") Long id,
-                                          @RequestBody SeatDto seat){
+    public ResponseEntity<SeatResponseDto> replaceOne(@PathVariable("id") Long id,
+                                                      @RequestBody SeatDto seat){
         return ResponseEntity.ok(seatService.replaceSeat(id, seat));
     }
 }

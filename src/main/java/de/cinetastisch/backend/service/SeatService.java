@@ -4,7 +4,6 @@ import de.cinetastisch.backend.dto.SeatDto;
 import de.cinetastisch.backend.dto.SeatResponseDto;
 import de.cinetastisch.backend.enumeration.SeatCategory;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
-import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.mapper.SeatMapper;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Seat;
@@ -14,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -60,10 +60,8 @@ public class SeatService {
     )
     public SeatResponseDto replaceSeat(Long id, SeatDto seatRequest){
         Seat oldSeat = seatRepository.getReferenceById(id);
-        Seat newSeat = mapper.dtoToEntity(seatRequest);
-        newSeat.setId(oldSeat.getId());
-
-        return mapper.entityToDto(saveSeat(newSeat));
+        oldSeat.setCategory(seatRequest.category());
+        return mapper.entityToDto(seatRepository.save(oldSeat));
     }
 
     @Operation(
@@ -84,4 +82,13 @@ public class SeatService {
         return seatRepository.save(seat);
     }
 
+    public List<SeatResponseDto> replaceSeats(List<SeatDto> request) {
+        List<Seat> oldSeats = new ArrayList<>();
+        for (SeatDto seat : request) {
+            Seat oldSeat = seatRepository.getReferenceById(seat.id());
+            oldSeat.setCategory(seat.category());
+            oldSeats.add(oldSeat);
+        }
+        return mapper.entityToDto(seatRepository.saveAll(oldSeats));
+    }
 }

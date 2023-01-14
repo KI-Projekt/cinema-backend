@@ -1,8 +1,6 @@
 package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.dto.OrderResponseDto;
-import de.cinetastisch.backend.model.Order;
-import de.cinetastisch.backend.dto.OrderRequestDto;
 import de.cinetastisch.backend.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +30,7 @@ public class OrderController {
     )
     @GetMapping("/orders/{id}")
     public OrderResponseDto getOne(@PathVariable("id") Long id){
-        return orderService.getOrder(id);
+        return orderService.getOrder(id); //get every information and relation
     }
 
     @Operation(
@@ -51,8 +49,9 @@ public class OrderController {
         return orderService.cancelOrder(id);
     }
 
-//    @PutMapping("orders/{id}/pay")
-//    public Order pay(@PathVariable("id") Long id){
-//        return orderService.payOrder(id);
-//    }
+    @PutMapping("orders/{id}/pay")
+    public OrderResponseDto pay(@PathVariable("id") Long id){
+        return orderService.payOrder(id);
+    }
+
 }
