@@ -14,7 +14,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "seats")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(uniqueConstraints = {
