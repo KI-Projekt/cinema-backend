@@ -7,6 +7,6 @@ public record RoomResponseDto(
         String name,
         Boolean hasThreeD,
         Boolean hasDolbyAtmos,
-        List<SeatResponseDto> seats
+        List<RoomSeatRowDto> rows
 ) {
 }

@@ -2,6 +2,7 @@ package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.dto.RoomRequestDto;
 import de.cinetastisch.backend.dto.RoomResponseDto;
+import de.cinetastisch.backend.dto.RoomSlimResponseDto;
 import de.cinetastisch.backend.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -23,7 +24,7 @@ public class RoomController {
             tags = {"Rooms"}
     )
     @GetMapping
-    public ResponseEntity<List<RoomResponseDto>> getAll(){
+    public ResponseEntity<List<RoomSlimResponseDto>> getAll(){
         return new ResponseEntity<>(roomService.getAllRooms(), HttpStatus.OK);
     }
 

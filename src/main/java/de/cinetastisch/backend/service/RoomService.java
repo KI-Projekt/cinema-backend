@@ -2,6 +2,7 @@ package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.dto.RoomRequestDto;
 import de.cinetastisch.backend.dto.RoomResponseDto;
+import de.cinetastisch.backend.dto.RoomSlimResponseDto;
 import de.cinetastisch.backend.enumeration.SeatCategory;
 import de.cinetastisch.backend.exception.NoResourcesException;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
@@ -24,12 +25,12 @@ public class RoomService {
     private final SeatRepository seatRepository;
     private final RoomMapper mapper;
 
-    public List<RoomResponseDto> getAllRooms(){
+    public List<RoomSlimResponseDto> getAllRooms(){
         List<Room> rooms = roomRepository.findAll();
         if (rooms.isEmpty()) {
             throw new NoResourcesException("Empty");
         }
-        return mapper.entityToDto(rooms);
+        return mapper.dtoToSlimDto(mapper.entityToDto(rooms));
     }
 
     public RoomResponseDto getRoom(Long id){
