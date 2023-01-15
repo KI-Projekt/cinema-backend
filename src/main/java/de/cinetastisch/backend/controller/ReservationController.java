@@ -2,7 +2,6 @@ package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.dto.ReservationRequestDto;
 import de.cinetastisch.backend.dto.ReservationResponseDto;
-import de.cinetastisch.backend.model.Reservation;
 import de.cinetastisch.backend.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -38,5 +37,14 @@ public class ReservationController {
     @PostMapping
     public ResponseEntity<ReservationResponseDto> addReservation(@Valid @RequestBody ReservationRequestDto request){
         return new ResponseEntity<>(reservationService.addReservation(request), HttpStatus.CREATED);
+    }
+
+    @Operation(
+            tags = {"Reservations"}
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> cancelReservation(@Valid @PathVariable Long id){
+        reservationService.deleteReservation(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

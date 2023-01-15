@@ -2,7 +2,8 @@ package de.cinetastisch.backend.mapper;
 
 import de.cinetastisch.backend.dto.RoomRequestDto;
 import de.cinetastisch.backend.dto.RoomResponseDto;
-import de.cinetastisch.backend.dto.SeatRowsDto;
+import de.cinetastisch.backend.dto.RoomSlimResponseDto;
+import de.cinetastisch.backend.dto.SeatRowDto;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Seat;
 import org.mapstruct.Mapper;
@@ -22,9 +23,13 @@ public interface RoomMapper {
     Room dtoToEntity(RoomRequestDto roomRequestDto);
     List<Room> dtoToEntity(Iterable<RoomRequestDto> roomRequestDtos);
 
-    List<SeatRowsDto> seatsToRowsDto(List<Seat> seatis);
+    List<SeatRowDto> seatsToRowsDto(List<Seat> seatis);
 
     @Mapping(target = "id", expression = "java(room.getId())")
     RoomResponseDto entityToDto(Room room);
     List<RoomResponseDto> entityToDto(Iterable<Room> rooms);
+
+    @Mapping(target = "id", expression = "java(room.id())")
+    RoomSlimResponseDto dtoToSlimDto(RoomResponseDto room);
+    List<RoomSlimResponseDto> dtoToSlimDto(Iterable<RoomResponseDto> room);
 }

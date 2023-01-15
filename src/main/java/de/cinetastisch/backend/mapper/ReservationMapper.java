@@ -15,8 +15,6 @@ import java.util.List;
         uses = {ReferenceMapper.class, OrderMapper.class, UserMapper.class, SeatMapper.class})
 public interface ReservationMapper {
 
-
-
     @Mapping(target = "user", source = "userId")
     @Mapping(target = "seat", source = "seatId")
     @Mapping(target = "screening", source = "screeningId")
@@ -28,6 +26,7 @@ public interface ReservationMapper {
 
 
 
+    @Mapping(target = "orderId", expression = "java(reservation.getOrder().getId())")
     @Mapping(target = "screeningId", expression = "java(reservation.getScreening().getId())")
     @Mapping(target  = "id", expression = "java(reservation.getId())")
     ReservationResponseDto entityToDto(Reservation reservation);

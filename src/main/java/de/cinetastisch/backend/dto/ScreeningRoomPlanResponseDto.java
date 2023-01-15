@@ -2,9 +2,9 @@ package de.cinetastisch.backend.dto;
 
 import java.util.List;
 
-public record RoomPlanResponseDto(
+public record ScreeningRoomPlanResponseDto(
         Long screeningId,
         Long roomId,
-        List<ScreeningSeatingRowsDto> plan
+        List<ScreeningSeatRowDto> plan
 ) {
 }

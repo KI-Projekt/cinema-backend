@@ -3,13 +3,16 @@ package de.cinetastisch.backend.dto;
 import de.cinetastisch.backend.enumeration.ScreeningStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-public record ScreeningResponseDto(
+public record ScreeningFullResponseDto(
         Long id,
         ScreeningStatus status,
         MovieSlimResponseDto movie,
         RoomSlimResponseDto room,
         LocalDateTime startDateTime,
         LocalDateTime endDateTime,
-        Long duration) {
+        Long duration,
+        List<ScreeningSeatRowDto> seatingPlan
+) {
 }

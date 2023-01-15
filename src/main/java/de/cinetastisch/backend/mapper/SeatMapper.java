@@ -1,6 +1,6 @@
 package de.cinetastisch.backend.mapper;
 
-import de.cinetastisch.backend.dto.SeatDto;
+import de.cinetastisch.backend.dto.SeatRequestDto;
 import de.cinetastisch.backend.dto.SeatResponseDto;
 import de.cinetastisch.backend.model.Seat;
 import org.mapstruct.Mapper;
@@ -15,10 +15,10 @@ import java.util.List;
         uses = {ReferenceMapper.class, RoomMapper.class})
 public interface SeatMapper {
 
-    @Mapping(target = "room", source = "seatDto.roomId")
+    @Mapping(target = "room", source = "seatRequestDto.roomId")
     @Mapping(target = "id", ignore = true)
-    Seat dtoToEntity(SeatDto seatDto);
-    List<Seat> dtoToEntity(Iterable<SeatDto> seatDto);
+    Seat dtoToEntity(SeatRequestDto seatRequestDto);
+    List<Seat> dtoToEntity(Iterable<SeatRequestDto> seatDto);
 
 
 

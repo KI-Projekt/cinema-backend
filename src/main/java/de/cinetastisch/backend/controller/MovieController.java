@@ -2,9 +2,7 @@ package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.dto.MovieRequestDto;
 import de.cinetastisch.backend.dto.MovieResponseDto;
-import de.cinetastisch.backend.dto.ScreeningResponseDto;
 import de.cinetastisch.backend.model.Movie;
-import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.service.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -243,41 +241,5 @@ public class MovieController {
     @PutMapping("/{id}/catalog")
     public ResponseEntity<MovieResponseDto> catalogMovie(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.catalog(id));
-    }
-
-
-    @Operation(
-            tags = {"Movies", "Screenings"},
-            operationId = "getScreeningsOfMovie",
-            summary = "Get Screenings of a movie",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Successful",
-                            content = @Content(
-                                    schema = @Schema(implementation = Screening.class),
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "204",
-                            description = "No content",
-                            content = @Content
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Invalid input supplied",
-                            content = @Content
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Movie not found",
-                            content = @Content
-                    )
-            }
-    )
-    @GetMapping("{id}/screenings")
-    public ResponseEntity<List<ScreeningResponseDto>> getScreenings(@PathVariable("id") Long id){
-        return ResponseEntity.ok(movieService.getAllScreeningsByMovie(id));
     }
 }

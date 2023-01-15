@@ -1,9 +1,6 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.dto.RoomPlanResponseDto;
-import de.cinetastisch.backend.dto.ScreeningResponseDto;
-import de.cinetastisch.backend.model.Screening;
-import de.cinetastisch.backend.dto.ScreeningRequestDto;
+import de.cinetastisch.backend.dto.*;
 import de.cinetastisch.backend.service.ScreeningService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -49,7 +46,7 @@ public class ScreeningController {
             tags = {"Screenings"}
     )
     @GetMapping("/{id}")
-    public ScreeningResponseDto getOne(@PathVariable Long id){
+    public ScreeningFullResponseDto getOne(@PathVariable Long id){
         return screeningService.getScreening(id);
     }
 
@@ -64,7 +61,7 @@ public class ScreeningController {
             )
     )
     @PostMapping
-    public ResponseEntity<ScreeningResponseDto> add(@RequestBody ScreeningRequestDto screeningRequestDto){
+    public ResponseEntity<ScreeningFullResponseDto> add(@RequestBody ScreeningRequestDto screeningRequestDto){
         return new ResponseEntity<>(screeningService.addScreening(screeningRequestDto), HttpStatus.CREATED);
     }
 
@@ -73,7 +70,7 @@ public class ScreeningController {
             tags = {"Screenings"}
     )
     @PutMapping("{id}")
-    public ResponseEntity<ScreeningResponseDto> replaceOne(@Valid @RequestBody ScreeningRequestDto screeningDto,
+    public ResponseEntity<ScreeningFullResponseDto> replaceOne(@Valid @RequestBody ScreeningRequestDto screeningDto,
                                                 @Valid @PathVariable("id") Long id){
         return new ResponseEntity<>(screeningService.replaceScreening(id, screeningDto), HttpStatus.OK);
     }
@@ -92,7 +89,7 @@ public class ScreeningController {
             tags = {"Screenings"}
     )
     @GetMapping("{id}/seatingplan")
-    public ResponseEntity<RoomPlanResponseDto> getSeatingPlan(@PathVariable("id") Long id){
+    public ResponseEntity<ScreeningRoomPlanResponseDto> getSeatingPlan(@PathVariable("id") Long id){
         return new ResponseEntity<>(screeningService.getSeatingPlan(id), HttpStatus.OK);
     }
 

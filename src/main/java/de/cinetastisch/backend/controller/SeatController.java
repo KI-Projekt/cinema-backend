@@ -1,6 +1,6 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.dto.SeatDto;
+import de.cinetastisch.backend.dto.SeatRequestDto;
 import de.cinetastisch.backend.dto.SeatResponseDto;
 import de.cinetastisch.backend.service.SeatService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,7 +41,7 @@ public class SeatController {
             tags = {"Seats"}
     )
     @PostMapping
-    public ResponseEntity<SeatResponseDto> addOne(@RequestBody SeatDto seat){
+    public ResponseEntity<SeatResponseDto> addOne(@RequestBody SeatRequestDto seat){
         return new ResponseEntity<>(seatService.addSeat(seat), HttpStatus.CREATED);
     }
 
@@ -49,7 +49,7 @@ public class SeatController {
             tags = {"Seats"}
     )
     @PutMapping
-    public ResponseEntity<List<SeatResponseDto>> replaceMultiple(@RequestBody List<SeatDto> request){
+    public ResponseEntity<List<SeatResponseDto>> replaceMultiple(@RequestBody List<SeatRequestDto> request){
         return new ResponseEntity<>(seatService.replaceSeats(request), HttpStatus.CREATED);
     }
 
@@ -59,7 +59,7 @@ public class SeatController {
     )
     @PutMapping("/{id}")
     public ResponseEntity<SeatResponseDto> replaceOne(@PathVariable("id") Long id,
-                                                      @RequestBody SeatDto seat){
+                                                      @RequestBody SeatRequestDto seat){
         return ResponseEntity.ok(seatService.replaceSeat(id, seat));
     }
 }

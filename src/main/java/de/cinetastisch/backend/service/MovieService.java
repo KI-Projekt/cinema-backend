@@ -2,14 +2,12 @@ package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.dto.MovieRequestDto;
 import de.cinetastisch.backend.dto.MovieResponseDto;
-import de.cinetastisch.backend.dto.ScreeningResponseDto;
 import de.cinetastisch.backend.enumeration.MovieRating;
 import de.cinetastisch.backend.enumeration.MovieStatus;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.exception.ResourceHasChildrenException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.mapper.MovieMapper;
-import de.cinetastisch.backend.mapper.ScreeningMapper;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.pojo.OmdbMovieResponse;
 import de.cinetastisch.backend.repository.MovieRepository;
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @AllArgsConstructor
@@ -28,7 +27,6 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
     private final ScreeningRepository screeningRepository;
-    private final ScreeningMapper screeningMapper;
 
 
 
@@ -76,7 +74,11 @@ public class MovieService {
 
     public MovieResponseDto addMovieByParameters(MovieRequestDto movie, String imdbId, String title){
         if (movie != null){
-            return movieMapper.entityToDto(addMovie(movieMapper.dtoToEntity(movie)));
+            if(MovieRating.valueOfLabel(movie.rated()) == null){
+                throw new IllegalArgumentException("Wrong Movie Rating given, optional are: " + Arrays.toString(MovieRating.getLabels()));
+            }
+            Movie newMovie = movieMapper.dtoToEntity(movie);
+            return movieMapper.entityToDto(addMovie(newMovie));
         }
 
         if (imdbId != null && !imdbId.isBlank()) {
@@ -113,11 +115,6 @@ public class MovieService {
     // ##############
     // Other
     // ##############
-
-    public List<ScreeningResponseDto> getAllScreeningsByMovie(Long id) {
-        Movie movie = movieRepository.getReferenceById(id);
-        return screeningMapper.entityToDto(screeningRepository.findAllByMovie(movie));
-    }
 
     public Movie getOmdbMovieByTitle(String movieTitle){
         String uri = "https://www.omdbapi.com/?apikey=16be7c3b&t=" + movieTitle;
