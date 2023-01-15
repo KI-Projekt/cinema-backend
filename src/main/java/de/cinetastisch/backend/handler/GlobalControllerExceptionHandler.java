@@ -44,7 +44,7 @@ public class GlobalControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = {
-            IllegalArgumentException.class,
+//            IllegalArgumentException.class,
             IllegalStateException.class,
             MethodArgumentNotValidException.class,
             MethodArgumentTypeMismatchException.class

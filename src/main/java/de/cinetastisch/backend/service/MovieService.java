@@ -1,6 +1,8 @@
 package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.dto.MovieRequestDto;
+import de.cinetastisch.backend.dto.MovieResponseDto;
+import de.cinetastisch.backend.dto.ScreeningResponseDto;
 import de.cinetastisch.backend.enumeration.MovieRating;
 import de.cinetastisch.backend.enumeration.MovieStatus;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
@@ -9,7 +11,6 @@ import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.mapper.MovieMapper;
 import de.cinetastisch.backend.mapper.ScreeningMapper;
 import de.cinetastisch.backend.model.Movie;
-import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.pojo.OmdbMovieResponse;
 import de.cinetastisch.backend.repository.MovieRepository;
 import de.cinetastisch.backend.repository.ScreeningRepository;
@@ -17,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -26,6 +28,7 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
     private final ScreeningRepository screeningRepository;
+    private final ScreeningMapper screeningMapper;
 
 
 
@@ -34,30 +37,32 @@ public class MovieService {
     // #########################
 
 
-    public List<Movie> getAllMovies(String title, String genre, String imdbId, String rated){
+    public List<MovieResponseDto> getAllMovies(String title, String genre, String imdbId, String rated){
         if (title != null && !title.isBlank() && genre != null && !genre.isBlank()){
             throw new IllegalArgumentException("Only one query parameter at a time supported.");
         }
 
+        List<Movie> result = new ArrayList<>();
+
         if(imdbId != null && !imdbId.isBlank()){
-            return movieRepository.findAllByImdbIdLikeIgnoreCase("%" + imdbId + "%");
+            result.addAll(movieRepository.findAllByImdbIdLikeIgnoreCase("%" + imdbId + "%"));
         } else if(title != null && !title.isBlank()){
-            return movieRepository.findAllByTitleLikeIgnoreCase("%"+title+"%");
+            result.addAll(movieRepository.findAllByTitleLikeIgnoreCase("%"+title+"%"));
         } else if (genre != null && !genre.isBlank()){
-            return movieRepository.findAllByGenreLikeIgnoreCase("%"+genre+"%");
+            result.addAll(movieRepository.findAllByGenreLikeIgnoreCase("%"+genre+"%"));
         } else if (rated != null){
             MovieRating movieRating = MovieRating.valueOfLabel(rated);
-            return movieRepository.findAllByRatedLessThanEqual(movieRating);
+            result.addAll(movieRepository.findAllByRatedLessThanEqual(movieRating));
         } else {
-            return movieRepository.findAll();
+            result.addAll(movieRepository.findAll());
         }
 
+        return movieMapper.entityToDto(result);
 //        List<MovieRequestDto>responseDto = response.stream().map(this::convertToDto).toList();
     }
 
-    public Movie getMovie(Long id){
-        return movieRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No movie with id [%s] found".formatted(id)));
+    public MovieResponseDto getMovie(Long id){
+        return movieMapper.entityToDto(movieRepository.getReferenceById(id));
     }
 
     public Movie addMovie(Movie movie){
@@ -69,36 +74,36 @@ public class MovieService {
         return movieRepository.save(movie);
     }
 
-    public Movie addMovieByParameters(MovieRequestDto movie, String imdbId, String title){
+    public MovieResponseDto addMovieByParameters(MovieRequestDto movie, String imdbId, String title){
         if (movie != null){
-            return addMovie(movieMapper.dtoToEntity(movie));
+            return movieMapper.entityToDto(addMovie(movieMapper.dtoToEntity(movie)));
         }
 
         if (imdbId != null && !imdbId.isBlank()) {
             checkIfImdbIdAlreadyExists(imdbId);
             Movie newMovie = getOmdbMovieByImdbId(imdbId);
-            return addMovie(newMovie);
+            return movieMapper.entityToDto(addMovie(newMovie));
 
         } else if (title != null && !title.isBlank()) {
             title = title.replace("\"", "");
             checkIfTitleAlreadyExists(title);
             Movie newMovie = getOmdbMovieByTitle(title);
             checkIfTitleAlreadyExists(newMovie.getTitle());
-            return addMovie(newMovie);
+            return movieMapper.entityToDto(addMovie(newMovie));
         }
 
         throw new IllegalArgumentException("No inputs given");
     }
 
-    public Movie replaceMovie(Long id, MovieRequestDto moviedto){
+    public MovieResponseDto replaceMovie(Long id, MovieRequestDto moviedto){
         Movie newMovie = movieMapper.dtoToEntity(moviedto);
-        Movie refMovie = getMovie(id);
+        Movie refMovie = movieRepository.getReferenceById(id);
         newMovie.setId(refMovie.getId());
-        return movieRepository.save(newMovie);
+        return movieMapper.entityToDto(movieRepository.save(newMovie));
     }
 
     public void deleteMovie(Long id){
-        Movie movie = getMovie(id);
+        Movie movie = movieRepository.getReferenceById(id);
         if(screeningRepository.existsByMovie(movie)){
             throw new ResourceHasChildrenException("Movie can't be deleted because a screening is referencing it");
         }
@@ -109,11 +114,9 @@ public class MovieService {
     // Other
     // ##############
 
-    public List<Screening> getAllScreeningsByMovie(Long id) {
-        Movie movie = movieRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Movie Not Found")
-        );
-        return screeningRepository.findAllByMovie(movie);
+    public List<ScreeningResponseDto> getAllScreeningsByMovie(Long id) {
+        Movie movie = movieRepository.getReferenceById(id);
+        return screeningMapper.entityToDto(screeningRepository.findAllByMovie(movie));
     }
 
     public Movie getOmdbMovieByTitle(String movieTitle){
@@ -151,23 +154,23 @@ public class MovieService {
     }
 
 
-    public Movie archive(Long id) {
+    public MovieResponseDto archive(Long id) {
         Movie movie = movieRepository.findById(id)
                                      .orElseThrow(() -> new ResourceNotFoundException("Movie id not found."));
         if (movie.getMovieStatus() != MovieStatus.ARCHIVED){
             movie.setMovieStatus(MovieStatus.ARCHIVED);
-            return movieRepository.save(movie);
+            return movieMapper.entityToDto(movieRepository.save(movie));
         }
-        return movie;
+        return movieMapper.entityToDto(movie);
     }
 
-    public Movie catalog(Long id) {
+    public MovieResponseDto catalog(Long id) {
         Movie movie = movieRepository.findById(id)
                                      .orElseThrow(() -> new ResourceNotFoundException("Movie id not found."));
         if (movie.getMovieStatus() != MovieStatus.IN_CATALOG){
             movie.setMovieStatus(MovieStatus.IN_CATALOG);
-            return movieRepository.save(movie);
+            return movieMapper.entityToDto(movieRepository.save(movie));
         }
-        return movie;
+        return movieMapper.entityToDto(movie);
     }
 }

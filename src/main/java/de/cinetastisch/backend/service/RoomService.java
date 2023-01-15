@@ -33,11 +33,8 @@ public class RoomService {
     }
 
     public RoomResponseDto getRoom(Long id){
-        return mapper.entityToDto(roomRepository.getReferenceById(id));
-    }
-
-    public Room getRoomEntity(Long id){
-        return roomRepository.getReferenceById(id);
+        Room room = roomRepository.getReferenceById(id);
+        return mapper.entityToDto(room);
     }
 
     @Transactional
@@ -48,8 +45,6 @@ public class RoomService {
         }
 
         roomRepository.save(newRoom);
-
-        System.out.println("Null as id? " + newRoom);
 
         if(rows != null || columns != null){
             if(rows < 0 || columns < 0 ){
@@ -62,6 +57,7 @@ public class RoomService {
                 }
             }
         }
+
         return mapper.entityToDto(newRoom);
     }
 

@@ -4,7 +4,7 @@ import de.cinetastisch.backend.enumeration.TicketCategory;
 
 public record TicketResponseDto(
         Long id,
-        OrderResponseDto order,
+        Long orderId,
         ScreeningResponseDto screening,
         SeatResponseDto seat,
         TicketCategory category

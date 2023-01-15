@@ -2,8 +2,8 @@ package de.cinetastisch.backend.dto;
 
 import java.util.List;
 
-public record SeatingRowsDto(
+public record SeatRowsDto(
         String rowDescription,
-        List<ScreeningSeatDto> seats
+        List<SeatResponseDto> seats
 ) {
 }

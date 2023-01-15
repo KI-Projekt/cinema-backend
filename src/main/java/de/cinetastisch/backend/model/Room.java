@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.lang.NonNull;
 
+import java.util.List;
 import java.util.Objects;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
@@ -32,6 +33,12 @@ public class Room {
     private @NonNull String name;
     private Boolean hasThreeD;
     private Boolean hasDolbyAtmos;
+
+    @OneToMany(
+            mappedBy = "room",
+            cascade = CascadeType.ALL
+    )
+    private List<Seat> seats;
 
 
     public Room(@NonNull String name, Boolean hasThreeD, Boolean hasDolbyAtmos) {

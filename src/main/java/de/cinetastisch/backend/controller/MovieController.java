@@ -1,6 +1,8 @@
 package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.dto.MovieRequestDto;
+import de.cinetastisch.backend.dto.MovieResponseDto;
+import de.cinetastisch.backend.dto.ScreeningResponseDto;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.service.MovieService;
@@ -57,7 +59,7 @@ public class MovieController {
             }
     )
     @GetMapping
-    public ResponseEntity<List<Movie>> getAll(@RequestParam(value = "title", required = false) String title,
+    public ResponseEntity<List<MovieResponseDto>> getAll(@RequestParam(value = "title", required = false) String title,
                                               @RequestParam(value = "genre", required = false) String genre,
                                               @RequestParam(value = "imdbId", required = false) String imdbId,
                                               @RequestParam(value = "rated", required = false) String rated) {
@@ -93,7 +95,7 @@ public class MovieController {
             }
     )
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Movie> getOne(@PathVariable("id") Long id){
+    public ResponseEntity<MovieResponseDto> getOne(@PathVariable("id") Long id){
         return new ResponseEntity<>(movieService.getMovie(id), HttpStatus.OK);
     }
 
@@ -140,9 +142,9 @@ public class MovieController {
             }
     )
     @PostMapping()
-    public ResponseEntity<Movie> addOne(@Valid @RequestBody(required = false) MovieRequestDto movie,
-                                        @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
-                                        @Valid @RequestParam(value = "title", required = false) String title){
+    public ResponseEntity<MovieResponseDto> addOne(@Valid @RequestBody(required = false) MovieRequestDto movie,
+                                                   @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
+                                                   @Valid @RequestParam(value = "title", required = false) String title){
         return new ResponseEntity<>(movieService.addMovieByParameters(movie, imdbId, title), HttpStatus.CREATED);
     }
 
@@ -186,7 +188,7 @@ public class MovieController {
             }
     )
     @PutMapping("/{id}")
-    public ResponseEntity<Movie> replaceOne(@PathVariable Long id,
+    public ResponseEntity<MovieResponseDto> replaceOne(@PathVariable Long id,
                                             @RequestBody MovieRequestDto movie){
         return ResponseEntity.ok(movieService.replaceMovie(id, movie));
     }
@@ -229,7 +231,7 @@ public class MovieController {
             description = "It's an alternative for deleting movies"
     )
     @PutMapping("/{id}/archive")
-    public ResponseEntity<Movie> archiveMovie(@PathVariable("id") Long id){
+    public ResponseEntity<MovieResponseDto> archiveMovie(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.archive(id));
     }
 
@@ -239,7 +241,7 @@ public class MovieController {
             summary = "Catalog a movie by id"
     )
     @PutMapping("/{id}/catalog")
-    public ResponseEntity<Movie> catalogMovie(@PathVariable("id") Long id){
+    public ResponseEntity<MovieResponseDto> catalogMovie(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.catalog(id));
     }
 
@@ -275,7 +277,7 @@ public class MovieController {
             }
     )
     @GetMapping("{id}/screenings")
-    public ResponseEntity<List<Screening>> getScreenings(@PathVariable("id") Long id){
+    public ResponseEntity<List<ScreeningResponseDto>> getScreenings(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.getAllScreeningsByMovie(id));
     }
 }

@@ -83,7 +83,7 @@ public class ScreeningService {
     public RoomPlanResponseDto getSeatingPlan(Long id) {
         Screening screening = screeningRepository.getReferenceById(id);
         Room room = screening.getRoom();
-        List<SeatingRowsDto> seatingRowsDtos = new ArrayList<>();
+        List<ScreeningSeatingRowsDto> screeningSeatingRowsDtos = new ArrayList<>();
 
         Integer rows = seatRepository.findAllByRoomOrderByRowDesc(room).get(0).getRow();
         for(int i = 1; i <= rows; i++){
@@ -91,7 +91,7 @@ public class ScreeningService {
             List<Seat> seatsByRow = seatRepository.findAllByRoomAndRowOrderByColumnDesc(room, i);
             List<ScreeningSeatDto> screeningSeatDtos = new ArrayList<>();
             if(seatsByRow == null || seatsByRow.size() == 0){
-                seatingRowsDtos.add(new SeatingRowsDto("Row " + i + " (empty)", screeningSeatDtos));
+                screeningSeatingRowsDtos.add(new ScreeningSeatingRowsDto("Row " + i + " (empty)", screeningSeatDtos));
                 continue;
             }
             for (Seat s : seatsByRow) { //COLUMNS, einzelne Seats
@@ -100,9 +100,9 @@ public class ScreeningService {
                 screeningSeatDtos.add(new ScreeningSeatDto(seatMapper.entityToDto(s),isReserved));
             }
 
-            seatingRowsDtos.add(new SeatingRowsDto("Row " + i, screeningSeatDtos));
+            screeningSeatingRowsDtos.add(new ScreeningSeatingRowsDto("Row " + i, screeningSeatDtos));
         }
 
-        return new RoomPlanResponseDto(id, room.getId(), seatingRowsDtos);
+        return new RoomPlanResponseDto(id, room.getId(), screeningSeatingRowsDtos);
     }
 }

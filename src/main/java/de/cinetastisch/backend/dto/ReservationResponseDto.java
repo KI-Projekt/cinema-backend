@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public record ReservationResponseDto(
         Long id,
         Long screeningId,
-        OrderResponseDto order,
+        Long orderId,
         SeatResponseDto seat,
         LocalDateTime expiresAt
 ) {

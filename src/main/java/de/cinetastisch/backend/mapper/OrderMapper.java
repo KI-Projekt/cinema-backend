@@ -12,7 +12,7 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-        uses = {ReferenceMapper.class, UserMapper.class})
+        uses = {ReferenceMapper.class, UserMapper.class, TicketMapper.class, ReservationMapper.class})
 public interface OrderMapper {
 
     @Mapping(target = "total", ignore = true)
@@ -23,6 +23,8 @@ public interface OrderMapper {
 
 
 //    @Mapping(target = "userId", expression = "java(order.getUser().getId())")
+    @Mapping(target = "tickets", ignore = true)
+    @Mapping(target = "reservations", ignore = true)
     @Mapping(target = "id", expression = "java(order.getId())")
     OrderResponseDto entityToDto(Order order);
     List<OrderResponseDto> entityToDto(Iterable<Order> order);

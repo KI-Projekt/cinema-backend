@@ -33,7 +33,9 @@ public class OrderService {
     }
 
     public OrderResponseDto getOrder(Long id){
-        return orderMapper.entityToDto(orderRepository.getReferenceById(id));
+        Order order = orderRepository.getReferenceById(id);
+        OrderResponseDto orderDto = orderMapper.entityToDto(order);
+        return orderDto;
     }
 
     public OrderResponseDto cancelOrder(Long id){
