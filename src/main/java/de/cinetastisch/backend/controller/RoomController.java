@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.controller;
 
+import de.cinetastisch.backend.dto.RoomPutRequestDto;
 import de.cinetastisch.backend.dto.RoomRequestDto;
 import de.cinetastisch.backend.dto.RoomResponseDto;
 import de.cinetastisch.backend.dto.RoomSlimResponseDto;
@@ -49,8 +50,8 @@ public class RoomController {
     )
     @PutMapping("/{id}")
     public ResponseEntity<RoomResponseDto> replaceRoom(@Valid @PathVariable Long id,
-                                                      @Valid @RequestBody RoomRequestDto roomRequestDto){
-        return new ResponseEntity<>(roomService.replaceRoom(id, roomRequestDto), HttpStatus.OK);
+                                                      @Valid @RequestBody RoomPutRequestDto request){
+        return new ResponseEntity<>(roomService.replaceRoom(id, request), HttpStatus.OK);
     }
 
     @Operation(

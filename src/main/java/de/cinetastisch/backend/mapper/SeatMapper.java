@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.mapper;
 
+import de.cinetastisch.backend.dto.SeatPutRequestDto;
 import de.cinetastisch.backend.dto.SeatRequestDto;
 import de.cinetastisch.backend.dto.SeatResponseDto;
 import de.cinetastisch.backend.model.Seat;
