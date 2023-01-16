@@ -14,6 +14,7 @@ import java.util.List;
         uses = {ReferenceMapper.class, OrderMapper.class, ScreeningMapper.class, SeatMapper.class})
 public interface TicketMapper {
 
+    @Mapping(target = "orderId", expression = "java(ticket.getOrder().getId())")
     @Mapping(target = "id", expression = "java(ticket.getId())")
     TicketResponseDto entityToDto(Ticket ticket);
     List<TicketResponseDto> entityToDto(Iterable<Ticket> tickets);

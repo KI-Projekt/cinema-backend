@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.model;
 
+import de.cinetastisch.backend.enumeration.TicketCategory;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,24 +27,27 @@ public class Reservation {
     @Column(name = "id")
     private @Id Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "reservation_user_id_fk"))
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "screening_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "reservation_screening_id_fk"))
     private Screening screening;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seat_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "reservation_seat_id_fk"))
     private Seat seat;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "reservation_order_id_fk"))
     private Order order;
 
+    @Enumerated(EnumType.STRING)
+    private TicketCategory category = TicketCategory.ADULT;
+
     private final LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(20L);
+    private LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(1L);
 
     public Reservation(User user, Screening screening, Seat seat, Order order) {
         this.user = user;

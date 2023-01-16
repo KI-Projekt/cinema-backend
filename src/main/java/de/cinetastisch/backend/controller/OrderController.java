@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.controller;
 
+import de.cinetastisch.backend.dto.FaresDto;
 import de.cinetastisch.backend.dto.OrderResponseDto;
 import de.cinetastisch.backend.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,22 +37,24 @@ public class OrderController {
     @Operation(
             tags = {"Orders"}
     )
-    @GetMapping("/users/{userId}/orders")
-    public List<OrderResponseDto> getAllByUserId(@PathVariable("userId") Long userId){
-        return orderService.getAllOrders(userId);
-    }
-
-    @Operation(
-            tags = {"Orders"}
-    )
     @PutMapping("/orders/{id}/cancel")
     public OrderResponseDto cancel(@PathVariable("id") Long id){
         return orderService.cancelOrder(id);
     }
 
+    @Operation(
+            tags = {"Orders"}
+    )
     @PutMapping("orders/{id}/pay")
     public OrderResponseDto pay(@PathVariable("id") Long id){
         return orderService.payOrder(id);
     }
 
+    @Operation(
+            tags = {"Orders"}
+    )
+    @PutMapping("orders/{id}/selectFares")
+    public OrderResponseDto pay(@PathVariable("id") Long id, @RequestBody FaresDto fares){
+        return orderService.selectFares(id, fares);
+    }
 }

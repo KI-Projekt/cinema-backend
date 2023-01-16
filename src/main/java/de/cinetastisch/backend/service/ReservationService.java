@@ -20,10 +20,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final OrderRepository orderRepository;
@@ -31,7 +34,7 @@ public class ReservationService {
     private final ReservationMapper mapper;
     private final ReferenceMapper referenceMapper;
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.SECONDS)
     @Transactional
     public void deleteExpiredReservations(){
         if(reservationRepository.existsByExpiresAtIsLessThanEqual(LocalDateTime.now())){
@@ -39,20 +42,24 @@ public class ReservationService {
 
             for (Order o : ordersOfReservations){
                 if(o.getOrderStatus() != OrderStatus.PAID){
-                    System.out.println(o);
                     o.setOrderStatus(OrderStatus.CANCELLED);
                     orderRepository.save(o);
                 }
                 reservationRepository.deleteAllByOrder(o);
             }
 //            reservationRepository.deleteByExpireAtIsLessThanEqual(LocalDateTime.now());
-
-//            orderService.cancelOrder();
         }
     }
 
+    @Transactional
     public void deleteReservation(Long id){
-        reservationRepository.delete(getReservation(id));
+        Reservation toDelete = reservationRepository.getReferenceById(id);
+
+        if(toDelete.getOrder().getReservations().size() == 1){
+            toDelete.getOrder().setOrderStatus(OrderStatus.CANCELLED);
+            toDelete.getOrder().setReservations(new ArrayList<>());
+        }
+        reservationRepository.delete(toDelete);
     }
 
     public List<ReservationResponseDto> getAllReservations(Long userId, Long screeningId){
@@ -97,11 +104,7 @@ public class ReservationService {
             reservation.setOrder(firstReservation.getOrder());
             reservation.setExpiresAt(firstReservation.getExpiresAt());
         }
-        System.out.println(reservation);
-        return mapper.entityToDto(reservationRepository.save(reservation));
-    }
 
-    public List<Reservation> getAllReservations(Order order) {
-        return reservationRepository.findAllByOrder(order);
+        return mapper.entityToDto(reservationRepository.save(reservation));
     }
 }

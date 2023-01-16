@@ -15,6 +15,7 @@ import java.util.List;
         uses = {ReferenceMapper.class, OrderMapper.class, UserMapper.class, SeatMapper.class})
 public interface ReservationMapper {
 
+    @Mapping(target = "category", ignore = true, defaultValue = "ADULT")
     @Mapping(target = "user", source = "userId")
     @Mapping(target = "seat", source = "seatId")
     @Mapping(target = "screening", source = "screeningId")
