@@ -26,12 +26,4 @@ public class TicketController {
         return ticketService.getAllTickets(orderId);
     }
 
-    @Operation(
-            tags = {"Tickets"}
-    )
-    @PostMapping()
-    public List<TicketResponseDto> buyTickets(PayTicketsRequestDto order){
-        return ticketService.buyTickets(order);
-    }
-
 }
