@@ -14,7 +14,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Getter
 @Setter
-@ToString(exclude = "row")
+@ToString(exclude = "seats")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(uniqueConstraints = {
@@ -36,7 +36,8 @@ public class Room {
 
     @OneToMany(
             mappedBy = "room",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
     )
     private List<Seat> seats;
 

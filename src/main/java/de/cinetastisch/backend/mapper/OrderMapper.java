@@ -23,8 +23,6 @@ public interface OrderMapper {
 
 
 //    @Mapping(target = "userId", expression = "java(order.getUser().getId())")
-    @Mapping(target = "tickets", ignore = true)
-    @Mapping(target = "reservations", ignore = true)
     @Mapping(target = "id", expression = "java(order.getId())")
     OrderResponseDto entityToDto(Order order);
     List<OrderResponseDto> entityToDto(Iterable<Order> order);
