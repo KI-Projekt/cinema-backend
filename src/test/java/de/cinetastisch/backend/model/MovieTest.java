@@ -1,10 +1,15 @@
 package de.cinetastisch.backend.model;
 
+import de.cinetastisch.backend.enumeration.MovieRating;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MovieTest {
+    @Mock
+    Movie movie = new Movie("Avengers Endgame","2019","/src/datei.png", MovieRating.PG13,"120","Action","Anthony Russo","Christopher Markus","Chris Evens","Viel BumBum","www.youtube.com/Endgame","1234IMdb","27/10","1222");
+
 
     @Test
     void getRated() {
@@ -12,6 +17,12 @@ class MovieTest {
 
     @Test
     void testEquals() {
+        movie.setId((long) 1.2222);
+        Movie testmovie1 = movie;
+        Movie testmovie = new Movie();
+        Boolean act = movie.equals(testmovie1);
+        assertTrue(act);
+        assertFalse(movie.equals(testmovie));
     }
 
     @Test
