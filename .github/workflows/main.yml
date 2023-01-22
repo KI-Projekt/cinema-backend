@@ -35,4 +35,4 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
-            token: ${{ secrets.CODECOV_TOKEN=920a645b-ac43-43cf-bec8-0dcc0c52d73c }} # not required for public repos
+            token: ${{ secrets.CODECOV_TOKEN}} # not required for public repos
