@@ -39,9 +39,6 @@ public interface ScreeningMapper {
         Room room = screening.getRoom();
         List<Seat> seats = room.getSeats();
 
-        System.out.println("TESTING");
-        System.out.println(screening.getTickets());
-
         List<ScreeningSeatRowDto> roomPlan = new ArrayList<>();
 //        Integer maxRows = row.stream()
 //                               .max(Comparator.comparing(Seat::getRow))

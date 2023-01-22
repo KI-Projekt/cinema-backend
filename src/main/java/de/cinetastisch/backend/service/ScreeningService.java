@@ -49,9 +49,7 @@ public class ScreeningService {
 
     @Transactional
     public ScreeningFullResponseDto addScreening(ScreeningRequestDto screeningRequestDto) {
-        System.out.println(screeningRequestDto);
         Screening screening = mapper.dtoToEntity(screeningRequestDto);
-        System.out.println(screening);
         if (screeningRequestDto.endDateTime() == null){
             screening.setEndDateTime(calculateEndDateTime(screening.getStartDateTime(), screening.getMovie()));
         }
