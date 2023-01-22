@@ -30,5 +30,9 @@ jobs:
         name: report.xml
         path: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
 
-    - name: Upload coverage to Codecov
+    - name: Testing
+      run: mvn -B test
+    - name: Codecov
       uses: codecov/codecov-action@v3
+
+
