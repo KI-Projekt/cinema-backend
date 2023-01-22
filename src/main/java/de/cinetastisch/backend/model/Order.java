@@ -38,7 +38,7 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.IN_PROGRESS;
 
-    private Integer total;
+    private Double total = 0.00;
 
     @OneToMany(
             mappedBy = "order",
@@ -73,5 +73,30 @@ public class Order {
     @Override
     public int hashCode() {
         return Objects.hash(id, user, orderStatus, total);
+    }
+
+    public OrderStatus getOrderStatus() {
+        if(this.getReservations().size() == 0 && this.getTickets().size() == 0){
+            this.orderStatus = OrderStatus.CANCELLED;
+        }
+
+        return orderStatus;
+    }
+
+    public Double getTotal() {
+        double newTotal = 0.0;
+        if(this.orderStatus == OrderStatus.IN_PROGRESS){
+            for(Reservation r : this.reservations){
+                switch(r.getCategory()){
+                    case KID: newTotal = newTotal + 8; break;
+                    case STUDENT: newTotal = newTotal + 10; break;
+                    case ADULT: newTotal = newTotal + 12; break;
+                    case PENSIONER: newTotal = newTotal + 11; break;
+                }
+            }
+            this.total = newTotal;
+        }
+
+        return total;
     }
 }

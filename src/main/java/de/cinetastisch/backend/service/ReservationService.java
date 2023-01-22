@@ -7,20 +7,17 @@ import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.mapper.ReferenceMapper;
 import de.cinetastisch.backend.mapper.ReservationMapper;
-import de.cinetastisch.backend.mapper.ScreeningMapper;
-import de.cinetastisch.backend.mapper.UserMapper;
 import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.OrderRepository;
 import de.cinetastisch.backend.repository.ReservationRepository;
-import de.cinetastisch.backend.repository.SeatRepository;
 import de.cinetastisch.backend.repository.TicketRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.annotation.Transient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -47,19 +44,14 @@ public class ReservationService {
                 }
                 reservationRepository.deleteAllByOrder(o);
             }
-//            reservationRepository.deleteByExpireAtIsLessThanEqual(LocalDateTime.now());
+            reservationRepository.deleteByExpiresAtIsLessThanEqual(LocalDateTime.now());
         }
     }
 
     @Transactional
+    @Transient
     public void deleteReservation(Long id){
-        Reservation toDelete = reservationRepository.getReferenceById(id);
-
-        if(toDelete.getOrder().getReservations().size() == 1){
-            toDelete.getOrder().setOrderStatus(OrderStatus.CANCELLED);
-            toDelete.getOrder().setReservations(new ArrayList<>());
-        }
-        reservationRepository.delete(toDelete);
+        reservationRepository.deleteById(id);
     }
 
     public List<ReservationResponseDto> getAllReservations(Long userId, Long screeningId){

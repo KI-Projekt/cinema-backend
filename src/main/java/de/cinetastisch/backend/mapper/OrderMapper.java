@@ -15,6 +15,8 @@ import java.util.List;
         uses = {ReferenceMapper.class, UserMapper.class, TicketMapper.class, ReservationMapper.class})
 public interface OrderMapper {
 
+    @Mapping(target = "tickets", ignore = true)
+    @Mapping(target = "reservations", ignore = true)
     @Mapping(target = "total", ignore = true)
     @Mapping(target = "user", source = "userId")
     @Mapping(target = "orderStatus", defaultValue = "IN_PROGRESS", ignore = true)
