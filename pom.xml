@@ -11,7 +11,7 @@
 	<groupId>de.cinetastisch.backend</groupId>
 	<artifactId>spring-azure-cinema</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>spring-azure-cinema</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
@@ -22,6 +22,10 @@
 		<lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
 	</properties>
 	<dependencies>
+		<dependency>
+		<groupId>com.azure.spring</groupId>
+		<artifactId>spring-cloud-azure-starter</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -93,20 +97,19 @@
 			<version>${lombok-mapstruct-binding.version}</version>
 		</dependency>
 	</dependencies>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.azure.spring</groupId>
-				<artifactId>spring-cloud-azure-dependencies</artifactId>
-				<version>${spring-cloud-azure.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+<!--	<dependencyManagement>-->
+<!--		<dependencies>-->
+<!--			<dependency>-->
+<!--				<groupId>com.azure.spring</groupId>-->
+<!--				<artifactId>spring-cloud-azure-dependencies</artifactId>-->
+<!--				<version>${spring-cloud-azure.version}</version>-->
+<!--				<type>pom</type>-->
+<!--				<scope>import</scope>-->
+<!--			</dependency>-->
+<!--		</dependencies>-->
+<!--	</dependencyManagement>-->
 
 	<build>
-		<pluginManagement>
 			<plugins>
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
@@ -133,7 +136,6 @@
 								<artifactId>lombok</artifactId>
 								<version>${org.projectlombok.version}</version>
 							</path>
-
 						</annotationProcessorPaths>
 						<compilerArgs>
 							<compilerArg>
@@ -143,7 +145,6 @@
 					</configuration>
 				</plugin>
 			</plugins>
-		</pluginManagement>
 	</build>
 
 </project>
