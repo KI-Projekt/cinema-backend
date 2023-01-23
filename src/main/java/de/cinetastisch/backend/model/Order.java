@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,7 +17,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Getter
 @Setter
-@ToString(exclude = {"tickets", "reservations"})
+@ToString(exclude = {"tickets"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "orders")
@@ -36,25 +37,20 @@ public class Order {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Column(name = "order_status",nullable = false)
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus = OrderStatus.IN_PROGRESS;
+    private OrderStatus status = OrderStatus.IN_PROGRESS;
 
     private Double total = 0.00;
+    private final LocalDateTime createdAt = LocalDateTime.now();
+    private final LocalDateTime expiresAt = this.createdAt.plusMinutes(1);
 
     @OneToMany(
             mappedBy = "order",
+            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
+            orphanRemoval = true
     )
     @JsonIgnore
     private List<Ticket> tickets = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "order",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
-    @JsonIgnore
-    private List<Reservation> reservations = new ArrayList<>();
 
     public Order(User user) {
         this.user = user;
@@ -65,38 +61,37 @@ public class Order {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return id.equals(order.id) && Objects.equals(user,
-                                                     order.user) && orderStatus == order.orderStatus && Objects.equals(
-                total, order.total);
+        return id.equals(order.id) && Objects.equals(user, order.user) && total.equals(
+                order.total) && status == order.status && createdAt.equals(order.createdAt) && Objects.equals(
+                tickets, order.tickets);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, orderStatus, total);
-    }
-
-    public OrderStatus getOrderStatus() {
-        if(this.getReservations().size() == 0 && this.getTickets().size() == 0){
-            this.orderStatus = OrderStatus.CANCELLED;
-        }
-
-        return orderStatus;
+        return Objects.hash(id, user, total, status, createdAt, tickets);
     }
 
     public Double getTotal() {
         double newTotal = 0.0;
-        if(this.orderStatus == OrderStatus.IN_PROGRESS){
-            for(Reservation r : this.reservations){
-                switch(r.getCategory()){
-                    case KID: newTotal = newTotal + 8; break;
-                    case STUDENT: newTotal = newTotal + 10; break;
-                    case ADULT: newTotal = newTotal + 12; break;
-                    case PENSIONER: newTotal = newTotal + 11; break;
-                }
+        if(this.status == OrderStatus.IN_PROGRESS){
+            for(Ticket t : this.tickets){
+                newTotal = switch (t.getCategory()) {
+                    case KID        -> newTotal + 8;
+                    case STUDENT    -> newTotal + 10;
+                    case ADULT      -> newTotal + 12;
+                    case PENSIONER  -> newTotal + 11;
+                };
             }
             this.total = newTotal;
         }
 
         return total;
+    }
+
+    public OrderStatus getStatus() {
+        if(this.status == OrderStatus.IN_PROGRESS && LocalDateTime.now().isAfter(this.expiresAt)){
+            this.status = OrderStatus.CANCELLED;
+        }
+        return status;
     }
 }

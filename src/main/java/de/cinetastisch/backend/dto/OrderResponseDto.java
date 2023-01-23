@@ -2,6 +2,7 @@ package de.cinetastisch.backend.dto;
 
 import de.cinetastisch.backend.enumeration.OrderStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record OrderResponseDto(
@@ -9,7 +10,8 @@ public record OrderResponseDto(
         UserResponseDto user,
         OrderStatus orderStatus,
         Double total,
-        List<ReservationResponseDto> reservations,
+        LocalDateTime createdAt,
+        LocalDateTime expiresAt,
         List<TicketResponseDto> tickets
 ) {
 }

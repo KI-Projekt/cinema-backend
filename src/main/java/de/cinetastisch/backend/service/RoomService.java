@@ -3,11 +3,8 @@ package de.cinetastisch.backend.service;
 import de.cinetastisch.backend.dto.*;
 import de.cinetastisch.backend.enumeration.SeatCategory;
 import de.cinetastisch.backend.exception.NoResourcesException;
-import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
-import de.cinetastisch.backend.mapper.ReferenceMapper;
 import de.cinetastisch.backend.mapper.RoomMapper;
-import de.cinetastisch.backend.mapper.SeatMapper;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Seat;
 import de.cinetastisch.backend.repository.RoomRepository;
@@ -18,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -43,7 +39,6 @@ public class RoomService {
     @Transactional
     public RoomResponseDto addRoom(RoomRequestDto request){
         Room newRoom = roomRepository.save(mapper.dtoToEntity(request));
-
         if(request.numberOfRows() != null && request.numberOfColumns() != null){
             if(request.numberOfRows() < 0 || request.numberOfColumns() < 0 ){
                 throw new IllegalArgumentException("Number must be positive");
@@ -56,11 +51,11 @@ public class RoomService {
                     seats.add(new Seat(newRoom, r, c, SeatCategory.NORMAL));
                 }
             }
+
             newRoom.setSeats(seats);
             roomRepository.save(newRoom);
         }
-
-        return mapper.entityToDto(roomRepository.getReferenceById(newRoom.getId()));
+        return mapper.entityToDto(newRoom);
     }
 
     @Transactional

@@ -1,20 +1,17 @@
 package de.cinetastisch.backend.mapper;
 
 import de.cinetastisch.backend.dto.*;
-import de.cinetastisch.backend.model.Room;
-import de.cinetastisch.backend.model.Screening;
-import de.cinetastisch.backend.model.Seat;
+import de.cinetastisch.backend.model.*;
+import de.cinetastisch.backend.service.RoomPlanService;
 import org.mapstruct.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
-        uses = {ReferenceMapper.class, RoomMapper.class, MovieMapper.class})
+        uses = {ReferenceMapper.class, RoomMapper.class, MovieMapper.class, RoomPlanService.class})
 public interface ScreeningMapper {
 
-    @Mapping(target = "tickets", ignore = true)
-    @Mapping(target = "reservations", ignore = true)
+
     @Mapping(target = "startDateTime", source="startDateTime", defaultExpression = "java(LocalDateTime.now())")
     @Mapping(target = "status", source = "status", defaultValue = "TICKET_SALE_OPEN")
     @Mapping(target = "room", source="roomId")
@@ -34,50 +31,57 @@ public interface ScreeningMapper {
     ScreeningResponseDto trimDto(ScreeningFullResponseDto screeningResponseDto);
     List<ScreeningResponseDto> trimDto(Iterable<ScreeningFullResponseDto> screeningResponseDto);
 
-    @Named("generateSeatingPlan")
-    default List<ScreeningSeatRowDto> getSeatingPlan(Screening screening){
-        Room room = screening.getRoom();
-        List<Seat> seats = room.getSeats();
-
-        List<ScreeningSeatRowDto> roomPlan = new ArrayList<>();
-//        Integer maxRows = row.stream()
-//                               .max(Comparator.comparing(Seat::getRow))
-//                               .orElseThrow(() -> new ResourceNotFoundException("Seat not found???"))
-//                               .getRow();
-
-        Map<Integer, List<Seat>> rowList = seats.stream()
-                                                .collect(Collectors.groupingBy(Seat::getRow));
-
-        for(List<Seat> row : rowList.values()){
-            List<ScreeningSeatDto> screeningSeats = new ArrayList<>();
-
-            for(Seat seat : row){
-
-                boolean reserved =
-                        screening.getTickets()
-                                 .stream()
-                                 .filter(Objects::nonNull)
-                                 .anyMatch(ticket -> ticket.getSeat() == seat) ||
-
-                        screening.getReservations()
-                                 .stream()
-                                 .filter(Objects::nonNull)
-                                 .anyMatch(reservation -> reservation.getSeat() == seat);
-
-
-                screeningSeats.add(
-                        new ScreeningSeatDto(
-                                new SeatResponseDto(
-                                        seat.getId(),
-                                        seat.getCategory(),
-                                        seat.getRow(),
-                                        seat.getColumn()),
-                                reserved)
-                );
-            }
-            roomPlan.add(new ScreeningSeatRowDto("Reihe" + screeningSeats.get(0).seat().row(), screeningSeats));
-        }
-
-        return roomPlan;
-    }
+////    @Named("generateSeatingPlan")
+//    default List<ScreeningSeatRowDto> getSeatingPlan(Screening screening){
+//        Room room = screening.getRoom();
+//        List<Seat> seats = room.getSeats();
+//
+//        List<ScreeningSeatRowDto> roomPlan = new ArrayList<>();
+//
+//        Map<Integer, List<Seat>> rowList = seats.stream()
+//                                                .collect(Collectors.groupingBy(Seat::getRow));
+//
+////        List<Ticket> screeningTickets = screening.getOrders()
+////                                                 .stream()
+////                                                 .flatMap(o -> o.getTickets().stream())
+////                                                 .toList();
+////        List<Reservation> screeningReservations = screening.getOrders()
+////                                                           .stream()
+////                                                           .flatMap(o -> o.getReservations().stream())
+////                                                           .toList();
+//
+//
+//        for(List<Seat> row : rowList.values()){
+//            List<ScreeningSeatDto> screeningSeats = new ArrayList<>();
+//
+//            for(Seat seat : row){
+//
+//                boolean reserved =
+//                        screening.getTickets()
+//                                 .stream()
+//                                 .filter(Objects::nonNull)
+//                                 .anyMatch(ticket -> ticket.getSeat() == seat);
+//
+////
+////                        screeningReservations
+////                                 .stream()
+////                                 .filter(Objects::nonNull)
+////                                 .anyMatch(reservation -> reservation.getSeat() == seat);
+//
+//
+//                screeningSeats.add(
+//                        new ScreeningSeatDto(
+//                                new SeatResponseDto(
+//                                        seat.getId(),
+//                                        seat.getCategory(),
+//                                        seat.getRow(),
+//                                        seat.getColumn()),
+//                                reserved)
+//                );
+//            }
+//            roomPlan.add(new ScreeningSeatRowDto("Reihe" + screeningSeats.get(0).seat().row(), screeningSeats));
+//        }
+//
+//        return roomPlan;
+//    }
 }

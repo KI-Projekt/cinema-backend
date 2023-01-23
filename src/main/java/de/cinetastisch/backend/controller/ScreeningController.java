@@ -83,14 +83,4 @@ public class ScreeningController {
         screeningService.deleteScreening(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
-    @Operation(
-            tags = {"Screenings"}
-    )
-    @GetMapping("{id}/seatingplan")
-    public ResponseEntity<ScreeningRoomPlanResponseDto> getSeatingPlan(@PathVariable("id") Long id){
-        return new ResponseEntity<>(screeningService.getSeatingPlan(id), HttpStatus.OK);
-    }
-
 }

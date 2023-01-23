@@ -54,7 +54,7 @@ public class OrderController {
             tags = {"Orders"}
     )
     @PutMapping("orders/{id}/selectFares")
-    public OrderResponseDto pay(@PathVariable("id") Long id, @RequestBody FaresDto fares){
+    public OrderResponseDto selectFares(@PathVariable("id") Long id, @RequestBody FaresDto fares){
         return orderService.selectFares(id, fares);
     }
 }

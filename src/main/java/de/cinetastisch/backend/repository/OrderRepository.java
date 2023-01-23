@@ -14,7 +14,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 //    Double totalCost();
 
     List<Order> findAllByUser(User user);
-    List<Order> findAllByOrderStatus(OrderStatus orderStatus);
-    List<Order> findAllByUserAndOrderStatus(User user, OrderStatus orderStatus);
+    List<Order> findAllByStatus(OrderStatus orderStatus);
+    List<Order> findAllByUserAndStatus(User user, OrderStatus orderStatus);
+
+
+    boolean existsByUserAndStatus(User user, OrderStatus status);
 
 }

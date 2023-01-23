@@ -4,7 +4,6 @@ import de.cinetastisch.backend.dto.*;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Seat;
 import org.mapstruct.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,6 @@ public interface RoomMapper {
 
     @Named("generateRoomPlan")
     default List<RoomSeatRowDto> generateRoomPlan(Room room){
-
         Map<Integer, List<Seat>> rowList = room.getSeats()
                                                .stream()
                                                .collect(Collectors.groupingBy(Seat::getRow));

@@ -6,8 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
@@ -15,7 +13,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Getter
 @Setter
-@ToString(exclude = {"tickets", "reservations"})
+@ToString
 @NoArgsConstructor
 @Entity
 @Table(name = "screening", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
@@ -40,18 +38,6 @@ public class Screening {
     @Enumerated(EnumType.STRING)
     private ScreeningStatus status = ScreeningStatus.TICKET_SALE_OPEN;
 
-    @OneToMany(
-            mappedBy = "screening",
-            cascade = CascadeType.ALL
-    )
-    private List<Ticket> tickets = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "screening",
-            cascade = CascadeType.ALL
-    )
-    private List<Reservation> reservations = new ArrayList<>();
-
     public Screening(Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime,
                      ScreeningStatus status) {
         this.movie = movie;
@@ -61,16 +47,14 @@ public class Screening {
         this.status = status;
     }
 
-    public Screening(Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime,
-                     ScreeningStatus status,
-                     List<Ticket> tickets, List<Reservation> reservations) {
+    public Screening(Long id, Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime,
+                     ScreeningStatus status) {
+        this.id = id;
         this.movie = movie;
         this.room = room;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.status = status;
-        this.tickets = tickets;
-        this.reservations = reservations;
     }
 
     @Override

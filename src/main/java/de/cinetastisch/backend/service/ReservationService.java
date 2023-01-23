@@ -1,102 +1,86 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.dto.ReservationRequestDto;
-import de.cinetastisch.backend.dto.ReservationResponseDto;
+import de.cinetastisch.backend.dto.*;
 import de.cinetastisch.backend.enumeration.OrderStatus;
+import de.cinetastisch.backend.enumeration.TicketType;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
-import de.cinetastisch.backend.exception.ResourceNotFoundException;
+import de.cinetastisch.backend.mapper.OrderMapper;
 import de.cinetastisch.backend.mapper.ReferenceMapper;
-import de.cinetastisch.backend.mapper.ReservationMapper;
+import de.cinetastisch.backend.mapper.TicketMapper;
 import de.cinetastisch.backend.model.*;
-import de.cinetastisch.backend.repository.OrderRepository;
-import de.cinetastisch.backend.repository.ReservationRepository;
-import de.cinetastisch.backend.repository.TicketRepository;
+import de.cinetastisch.backend.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.annotation.Transient;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @AllArgsConstructor
 @Transactional
 public class ReservationService {
-    private final ReservationRepository reservationRepository;
     private final OrderRepository orderRepository;
     private final TicketRepository ticketRepository;
-    private final ReservationMapper mapper;
+    private final UserRepository userRepository;
+    private final SeatRepository seatRepository;
+    private final ScreeningRepository screeningRepository;
+    private final TicketMapper ticketMapper;
+    private final OrderMapper orderMapper;
     private final ReferenceMapper referenceMapper;
 
-    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.SECONDS)
-    @Transactional
-    public void deleteExpiredReservations(){
-        if(reservationRepository.existsByExpiresAtIsLessThanEqual(LocalDateTime.now())){
-            List<Order> ordersOfReservations = reservationRepository.getAllDistinctOrdersOfReservationsToDelete(LocalDateTime.now());
-
-            for (Order o : ordersOfReservations){
-                if(o.getOrderStatus() != OrderStatus.PAID){
-                    o.setOrderStatus(OrderStatus.CANCELLED);
-                    orderRepository.save(o);
-                }
-                reservationRepository.deleteAllByOrder(o);
-            }
-            reservationRepository.deleteByExpiresAtIsLessThanEqual(LocalDateTime.now());
+    public List<TicketResponseDto> getAllReservations(Long userId, Long screeningId){
+        ticketRepository.deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus.CANCELLED, LocalDateTime.now());
+        if(screeningId != null){
+            return ticketMapper.entityToDto(ticketRepository.findAllByScreening(referenceMapper.map(screeningId, Screening.class)));
         }
+        return ticketMapper.entityToDto(ticketRepository.findAll());
+    }
+
+    @Transactional
+    public OrderResponseDto addReservation(ReservationRequestDto reservation){
+        ticketRepository.deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus.CANCELLED, LocalDateTime.now());
+
+
+        User user = userRepository.getReferenceById(reservation.userId());
+        Seat seat = seatRepository.getReferenceById(reservation.seatId());
+        Screening screening = screeningRepository.getReferenceById(reservation.screeningId());
+        Order order;
+        Ticket ticket;
+
+        if(seat.getRoom() != screening.getRoom()){
+            throw new IllegalArgumentException("Seat ID not in Screening");
+        }
+        if(ticketRepository.existsByScreeningAndSeat(screening, seat)){
+            throw new ResourceAlreadyOccupiedException("Seat is already reserved");
+        }
+
+
+        Order existingOrder = orderRepository.findAllByUserAndStatus(user, OrderStatus.IN_PROGRESS).get(0);
+
+        if(existingOrder != null && LocalDateTime.now().isBefore(existingOrder.getExpiresAt())){
+            order =  orderRepository.findAllByUserAndStatus(user, OrderStatus.IN_PROGRESS).get(0);
+        } else {
+            order = new Order(user);
+        }
+
+        ticket = new Ticket(order, screening, seat);
+        order.getTickets().add(ticket);
+        ticketRepository.save(ticket);
+        return orderMapper.entityToDto(orderRepository.getReferenceById(order.getId()));
     }
 
     @Transactional
     @Transient
     public void deleteReservation(Long id){
-        reservationRepository.deleteById(id);
-    }
+        ticketRepository.deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus.CANCELLED, LocalDateTime.now());
 
-    public List<ReservationResponseDto> getAllReservations(Long userId, Long screeningId){
-        if (userId != null && screeningId != null){
-            return mapper.entityToDto(reservationRepository.findAllByUserAndScreening(referenceMapper.map(userId, User.class), referenceMapper.map(screeningId, Screening.class)));
-        } else if (userId != null){
-            return mapper.entityToDto(reservationRepository.findAllByUser(referenceMapper.map(userId, User.class)));
-        } else if(screeningId != null){
-            return mapper.entityToDto(reservationRepository.findAllByScreening(referenceMapper.map(screeningId, Screening.class)));
-        }
-        return mapper.entityToDto(reservationRepository.findAll());
-    }
-
-    public Reservation getReservation(Long id){
-        return reservationRepository.getReferenceById(id);
-    }
-
-    public Reservation getReservation(User user, Screening screening, Seat seat){
-        return reservationRepository.findByUserAndScreeningAndSeat(user, screening, seat).orElseThrow(() -> new ResourceNotFoundException("Reservation not found"));
-    }
-
-    @Transactional
-    public ReservationResponseDto addReservation(ReservationRequestDto request){
-        deleteExpiredReservations();
-        Reservation reservation = mapper.dtoToEntity(request);
-        // Check for reservations
-        if(reservation.getSeat().getRoom() != reservation.getScreening().getRoom()){
-            throw new IllegalArgumentException("Seat ID not in Screening");
+        if(ticketRepository.getReferenceById(id).getType() == TicketType.TICKET){
+            throw new ResourceAlreadyOccupiedException("Ticket has already been paid");
         }
 
-
-        if((reservationRepository.existsByScreeningAndSeatAndExpiresAtIsGreaterThanEqual(reservation.getScreening(), reservation.getSeat(), LocalDateTime.now()))
-                || ticketRepository.existsByScreeningAndSeat(reservation.getScreening(), reservation.getSeat())){
-            throw new ResourceAlreadyOccupiedException("Seat is currently reserved");
-        }
-
-        if(!reservationRepository.existsByUserAndScreening(reservation.getUser(), reservation.getScreening())){
-            Order order = orderRepository.save(new Order(reservation.getUser()));
-            reservation.setOrder(order);
-        } else {
-            Reservation firstReservation = reservationRepository.findAllByUserAndScreening(reservation.getUser(), reservation.getScreening()).get(0);
-            reservation.setOrder(firstReservation.getOrder());
-            reservation.setExpiresAt(firstReservation.getExpiresAt());
-        }
-
-        return mapper.entityToDto(reservationRepository.save(reservation));
+        ticketRepository.deleteById(id);
     }
 }

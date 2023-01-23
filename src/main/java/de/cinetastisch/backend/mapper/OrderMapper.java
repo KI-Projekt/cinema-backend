@@ -16,15 +16,14 @@ import java.util.List;
 public interface OrderMapper {
 
     @Mapping(target = "tickets", ignore = true)
-    @Mapping(target = "reservations", ignore = true)
     @Mapping(target = "total", ignore = true)
     @Mapping(target = "user", source = "userId")
-    @Mapping(target = "orderStatus", defaultValue = "IN_PROGRESS", ignore = true)
+    @Mapping(target = "status", defaultValue = "IN_PROGRESS", ignore = true)
     @Mapping(target = "id", ignore = true)
     Order dtoToEntity(OrderRequestDto orderRequestDto);
 
-
-//    @Mapping(target = "userId", expression = "java(order.getUser().getId())")
+//    @Mapping(target = "expiresAt", expression = "java(order.getStatus() == de.cinetastisch.backend.enumeration.OrderStatus.IN_PROGRESS ? order.getCreatedAt().plusMinutes(1) : null)")
+    @Mapping(target = "orderStatus", source = "status")
     @Mapping(target = "id", expression = "java(order.getId())")
     OrderResponseDto entityToDto(Order order);
     List<OrderResponseDto> entityToDto(Iterable<Order> order);
