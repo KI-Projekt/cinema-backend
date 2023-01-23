@@ -3,6 +3,7 @@ package de.cinetastisch.backend.handler;
 import de.cinetastisch.backend.exception.*;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,8 @@ public class GlobalControllerExceptionHandler {
             IllegalArgumentException.class,
             IllegalStateException.class,
             MethodArgumentNotValidException.class,
-            MethodArgumentTypeMismatchException.class
+            MethodArgumentTypeMismatchException.class,
+            DataIntegrityViolationException.class
     })
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<ErrorMessage> handleInvalidInputConflicts(RuntimeException ex, WebRequest webRequest){

@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.lang.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,7 +40,7 @@ public class Room {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
-    private List<Seat> seats;
+    private List<Seat> seats = new ArrayList<>();
 
 
     public Room(@NonNull String name, Boolean hasThreeD, Boolean hasDolbyAtmos) {

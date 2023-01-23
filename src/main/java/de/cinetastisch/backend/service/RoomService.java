@@ -41,27 +41,26 @@ public class RoomService {
     }
 
     @Transactional
-    public RoomResponseDto addRoom(RoomRequestDto request, Integer rows, Integer columns){
-        Room newRoom = mapper.dtoToEntity(request);
-        if(roomRepository.existsByNameIgnoreCase(newRoom.getName())){
-            throw new ResourceAlreadyExistsException("Name is already taken");
-        }
+    public RoomResponseDto addRoom(RoomRequestDto request){
+        Room newRoom = roomRepository.save(mapper.dtoToEntity(request));
 
-        roomRepository.save(newRoom);
-
-        if(rows != null || columns != null){
-            if(rows < 0 || columns < 0 ){
-                throw new IllegalArgumentException("Number should be positive");
+        if(request.numberOfRows() != null && request.numberOfColumns() != null){
+            if(request.numberOfRows() < 0 || request.numberOfColumns() < 0 ){
+                throw new IllegalArgumentException("Number must be positive");
             }
 
-            for(int r = 1; r <= rows; r++){
-                for(int c = 1; c <= columns; c++){
-                    seatRepository.save(new Seat(newRoom, r, c, SeatCategory.NORMAL));
+            List<Seat> seats = new ArrayList<>();
+
+            for(int r = 1; r <= request.numberOfRows(); r++){
+                for(int c = 1; c <= request.numberOfColumns(); c++){
+                    seats.add(new Seat(newRoom, r, c, SeatCategory.NORMAL));
                 }
             }
+            newRoom.setSeats(seats);
+            roomRepository.save(newRoom);
         }
 
-        return mapper.entityToDto(newRoom);
+        return mapper.entityToDto(roomRepository.getReferenceById(newRoom.getId()));
     }
 
     @Transactional

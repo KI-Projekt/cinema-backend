@@ -42,7 +42,7 @@ public class RoomController {
     )
     @PostMapping
     public ResponseEntity<RoomResponseDto> add(@Valid @RequestBody RoomRequestDto roomRequestDto){
-        return new ResponseEntity<>(roomService.addRoom(roomRequestDto, roomRequestDto.numberOfRows(), roomRequestDto.numberOfColumns()), HttpStatus.CREATED);
+        return new ResponseEntity<>(roomService.addRoom(roomRequestDto), HttpStatus.CREATED);
     }
 
     @Operation(
