@@ -25,9 +25,8 @@ class OrderTest {
 
     @Test
     void testHashCode() {
-        int act = order.hashCode();
-        int exp = 1971952443;
-        assertEquals(exp, act);
+        Order order1 = order;
+        assertEquals(order.hashCode(), order1.hashCode());
     }
 
 

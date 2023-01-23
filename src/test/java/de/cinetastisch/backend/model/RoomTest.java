@@ -11,11 +11,12 @@ class RoomTest {
 
     @Test
     void testEquals() {
-//        Room testroom = new Room();
-//        Room testequalsroom = room;
-//        Boolean act = room.equals(testequalsroom);
-//        assertTrue(act);
-//        assertFalse(room.equals(testroom));
+        room.setId((long)1.22);
+        Room testroom = new Room();
+        Room testequalsroom = room;
+        Boolean act = room.equals(testequalsroom);
+        assertTrue(act);
+        assertFalse(room.equals(testroom));
     }
 
     @Test
