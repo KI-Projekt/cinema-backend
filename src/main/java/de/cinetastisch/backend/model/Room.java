@@ -49,6 +49,9 @@ public class Room {
         this.hasDolbyAtmos = hasDolbyAtmos;
     }
 
+//    public Room(long l, String avengers, boolean b, boolean b1) {
+//    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
