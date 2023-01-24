@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
         uses = {ReferenceMapper.class, SeatMapper.class})
 public interface RoomMapper {
 
+    @Mapping(target = "hasThreeD", defaultValue = "false")
+    @Mapping(target = "hasDolbyAtmos", defaultValue = "false")
     @Mapping(target = "seats", ignore = true)
     @Mapping(target = "id", ignore = true)
     Room dtoToEntity(RoomRequestDto roomRequestDto);
