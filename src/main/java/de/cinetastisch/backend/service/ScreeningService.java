@@ -1,6 +1,7 @@
 package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.dto.*;
+import de.cinetastisch.backend.exception.NoResourcesException;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
 import de.cinetastisch.backend.mapper.ScreeningMapper;
 import de.cinetastisch.backend.model.*;
@@ -33,6 +34,10 @@ public class ScreeningService {
         } else {
             result = screeningRepository.findAll();
         }
+        if(result.size() == 0){
+            throw new NoResourcesException("No Screenings given");
+        }
+
         return mapper.trimDto(mapper.entityToDto(result));
     }
 
