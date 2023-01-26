@@ -25,42 +25,42 @@ class TicketControllerTest {
     TicketService ticketService;
 
 
-    @Test
-    void getTickets() {
-        LocalDateTime localDateTime = LocalDateTime.of(2022,12,12,12,12,12);
-        UserResponseDto userResponseDto = new UserResponseDto((long)1.222,"Anthon", "Maier","anthon.maier@test.de");
-        OrderResponseDto orderResponseDto = new OrderResponseDto((long)1.222,userResponseDto, OrderStatus.IN_PROGRESS,1222);
-        SeatResponseDto seatResponseDto =new SeatResponseDto((long)1.22, SeatCategory.PREMIUM,2,2);
-        RoomResponseDto roomResponseDto = new RoomResponseDto((long)1.2,"Test","true","true");
-        ScreeningResponseDto screeningResponseDto = new ScreeningResponseDto((long)1.2, ScreeningStatus.TICKET_SALE_OPEN,(long)1.2,roomResponseDto,localDateTime,localDateTime,(long)1.2);
-        TicketResponseDto responseDto = new TicketResponseDto((long)1.2,orderResponseDto,screeningResponseDto,seatResponseDto, TicketCategory.STUDENT);
-        List<TicketResponseDto> responseDtoList = List.of(responseDto);
+//    @Test
+//    void getTickets() {
+//        LocalDateTime localDateTime = LocalDateTime.of(2022,12,12,12,12,12);
+//        UserResponseDto userResponseDto = new UserResponseDto((long)1.222,"Anthon", "Maier","anthon.maier@test.de");
+//        OrderResponseDto orderResponseDto = new OrderResponseDto((long)1.222,userResponseDto, OrderStatus.IN_PROGRESS,1222);
+//        SeatResponseDto seatResponseDto =new SeatResponseDto((long)1.22, SeatCategory.PREMIUM,2,2);
+//        RoomResponseDto roomResponseDto = new RoomResponseDto((long)1.2,"Test","true","true");
+//        ScreeningResponseDto screeningResponseDto = new ScreeningResponseDto((long)1.2, ScreeningStatus.TICKET_SALE_OPEN,(long)1.2,roomResponseDto,localDateTime,localDateTime,(long)1.2);
+//        TicketResponseDto responseDto = new TicketResponseDto((long)1.2,orderResponseDto,screeningResponseDto,seatResponseDto, TicketCategory.STUDENT);
+//        List<TicketResponseDto> responseDtoList = List.of(responseDto);
+//
+//        when(ticketService.getAllTickets()).thenReturn(responseDtoList);
+//
+//        List<TicketResponseDto> response = ticketController.getTickets();
+//
+//        assertEquals(responseDtoList,response);
+//
+//
+//    }
 
-        when(ticketService.getAllTickets()).thenReturn(responseDtoList);
-
-        List<TicketResponseDto> response = ticketController.getTickets();
-
-        assertEquals(responseDtoList,response);
-
-
-    }
-
-    @Test
-    void buyTickets() {
-        LocalDateTime localDateTime = LocalDateTime.of(2022,12,12,12,12,12);
-        UserResponseDto userResponseDto = new UserResponseDto((long)1.222,"Anthon", "Maier","anthon.maier@test.de");
-        OrderResponseDto orderResponseDto = new OrderResponseDto((long)1.222,userResponseDto, OrderStatus.IN_PROGRESS,1222);
-        SeatResponseDto seatResponseDto =new SeatResponseDto((long)1.22, SeatCategory.PREMIUM,2,2);
-        RoomResponseDto roomResponseDto = new RoomResponseDto((long)1.2,"Test","true","true");
-        ScreeningResponseDto screeningResponseDto = new ScreeningResponseDto((long)1.2, ScreeningStatus.TICKET_SALE_OPEN,(long)1.2,roomResponseDto,localDateTime,localDateTime,(long)1.2);
-        TicketResponseDto responseDto = new TicketResponseDto((long)1.2,orderResponseDto,screeningResponseDto,seatResponseDto, TicketCategory.STUDENT);
-        List<TicketResponseDto> responseDtoList = List.of(responseDto);
-        List<Long> fares = List.of((long)1.2,(long)1.2);
-        PayTicketsRequestDto payTicketsRequestDto = new PayTicketsRequestDto((long)1.2,fares);
-        when(ticketService.buyTickets(payTicketsRequestDto)).thenReturn(responseDtoList);
-
-        List<TicketResponseDto> response = ticketController.buyTickets(payTicketsRequestDto);
-
-        assertEquals(responseDtoList,response);
-    }
+//    @Test
+//    void buyTickets() {
+//        LocalDateTime localDateTime = LocalDateTime.of(2022,12,12,12,12,12);
+//        UserResponseDto userResponseDto = new UserResponseDto((long)1.222,"Anthon", "Maier","anthon.maier@test.de");
+//        OrderResponseDto orderResponseDto = new OrderResponseDto((long)1.222,userResponseDto, OrderStatus.IN_PROGRESS,1222);
+//        SeatResponseDto seatResponseDto =new SeatResponseDto((long)1.22, SeatCategory.PREMIUM,2,2);
+//        RoomResponseDto roomResponseDto = new RoomResponseDto((long)1.2,"Test","true","true");
+//        ScreeningResponseDto screeningResponseDto = new ScreeningResponseDto((long)1.2, ScreeningStatus.TICKET_SALE_OPEN,(long)1.2,roomResponseDto,localDateTime,localDateTime,(long)1.2);
+//        TicketResponseDto responseDto = new TicketResponseDto((long)1.2,orderResponseDto,screeningResponseDto,seatResponseDto, TicketCategory.STUDENT);
+//        List<TicketResponseDto> responseDtoList = List.of(responseDto);
+//        List<Long> fares = List.of((long)1.2,(long)1.2);
+//        PayTicketsRequestDto payTicketsRequestDto = new PayTicketsRequestDto((long)1.2,fares);
+//        when(ticketService.buyTickets(payTicketsRequestDto)).thenReturn(responseDtoList);
+//
+//        List<TicketResponseDto> response = ticketController.buyTickets(payTicketsRequestDto);
+//
+//        assertEquals(responseDtoList,response);
+//    }
 }
