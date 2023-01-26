@@ -1,28 +1,16 @@
-package de.cinetastisch.backend.controller;
-
-import de.cinetastisch.backend.dto.*;
-import de.cinetastisch.backend.enumeration.OrderStatus;
-import de.cinetastisch.backend.enumeration.ScreeningStatus;
-import de.cinetastisch.backend.enumeration.SeatCategory;
-import de.cinetastisch.backend.enumeration.TicketCategory;
-import de.cinetastisch.backend.service.TicketService;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-@ExtendWith(MockitoExtension.class)
-class TicketControllerTest {
-    @InjectMocks
-    TicketController ticketController;
-    @Mock
-    TicketService ticketService;
+//package de.cinetastisch.backend.controller;
+//
+//import org.junit.jupiter.api.extension.ExtendWith;
+//import org.mockito.InjectMocks;
+//import org.mockito.Mock;
+//import org.mockito.junit.jupiter.MockitoExtension;
+//
+//@ExtendWith(MockitoExtension.class)
+//class TicketControllerTest {
+//    @InjectMocks
+//    TicketController ticketController;
+//    @Mock
+//    TicketService ticketService;
 
 
 //    @Test
@@ -63,4 +51,4 @@ class TicketControllerTest {
 //
 //        assertEquals(responseDtoList,response);
 //    }
-}
+//}

@@ -46,8 +46,8 @@ public class ScreeningController {
             tags = {"Screenings"}
     )
     @GetMapping("/{id}")
-    public ScreeningFullResponseDto getOne(@PathVariable Long id){
-        return screeningService.getScreening(id);
+    public ResponseEntity<ScreeningFullResponseDto> getOne(@PathVariable Long id){
+        return ResponseEntity.ok(screeningService.getScreening(id));
     }
 
     @Operation(
@@ -81,6 +81,6 @@ public class ScreeningController {
     @DeleteMapping("{id}")
     public ResponseEntity<?> delete(@Valid @PathVariable("id") Long id){
         screeningService.deleteScreening(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 }

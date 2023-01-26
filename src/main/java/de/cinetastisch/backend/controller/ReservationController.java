@@ -27,9 +27,9 @@ public class ReservationController {
             tags = {"Reservations"}
     )
     @GetMapping
-    public List<TicketResponseDto> getAll(@RequestParam(value = "userId", required = false) Long userId,
+    public ResponseEntity<List<TicketResponseDto>> getAll(@RequestParam(value = "userId", required = false) Long userId,
                                           @RequestParam(value = "screeningId", required = false) Long screeningId){
-        return reservationService.getAllReservations(userId, screeningId);
+        return ResponseEntity.ok(reservationService.getAllReservations(userId, screeningId));
     }
 
     @Operation(
@@ -46,6 +46,6 @@ public class ReservationController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> cancelReservation(@Valid @PathVariable Long id){
         reservationService.deleteReservation(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
