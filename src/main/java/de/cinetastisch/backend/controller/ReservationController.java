@@ -5,6 +5,7 @@ import de.cinetastisch.backend.dto.ReservationRequestDto;
 import de.cinetastisch.backend.dto.TicketResponseDto;
 import de.cinetastisch.backend.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +37,8 @@ public class ReservationController {
             tags = {"Reservations"}
     )
     @PostMapping
-    public ResponseEntity<OrderResponseDto> addReservation(@Valid @RequestBody ReservationRequestDto request){
-        return new ResponseEntity<>(reservationService.addReservation(request), HttpStatus.CREATED);
+    public ResponseEntity<OrderResponseDto> addReservation(@Valid @RequestBody ReservationRequestDto request, HttpSession session){
+        return new ResponseEntity<>(reservationService.addReservation(request, session), HttpStatus.CREATED);
     }
 
     @Operation(

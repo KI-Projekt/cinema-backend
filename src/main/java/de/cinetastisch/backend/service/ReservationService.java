@@ -9,6 +9,7 @@ import de.cinetastisch.backend.mapper.ReferenceMapper;
 import de.cinetastisch.backend.mapper.TicketMapper;
 import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.*;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.data.annotation.Transient;
 import org.springframework.stereotype.Service;
@@ -39,9 +40,9 @@ public class ReservationService {
     }
 
     @Transactional
-    public OrderResponseDto addReservation(ReservationRequestDto reservation){
+    public OrderResponseDto addReservation(ReservationRequestDto reservation, HttpSession session){
         ticketRepository.deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus.CANCELLED, LocalDateTime.now());
-
+        System.out.println(session.getId());
 
         User user = userRepository.getReferenceById(reservation.userId());
         Seat seat = seatRepository.getReferenceById(reservation.seatId());
