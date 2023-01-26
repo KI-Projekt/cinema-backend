@@ -51,7 +51,7 @@ class ReservationControllerTest {
         ReservationRequestDto requestDto = new ReservationRequestDto((long)1.22,(long)1.22,(long)1.22);
         ResponseEntity<?> response = reservationController.addReservation(requestDto);
 
-        assertEquals(response.getStatusCode(),HttpStatus.CREATED);
+        assertEquals(HttpStatus.CREATED,response.getStatusCode());
 
     }
 }
