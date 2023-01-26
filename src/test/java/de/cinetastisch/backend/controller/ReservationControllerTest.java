@@ -4,6 +4,8 @@ import de.cinetastisch.backend.dto.*;
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.SeatCategory;
 import de.cinetastisch.backend.service.ReservationService;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
+import java.util.Enumeration;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -47,9 +50,69 @@ class ReservationControllerTest {
 
     @Test
     void addReservation() throws Exception {
+        HttpSession session = new HttpSession() {
+            @Override
+            public long getCreationTime() {
+                return 0;
+            }
 
+            @Override
+            public String getId() {
+                return null;
+            }
+
+            @Override
+            public long getLastAccessedTime() {
+                return 0;
+            }
+
+            @Override
+            public ServletContext getServletContext() {
+                return null;
+            }
+
+            @Override
+            public void setMaxInactiveInterval(int interval) {
+
+            }
+
+            @Override
+            public int getMaxInactiveInterval() {
+                return 0;
+            }
+
+            @Override
+            public Object getAttribute(String name) {
+                return null;
+            }
+
+            @Override
+            public Enumeration<String> getAttributeNames() {
+                return null;
+            }
+
+            @Override
+            public void setAttribute(String name, Object value) {
+
+            }
+
+            @Override
+            public void removeAttribute(String name) {
+
+            }
+
+            @Override
+            public void invalidate() {
+
+            }
+
+            @Override
+            public boolean isNew() {
+                return false;
+            }
+        };
         ReservationRequestDto requestDto = new ReservationRequestDto((long)1.22,(long)1.22,(long)1.22);
-        ResponseEntity<?> response = reservationController.addReservation(requestDto);
+        ResponseEntity<?> response = reservationController.addReservation(requestDto, session);
 
         assertEquals(HttpStatus.CREATED,response.getStatusCode());
 
