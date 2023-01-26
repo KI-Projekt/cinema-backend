@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -57,10 +56,8 @@ public class ReservationService {
             throw new ResourceAlreadyOccupiedException("Seat is already reserved");
         }
 
-
-        Order existingOrder = orderRepository.findAllByUserAndStatus(user, OrderStatus.IN_PROGRESS).get(0);
-
-        if(existingOrder != null && LocalDateTime.now().isBefore(existingOrder.getExpiresAt())){
+        List<Order> existingOrders = orderRepository.findAllByUserAndStatus(user, OrderStatus.IN_PROGRESS);
+        if(existingOrders.size() > 0 && LocalDateTime.now().isBefore(existingOrders.get(0).getExpiresAt())){
             order =  orderRepository.findAllByUserAndStatus(user, OrderStatus.IN_PROGRESS).get(0);
         } else {
             order = new Order(user);
