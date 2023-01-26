@@ -38,9 +38,9 @@ class OrderControllerTest {
 
         when(orderService.getAllOrders((long)1.2222)).thenReturn(expected);
 
-        List<?> response = orderController.getAll((long)1.2222);
+        ResponseEntity<List<OrderResponseDto>> response = orderController.getAll((long)1.2222);
         assertAll(
-                () -> assertEquals(response, expected)
+                () -> assertEquals(response.getBody(), expected)
         );
     }
 

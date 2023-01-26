@@ -45,8 +45,9 @@ class ScreeningControllerTest {
 
         when(screeningService.getScreening((long)1.2)).thenReturn(screeningResponseDto);
 
-        ScreeningFullResponseDto response = screeningController.getOne((long)1.2);
-        assertEquals(screeningResponseDto, response);
+        ResponseEntity<ScreeningFullResponseDto> response = screeningController.getOne((long)1.2);
+        assertEquals(screeningResponseDto, response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
     }
 
@@ -74,7 +75,7 @@ class ScreeningControllerTest {
     @Test
     void delete() {
         ResponseEntity<?> response = screeningController.delete((long)1.2);
-        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals(HttpStatus.NO_CONTENT,response.getStatusCode());
 
     }
 
