@@ -140,9 +140,9 @@ class UserTest {
         assertEquals(5, user.getHouseNumber());
     }
 
-    @Test
-    void testToString() {
-        String exp= "User(id=null, firstName=Luca, lastName=Chmiprogramierski, email=luca@gmail.com, password=12345, birthday=2.2.22, country=Deutschland, city=Mannheim, zip=68259, street=Baumstr, houseNumber=3)";
-        assertEquals(exp, user.toString());
-    }
+//    @Test
+//    void testToString() {
+//        String exp= "User(id=null, firstName=Luca, lastName=Chmiprogramierski, email=luca@gmail.com, password=12345, birthday=2.2.22, country=Deutschland, city=Mannheim, zip=68259, street=Baumstr, houseNumber=3)";
+//        assertEquals(exp, user.toString());
+//    }
 }

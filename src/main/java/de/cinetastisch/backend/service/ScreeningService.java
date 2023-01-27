@@ -1,20 +1,16 @@
 package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.dto.*;
+import de.cinetastisch.backend.exception.NoResourcesException;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
 import de.cinetastisch.backend.mapper.ScreeningMapper;
-import de.cinetastisch.backend.mapper.SeatMapper;
 import de.cinetastisch.backend.model.*;
-import de.cinetastisch.backend.repository.ReservationRepository;
-import de.cinetastisch.backend.repository.ScreeningRepository;
-import de.cinetastisch.backend.repository.SeatRepository;
-import de.cinetastisch.backend.repository.TicketRepository;
+import de.cinetastisch.backend.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -23,31 +19,35 @@ public class ScreeningService {
 
     private final ScreeningRepository screeningRepository;
     private final ScreeningMapper mapper;
-    private final SeatRepository seatRepository;
-    private final SeatMapper seatMapper;
-    private final TicketRepository ticketRepository;
-    private final ReservationRepository reservationRepository;
+    private final MovieRepository movieRepository;
 
-    public List<ScreeningResponseDto> getAllScreenings(String startTime, Long movieId){
-        if ((startTime != null && !startTime.isBlank()) && (movieId != null)){
-
+    public List<ScreeningResponseDto> getAllScreenings(String startTime, Long movieId ){
+        List<Screening> result;
+        if (movieId != null && startTime != null){
+            Movie movie = movieRepository.getReferenceById(movieId);
+            result = screeningRepository.findAllByMovieAndStartDateTimeAfter(movie, LocalDateTime.parse(startTime));
+        } else if (movieId != null){
+            Movie movie = movieRepository.getReferenceById(movieId);
+            result = screeningRepository.findAllByMovie(movie);
+        } else if (startTime != null && !startTime.isBlank()){
+            result = screeningRepository.findAllByStartDateTimeAfter(LocalDateTime.parse(startTime));
+        } else {
+            result = screeningRepository.findAll();
+        }
+        if(result.size() == 0){
+            throw new NoResourcesException("No Screenings given");
         }
 
-        if (startTime != null && !startTime.isBlank()){
-            return mapper.entityToDto(screeningRepository.findAllAfterStartDateTime(LocalDateTime.parse(startTime)));
-        }
-        return mapper.entityToDto(screeningRepository.findAll());
+        return mapper.trimDto(mapper.entityToDto(result));
     }
 
-    public ScreeningResponseDto getScreening(Long id){
+    public ScreeningFullResponseDto getScreening(Long id){
         return mapper.entityToDto(screeningRepository.getReferenceById(id));
     }
 
     @Transactional
-    public ScreeningResponseDto addScreening(ScreeningRequestDto screeningRequestDto) {
-        System.out.println(screeningRequestDto);
+    public ScreeningFullResponseDto addScreening(ScreeningRequestDto screeningRequestDto) {
         Screening screening = mapper.dtoToEntity(screeningRequestDto);
-        System.out.println(screening);
         if (screeningRequestDto.endDateTime() == null){
             screening.setEndDateTime(calculateEndDateTime(screening.getStartDateTime(), screening.getMovie()));
         }
@@ -63,7 +63,7 @@ public class ScreeningService {
         return mapper.entityToDto(screeningRepository.save(screening));
     }
 
-    public ScreeningResponseDto replaceScreening(Long id, ScreeningRequestDto screeningDto) {
+    public ScreeningFullResponseDto replaceScreening(Long id, ScreeningRequestDto screeningDto) {
         Screening oldScreening = screeningRepository.getReferenceById(id);
         Screening newScreening = mapper.dtoToEntity(screeningDto);
         newScreening.setId(oldScreening.getId());
@@ -78,31 +78,5 @@ public class ScreeningService {
     public LocalDateTime calculateEndDateTime(LocalDateTime start, Movie movie){
         LocalDateTime newTime = start.plusMinutes(Long.parseLong(movie.getRuntime().split(" ")[0]));
         return newTime.plusMinutes(30L); // + Ads + Cleaning
-    }
-
-    public RoomPlanResponseDto getSeatingPlan(Long id) {
-        Screening screening = screeningRepository.getReferenceById(id);
-        Room room = screening.getRoom();
-        List<SeatingRowsDto> seatingRowsDtos = new ArrayList<>();
-
-        Integer rows = seatRepository.findAllByRoomOrderByRowDesc(room).get(0).getRow();
-        for(int i = 1; i <= rows; i++){
-
-            List<Seat> seatsByRow = seatRepository.findAllByRoomAndRowOrderByColumnDesc(room, i);
-            List<ScreeningSeatDto> screeningSeatDtos = new ArrayList<>();
-            if(seatsByRow == null || seatsByRow.size() == 0){
-                seatingRowsDtos.add(new SeatingRowsDto("Row " + i + " (empty)", screeningSeatDtos));
-                continue;
-            }
-            for (Seat s : seatsByRow) { //COLUMNS, einzelne Seats
-                boolean isReserved = reservationRepository.existsByScreeningAndSeatAndExpiresAtIsGreaterThanEqual(screening, s, LocalDateTime.now())
-                        || ticketRepository.existsByScreeningAndSeat(screening, s);
-                screeningSeatDtos.add(new ScreeningSeatDto(seatMapper.entityToDto(s),isReserved));
-            }
-
-            seatingRowsDtos.add(new SeatingRowsDto("Row " + i, screeningSeatDtos));
-        }
-
-        return new RoomPlanResponseDto(id, room.getId(), seatingRowsDtos);
     }
 }

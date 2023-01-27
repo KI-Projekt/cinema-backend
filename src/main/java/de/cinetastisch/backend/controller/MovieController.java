@@ -1,8 +1,8 @@
 package de.cinetastisch.backend.controller;
 
 import de.cinetastisch.backend.dto.MovieRequestDto;
+import de.cinetastisch.backend.dto.MovieResponseDto;
 import de.cinetastisch.backend.model.Movie;
-import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.service.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,9 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("api/movies")
 public class MovieController {
-
-    private final String exampleJson = "{\n  \"id\": 1,\n  \"title\": \"Guardians of the Galaxy\",\n  \"releaseYear\": \"2014\",\n  \"posterImage\": \"https://m.media-amazon.com/images/M/MV5BZTkwZjU3MTctMGExMi00YjU5LTgwMDMtOWNkZDRlZjQ4NmZhXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg\",\n  \"rated\": \"PG-13\",\n  \"runtime\": \"121 min\",\n  \"genre\": \"Action, Adventure, Comedy\",\n  \"actors\": \"Chris Pratt, Vin Diesel, Bradley Cooper\",\n  \"plot\": \"A group of intergalactic criminals must pull together to stop a fanatical warrior with plans to purge the universe.\",\n  \"trailer\": \"TODO\",\n  \"imdbId\": \"tt2015381\",\n  \"imdbRating\": \"8.0\",\n  \"imdbRatingCount\": \"1,180,325\"\n}";
-    private final String exampleJsonNoId = "{\n  \"title\": \"Guardians of the Galaxy\",\n  \"releaseYear\": \"2014\",\n  \"posterImage\": \"https://m.media-amazon.com/images/M/MV5BZTkwZjU3MTctMGExMi00YjU5LTgwMDMtOWNkZDRlZjQ4NmZhXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg\",\n  \"rated\": \"PG-13\",\n  \"runtime\": \"121 min\",\n  \"genre\": \"Action, Adventure, Comedy\",\n  \"actors\": \"Chris Pratt, Vin Diesel, Bradley Cooper\",\n  \"plot\": \"A group of intergalactic criminals must pull together to stop a fanatical warrior with plans to purge the universe.\",\n  \"trailer\": \"TODO\",\n  \"imdbId\": \"tt2015381\",\n  \"imdbRating\": \"8.0\",\n  \"imdbRatingCount\": \"1,180,325\"\n}";
 
     private final MovieService movieService;
 
@@ -57,10 +54,10 @@ public class MovieController {
             }
     )
     @GetMapping
-    public ResponseEntity<List<Movie>> getAll(@RequestParam(value = "title", required = false) String title,
-                                              @RequestParam(value = "genre", required = false) String genre,
-                                              @RequestParam(value = "imdbId", required = false) String imdbId,
-                                              @RequestParam(value = "rated", required = false) String rated) {
+    public ResponseEntity<List<MovieResponseDto>> getAll(@RequestParam(value = "title", required = false) String title,
+                                                         @RequestParam(value = "genre", required = false) String genre,
+                                                         @RequestParam(value = "imdbId", required = false) String imdbId,
+                                                         @RequestParam(value = "rated", required = false) String rated) {
         return new ResponseEntity<>(movieService.getAllMovies(title, genre, imdbId, rated), HttpStatus.OK);
     }
 
@@ -93,7 +90,7 @@ public class MovieController {
             }
     )
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Movie> getOne(@PathVariable("id") Long id){
+    public ResponseEntity<MovieResponseDto> getOne(@PathVariable("id") Long id){
         return new ResponseEntity<>(movieService.getMovie(id), HttpStatus.OK);
     }
 
@@ -140,9 +137,9 @@ public class MovieController {
             }
     )
     @PostMapping()
-    public ResponseEntity<Movie> addOne(@Valid @RequestBody(required = false) MovieRequestDto movie,
-                                        @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
-                                        @Valid @RequestParam(value = "title", required = false) String title){
+    public ResponseEntity<MovieResponseDto> addOne(@Valid @RequestBody(required = false) MovieRequestDto movie,
+                                                   @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
+                                                   @Valid @RequestParam(value = "title", required = false) String title){
         return new ResponseEntity<>(movieService.addMovieByParameters(movie, imdbId, title), HttpStatus.CREATED);
     }
 
@@ -186,8 +183,8 @@ public class MovieController {
             }
     )
     @PutMapping("/{id}")
-    public ResponseEntity<Movie> replaceOne(@PathVariable Long id,
-                                            @RequestBody MovieRequestDto movie){
+    public ResponseEntity<MovieResponseDto> replaceOne(@PathVariable Long id,
+                                                       @RequestBody MovieRequestDto movie){
         return ResponseEntity.ok(movieService.replaceMovie(id, movie));
     }
 
@@ -229,7 +226,7 @@ public class MovieController {
             description = "It's an alternative for deleting movies"
     )
     @PutMapping("/{id}/archive")
-    public ResponseEntity<Movie> archiveMovie(@PathVariable("id") Long id){
+    public ResponseEntity<MovieResponseDto> archiveMovie(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.archive(id));
     }
 
@@ -239,43 +236,7 @@ public class MovieController {
             summary = "Catalog a movie by id"
     )
     @PutMapping("/{id}/catalog")
-    public ResponseEntity<Movie> catalogMovie(@PathVariable("id") Long id){
+    public ResponseEntity<MovieResponseDto> catalogMovie(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.catalog(id));
-    }
-
-
-    @Operation(
-            tags = {"Movies", "Screenings"},
-            operationId = "getScreeningsOfMovie",
-            summary = "Get Screenings of a movie",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Successful",
-                            content = @Content(
-                                    schema = @Schema(implementation = Screening.class),
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "204",
-                            description = "No content",
-                            content = @Content
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Invalid input supplied",
-                            content = @Content
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Movie not found",
-                            content = @Content
-                    )
-            }
-    )
-    @GetMapping("{id}/screenings")
-    public ResponseEntity<List<Screening>> getScreenings(@PathVariable("id") Long id){
-        return ResponseEntity.ok(movieService.getAllScreeningsByMovie(id));
     }
 }

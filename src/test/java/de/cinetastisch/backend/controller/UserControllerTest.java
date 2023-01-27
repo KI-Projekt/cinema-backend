@@ -30,8 +30,8 @@ class UserControllerTest {
 
         when(userService.getAllUsers()).thenReturn(userList);
 
-        List<User> response = userController.getAll();
-        assertEquals(userList,response);
+        ResponseEntity<List<User>> response = userController.getAll();
+        assertEquals(userList,response.getBody());
     }
 
     @Test
@@ -40,8 +40,8 @@ class UserControllerTest {
 
         when(userService.getUser((long) 1.2)).thenReturn(firstuser);
 
-        User response = userController.getOne((long) 1.2);
-        assertEquals(firstuser, response);
+        ResponseEntity<User> response = userController.getOne((long) 1.2);
+        assertEquals(firstuser, response.getBody());
     }
 
 //    Remaining requests are not testable, as they are only another method call of a service method

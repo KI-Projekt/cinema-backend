@@ -20,13 +20,14 @@ public interface ScreeningRepository extends JpaRepository<Screening, Long> {
     List<Screening> findAllByLocalDateTimes(@Param("from") LocalDateTime from,
                                             @Param("to") LocalDateTime to);
 
-    @Query("SELECT s FROM Screening s WHERE s.startDateTime >= :from")
-    List<Screening> findAllAfterStartDateTime(@Param("from") LocalDateTime from);
+    List<Screening> findAllByStartDateTimeAfter(LocalDateTime from);
 
     @Query("SELECT s FROM Screening s WHERE s.room = :room AND (( s.startDateTime >= :from AND s.startDateTime <= :to ) OR ( s.endDateTime >= :from AND s.endDateTime <= :to ) OR (:from >= s.startDateTime AND :to <= s.endDateTime))")
     List<Screening> findAllByRoomAndTime(@Param("room") Room room,
                                          @Param("from") LocalDateTime from,
                                          @Param("to") LocalDateTime to);
+
+    List<Screening> findAllByMovieAndStartDateTimeAfter(Movie movie, LocalDateTime from);
 
     boolean existsByMovie(Movie movie);
 

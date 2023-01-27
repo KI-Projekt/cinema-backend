@@ -8,6 +8,7 @@ import de.cinetastisch.backend.dto.MovieRequestDto;
 import de.cinetastisch.backend.dto.MovieResponseDto;
 import de.cinetastisch.backend.dto.ScreeningResponseDto;
 import de.cinetastisch.backend.enumeration.MovieRating;
+import de.cinetastisch.backend.enumeration.MovieStatus;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.service.MovieService;
@@ -39,13 +40,16 @@ class MovieControllerTest {
     @Test
     void getAllsuccessfull() {
 
-        Movie movie1 = new Movie("Test", "2000", "scr/test", MovieRating.G, "200", "Action", "Nora", "klemp", "Kevin", "jsdflhjkfasdlhjkjflasdklkjfsda", "www.ded.de", "2/20", "2/20", "200");
-        Movie movie2 = new Movie("Test", "2000", "scr/test", MovieRating.G, "200", "Action", "Nora", "klemp", "Kevin", "jsdflhjkfasdlhjkjflasdklkjfsda", "www.ded.de", "2/20", "2/20", "200");
-        List<Movie> expected = List.of(movie1, movie2);
+//        Movie movie1 = new Movie("Test", "2000", "scr/test", MovieRating.G, "200", "Action", "Nora", "klemp", "Kevin", "jsdflhjkfasdlhjkjflasdklkjfsda", "www.ded.de", "2/20", "2/20", "200");
+//        Movie movie2 = new Movie("Test", "2000", "scr/test", MovieRating.G, "200", "Action", "Nora", "klemp", "Kevin", "jsdflhjkfasdlhjkjflasdklkjfsda", "www.ded.de", "2/20", "2/20", "200");
+
+        MovieResponseDto movie1 = new MovieResponseDto(1L, "Test", "2000", "scr/test", MovieRating.G.toString(), "200", "Action", "Nora", "klemp", "Kevin", "jsdflhjkfasdlhjkjflasdklkjfsda", "www.ded.de", "2/20", "2/20", "200", MovieStatus.IN_CATALOG);
+        MovieResponseDto movie2 = new MovieResponseDto(2L, "Test", "2000", "scr/test", MovieRating.G.toString(), "200", "Action", "Nora", "klemp", "Kevin", "jsdflhjkfasdlhjkjflasdklkjfsda", "www.ded.de", "2/20", "2/20", "200", MovieStatus.IN_CATALOG);
+        List<MovieResponseDto> expected = List.of(movie1, movie2);
 
         when(movieService.getAllMovies("Test", "", "", "")).thenReturn(expected);
 
-        ResponseEntity<List<Movie>> response = movieController.getAll("Test", "", "", "");
+        ResponseEntity<List<MovieResponseDto>> response = movieController.getAll("Test", "", "", "");
         assertAll(
                 () -> assertEquals(response.getBody(), expected),
                 () -> assertEquals(response.getStatusCode(), HttpStatus.OK)
@@ -54,12 +58,13 @@ class MovieControllerTest {
 
     @Test
     void getOne() {
-        Movie movie1 = new Movie("Test", "2000", "scr/test", MovieRating.G, "200", "Action", "Nora", "klemp", "Kevin", "jsdflhjkfasdlhjkjflasdklkjfsda", "www.ded.de", "2/20", "2/20", "200");
+//        Movie movie1 = new Movie("Test", "2000", "scr/test", MovieRating.G, "200", "Action", "Nora", "klemp", "Kevin", "jsdflhjkfasdlhjkjflasdklkjfsda", "www.ded.de", "2/20", "2/20", "200");
+        MovieResponseDto movie1 = new MovieResponseDto(1L, "Test", "2000", "scr/test", MovieRating.G.toString(), "200", "Action", "Nora", "klemp", "Kevin", "jsdflhjkfasdlhjkjflasdklkjfsda", "www.ded.de", "2/20", "2/20", "200", MovieStatus.IN_CATALOG);
 
 
         when(movieService.getMovie((long)1.222)).thenReturn(movie1);
 
-        ResponseEntity<Movie> response = movieController.getOne((long)1.222);
+        ResponseEntity<MovieResponseDto> response = movieController.getOne((long)1.222);
         assertAll(
                 () -> assertEquals(response.getBody(), movie1),
                 () -> assertEquals(response.getStatusCode(), HttpStatus.OK)
@@ -71,7 +76,8 @@ class MovieControllerTest {
     void addOne() {
         MovieResponseDto movieResponseDto = new MovieResponseDto(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         MovieRequestDto movieRequestDto = new MovieRequestDto(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-        Movie movie = new Movie("Avengers Endgame","2019","/src/datei.png", MovieRating.PG13,"120","Action","Anthony Russo","Christopher Markus","Chris Evens","Viel BumBum","www.youtube.com/Endgame","1234IMdb","27/10","1222");
+//        Movie movie = new Movie("Avengers Endgame","2019","/src/datei.png", MovieRating.PG13,"120","Action","Anthony Russo","Christopher Markus","Chris Evens","Viel BumBum","www.youtube.com/Endgame","1234IMdb","27/10","1222");
+        MovieResponseDto movie = new MovieResponseDto(1L, "Avengers Endgame","2019","/src/datei.png", MovieRating.PG13.toString(),"120","Action","Anthony Russo","Christopher Markus","Chris Evens","Viel BumBum","www.youtube.com/Endgame","1234IMdb","27/10","1222", MovieStatus.IN_CATALOG);
 
         when(movieService.addMovieByParameters(movieRequestDto,"AA123","Hangover")).thenReturn(movie);
         ResponseEntity<?> response = movieController.addOne(movieRequestDto,"AA123","Hangover");
@@ -85,7 +91,9 @@ class MovieControllerTest {
     void replaceOne() {
         MovieResponseDto movieResponseDto = new MovieResponseDto(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         MovieRequestDto movieRequestDto = new MovieRequestDto(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-        Movie movie = new Movie("Avengers Endgame","2019","/src/datei.png", MovieRating.PG13,"120","Action","Anthony Russo","Christopher Markus","Chris Evens","Viel BumBum","www.youtube.com/Endgame","1234IMdb","27/10","1222");
+//        Movie movie = new Movie("Avengers Endgame","2019","/src/datei.png", MovieRating.PG13,"120","Action","Anthony Russo","Christopher Markus","Chris Evens","Viel BumBum","www.youtube.com/Endgame","1234IMdb","27/10","1222");
+        MovieResponseDto movie = new MovieResponseDto(1L, "Avengers Endgame","2019","/src/datei.png", MovieRating.PG13.toString(),"120","Action","Anthony Russo","Christopher Markus","Chris Evens","Viel BumBum","www.youtube.com/Endgame","1234IMdb","27/10","1222", MovieStatus.IN_CATALOG);
+
 
         when(movieService.replaceMovie((long)1.2, movieRequestDto)).thenReturn(movie);
 
@@ -112,15 +120,17 @@ class MovieControllerTest {
         assertEquals(HttpStatus.OK,response.getStatusCode());
     }
 
-    @Test
-    void getScreenings() {
-        Screening firstScreening = new Screening(null,null,null,null,null);
-        Screening secoundScreening = new Screening(null,null,null,null,null);
-        List<Screening> screeningList = List.of(firstScreening,secoundScreening);
-        when(movieService.getAllScreeningsByMovie((long)1.2)).thenReturn(screeningList);
 
-        ResponseEntity<?> response = movieController.getScreenings((long)1.2);
-        assertEquals(screeningList, response.getBody());
-        assertEquals(HttpStatus.OK,response.getStatusCode());
-    }
+    // Deprecated! Replaced by GET /api/screenings?movie=...
+//    @Test
+//    void getScreenings() {
+//        Screening firstScreening = new Screening(null,null,null,null,null);
+//        Screening secoundScreening = new Screening(null,null,null,null,null);
+//        List<ScreeningResponseDto> screeningList = List.of(firstScreening,secoundScreening);
+//        when(movieService.getAllScreeningsByMovie((long)1.2)).thenReturn(screeningList);
+//
+//        ResponseEntity<?> response = movieController.getScreenings((long)1.2);
+//        assertEquals(screeningList, response.getBody());
+//        assertEquals(HttpStatus.OK,response.getStatusCode());
+//    }
 }

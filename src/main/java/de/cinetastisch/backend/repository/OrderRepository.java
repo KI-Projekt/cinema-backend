@@ -2,15 +2,11 @@ package de.cinetastisch.backend.repository;
 
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.model.Order;
-import de.cinetastisch.backend.model.Ticket;
 import de.cinetastisch.backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -18,7 +14,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 //    Double totalCost();
 
     List<Order> findAllByUser(User user);
-    List<Order> findAllByOrderStatus(OrderStatus orderStatus);
-    List<Order> findAllByUserAndOrderStatus(User user, OrderStatus orderStatus);
+    List<Order> findAllByStatus(OrderStatus orderStatus);
+    List<Order> findAllByUserAndStatus(User user, OrderStatus status);
+    List<Order> findAllBySessionAndStatus(String session, OrderStatus status);
 
+    Order findByUserAndStatus(User user, OrderStatus status);
+    Order findBySessionAndStatus(String session, OrderStatus status);
+
+
+    boolean existsByUserAndStatus(User user, OrderStatus status);
+    boolean existsBySessionAndStatus(String session, OrderStatus status);
 }

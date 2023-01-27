@@ -31,4 +31,8 @@ public enum MovieRating {
     public static MovieRating valueOfLabel(String label) {
         return BY_LABEL.get(label);
     }
+
+    public static Object[] getLabels(){
+        return BY_LABEL.keySet().toArray();
+    }
 }

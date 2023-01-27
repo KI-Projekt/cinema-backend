@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public record ScreeningRequestDto(
         @NotNull @NotEmpty Long movieId,
         @NotNull @NotEmpty Long roomId,
-        @NotNull @NotEmpty LocalDateTime startDateTime,
+        LocalDateTime startDateTime,
         LocalDateTime endDateTime,
         @JsonProperty(defaultValue = "TICKET_SALE_OPEN") String status
 ) {}

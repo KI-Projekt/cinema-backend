@@ -4,6 +4,7 @@ import de.cinetastisch.backend.enumeration.MovieRating;
 import de.cinetastisch.backend.enumeration.MovieStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
@@ -30,7 +31,7 @@ public class Movie {
     private @NonNull @Column(columnDefinition = "TEXT") String title;
     private String releaseYear;
     private String posterImage;
-    private MovieRating rated;
+    private @NonNull @NotNull MovieRating rated = MovieRating.NA;
     private String runtime;
     private String genre;
     private String director;

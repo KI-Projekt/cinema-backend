@@ -1,21 +1,22 @@
 package de.cinetastisch.backend.repository;
 
-import de.cinetastisch.backend.model.Order;
-import de.cinetastisch.backend.model.Screening;
-import de.cinetastisch.backend.model.Seat;
-import de.cinetastisch.backend.model.Ticket;
+import de.cinetastisch.backend.enumeration.OrderStatus;
+import de.cinetastisch.backend.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findAllByOrder(Order order);
     List<Ticket> findAllByScreening(Screening screening);
-
-    Optional<Ticket> findByScreeningAndSeat(Screening screening, Seat seat);
+    List<Ticket> findAllByOrderExpiresAtIsLessThanEqual(LocalDateTime now);
 
     boolean existsByScreeningAndSeat(Screening screening, Seat seat);
+
+    void deleteAllByOrderStatus(OrderStatus status);
+    void deleteAllByOrderExpiresAtIsLessThanEqual(LocalDateTime now);
+    void deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus status, LocalDateTime now);
 }

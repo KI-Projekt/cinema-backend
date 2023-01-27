@@ -1,9 +1,15 @@
 package de.cinetastisch.backend.model;
 
+import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.TicketCategory;
+import de.cinetastisch.backend.enumeration.TicketType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
+import java.time.LocalDateTime;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -15,6 +21,8 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "Ticket")
 @Table(name = "ticket")
+@SQLDelete(sql = "UPDATE ticket SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class Ticket {
 
     @Schema(accessMode = READ_ONLY)
@@ -23,7 +31,7 @@ public class Ticket {
     @Column(name = "id")
     private @Id Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "orders_id", foreignKey = @ForeignKey(name = "ticket_orders_id_fk"))
     private Order order;
 
@@ -38,10 +46,43 @@ public class Ticket {
     @Enumerated(EnumType.STRING)
     private TicketCategory category = TicketCategory.ADULT;
 
+    @Enumerated(EnumType.STRING)
+    private TicketType type = TicketType.RESERVATION;
+
+    private final LocalDateTime createdAt = LocalDateTime.now();
+//    private final LocalDateTime expiresAt = this.order.getExpiresAt();
+
+    private boolean deleted = Boolean.FALSE;
+
+    public Ticket(Order order, Screening screening, Seat seat) {
+        this.order = order;
+        this.screening = screening;
+        this.seat = seat;
+    }
+
     public Ticket(Order order, Screening screening, Seat seat, TicketCategory category) {
         this.order = order;
         this.screening = screening;
         this.seat = seat;
         this.category = category;
+    }
+
+    public Ticket(Order order, Screening screening, Seat seat, TicketCategory category, TicketType type) {
+        this.order = order;
+        this.screening = screening;
+        this.seat = seat;
+        this.category = category;
+        this.type = type;
+    }
+
+
+    @PrePersist // benefit of this would be marginal since usually you do not deal much with entity after persisting
+    @PostLoad
+    private void updateStatus() {
+        if (!this.deleted && this.order != null && this.order.getStatus() == OrderStatus.CANCELLED){
+            System.out.println(this);
+            this.deleted = true;
+            System.out.println(this);
+        }
     }
 }

@@ -1,7 +1,7 @@
 package de.cinetastisch.backend.dto;
 
-public record MovieSlimDto(
+public record SeatPutRequestDto(
         Long id,
-        String title
+        String seatCategory
 ) {
 }

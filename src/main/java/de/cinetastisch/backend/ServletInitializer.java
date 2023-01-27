@@ -11,3 +11,11 @@ public class ServletInitializer extends SpringBootServletInitializer {
 	}
 
 }
+//
+//public class ServletInitializer extends AbstractHttpSessionApplicationInitializer {
+//
+//	public ServletInitializer() {
+//		super(Config.class);
+//	}
+//
+//}

@@ -1,9 +1,12 @@
 package de.cinetastisch.backend.dto;
 
+import java.util.List;
+
 public record RoomResponseDto(
         Long id,
         String name,
-        String hasThreeD,
-        String hasDolbyAtmos
+        Boolean hasThreeD,
+        Boolean hasDolbyAtmos,
+        List<RoomSeatRowDto> rows
 ) {
 }

@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.dto;
 
+import de.cinetastisch.backend.enumeration.MovieRating;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
@@ -8,6 +9,7 @@ public record MovieRequestDto(
         String title,
         String releaseYear,
         String posterImage,
+        @NotBlank(message = "Movie needs a rating.")
         String rated,
         String runtime,
         String genre,

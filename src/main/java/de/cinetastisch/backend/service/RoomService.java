@@ -1,10 +1,8 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.dto.RoomRequestDto;
-import de.cinetastisch.backend.dto.RoomResponseDto;
+import de.cinetastisch.backend.dto.*;
 import de.cinetastisch.backend.enumeration.SeatCategory;
 import de.cinetastisch.backend.exception.NoResourcesException;
-import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.mapper.RoomMapper;
 import de.cinetastisch.backend.model.Room;
@@ -15,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -24,55 +23,68 @@ public class RoomService {
     private final SeatRepository seatRepository;
     private final RoomMapper mapper;
 
-    public List<RoomResponseDto> getAllRooms(){
+    public List<RoomSlimResponseDto> getAllRooms(){
         List<Room> rooms = roomRepository.findAll();
         if (rooms.isEmpty()) {
             throw new NoResourcesException("Empty");
         }
-        return mapper.entityToDto(rooms);
+        return mapper.dtoToSlimDto(mapper.entityToDto(rooms));
     }
 
     public RoomResponseDto getRoom(Long id){
-        return mapper.entityToDto(roomRepository.getReferenceById(id));
-    }
-
-    public Room getRoomEntity(Long id){
-        return roomRepository.getReferenceById(id);
+        Room room = roomRepository.getReferenceById(id);
+        return mapper.entityToDto(room);
     }
 
     @Transactional
-    public RoomResponseDto addRoom(RoomRequestDto request, Integer rows, Integer columns){
-        Room newRoom = mapper.dtoToEntity(request);
-        if(roomRepository.existsByNameIgnoreCase(newRoom.getName())){
-            throw new ResourceAlreadyExistsException("Name is already taken");
-        }
-
-        roomRepository.save(newRoom);
-
-        System.out.println("Null as id? " + newRoom);
-
-        if(rows != null || columns != null){
-            if(rows < 0 || columns < 0 ){
-                throw new IllegalArgumentException("Number should be positive");
+    public RoomResponseDto addRoom(RoomRequestDto request){
+        Room newRoom = roomRepository.save(mapper.dtoToEntity(request));
+        if(request.numberOfRows() != null && request.numberOfColumns() != null){
+            if(request.numberOfRows() < 0 || request.numberOfColumns() < 0 ){
+                throw new IllegalArgumentException("Number must be positive");
             }
 
-            for(int r = 1; r <= rows; r++){
-                for(int c = 1; c <= columns; c++){
-                    seatRepository.save(new Seat(newRoom, r, c, SeatCategory.NORMAL));
+            List<Seat> seats = new ArrayList<>();
+
+            for(int r = 1; r <= request.numberOfRows(); r++){
+                for(int c = 1; c <= request.numberOfColumns(); c++){
+                    seats.add(new Seat(newRoom, r, c, SeatCategory.NORMAL));
                 }
             }
+
+            newRoom.setSeats(seats);
+            roomRepository.save(newRoom);
         }
         return mapper.entityToDto(newRoom);
     }
 
-    public RoomResponseDto replaceRoom(Long id, RoomRequestDto request) {
-        Room newRoom = mapper.dtoToEntity(request);
-        newRoom.setId(id);
-        Room oldRoom = roomRepository.getReferenceById(id);
-        if(roomRepository.existsByNameIgnoreCase(newRoom.getName()) && !oldRoom.getName().equals(newRoom.getName())){
-            throw new ResourceAlreadyExistsException("Name is already taken by another room.");
+    @Transactional
+    public RoomResponseDto replaceRoom(Long id, RoomPutRequestDto request) {
+        if(id != request.id()){
+            throw new IllegalArgumentException("Different ids given");
         }
-        return mapper.entityToDto(roomRepository.save(newRoom));
+
+        Room oldRoom = roomRepository.getReferenceById(id);
+        if(request.name() != null){
+            oldRoom.setName(request.name());
+        }
+        if(request.hasThreeD() != null){
+            oldRoom.setHasThreeD(Boolean.getBoolean(request.hasThreeD()));
+        }
+        if(request.hasDolbyAtmos() != null){
+            oldRoom.setHasThreeD(Boolean.getBoolean(request.hasDolbyAtmos()));
+        }
+
+        if(request.seats().size() > 0){
+            List<Seat> changedSeats = new ArrayList<>();
+            for(SeatPutRequestDto seatRequest : request.seats()){
+                Seat seat = seatRepository.getReferenceById(seatRequest.id());
+                seat.setCategory(SeatCategory.valueOf(seatRequest.seatCategory()));
+                changedSeats.add(seat);
+            }
+            seatRepository.saveAll(changedSeats);
+        }
+        return mapper.entityToDto(roomRepository.save(oldRoom));
     }
 
     public void deleteRoom(Long id){

@@ -4,6 +4,7 @@ import de.cinetastisch.backend.enumeration.ScreeningStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -14,9 +15,10 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
 @Table(name = "screening", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+@SQLDelete(sql = "UPDATE screening SET status = 'CANCELLED' WHERE id=?")
 public class Screening {
 
     @Schema(accessMode = READ_ONLY)
@@ -40,6 +42,16 @@ public class Screening {
 
     public Screening(Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime,
                      ScreeningStatus status) {
+        this.movie = movie;
+        this.room = room;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.status = status;
+    }
+
+    public Screening(Long id, Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime,
+                     ScreeningStatus status) {
+        this.id = id;
         this.movie = movie;
         this.room = room;
         this.startDateTime = startDateTime;
