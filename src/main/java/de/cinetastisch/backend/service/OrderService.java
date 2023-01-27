@@ -3,6 +3,7 @@ package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.dto.FaresDto;
 import de.cinetastisch.backend.dto.OrderResponseDto;
+import de.cinetastisch.backend.enumeration.OrderPaymentMethod;
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.TicketCategory;
 import de.cinetastisch.backend.enumeration.TicketType;
@@ -11,11 +12,11 @@ import de.cinetastisch.backend.mapper.OrderMapper;
 import de.cinetastisch.backend.mapper.ReferenceMapper;
 import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.*;
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,7 +26,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final ReferenceMapper referenceMapper;
-    private final TicketRepository ticketRepository;
 
 
     public List<OrderResponseDto> getAllOrders(Long userId){
@@ -42,21 +42,14 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponseDto removeTicketOrder(Long orderId, Long ticketId){
-        ticketRepository.deleteById(ticketId);
-        return orderMapper.entityToDto(orderRepository.getReferenceById(orderId));
-    }
-
-    @Transactional
     public OrderResponseDto selectFares(Long id, FaresDto fares) {
         Order order = orderRepository.getReferenceById(id);
 
         int kids = fares.kidsCount();
-        int students = fares.studentCounts();
+        int students = fares.studentCount();
         int adults = fares.adultsCount();
         int pensioners = fares.pensionerCount();
 
-        ticketRepository.deleteAllByOrderStatus(OrderStatus.CANCELLED);
         if(order.getStatus() != OrderStatus.IN_PROGRESS){
             throw new ResourceAlreadyExistsException("Order is already " + order.getStatus());
         }
@@ -80,6 +73,30 @@ public class OrderService {
                 pensioners--;
             }
 
+        }
+        orderRepository.save(order);
+        return orderMapper.entityToDto(order);
+    }
+
+    public OrderResponseDto selectPaymentMethod(Long id, String method){
+        Order order = orderRepository.getReferenceById(id);
+
+        if(order.getStatus() != OrderStatus.IN_PROGRESS){
+            throw new IllegalArgumentException("Order cannot be paid because it's " + order.getStatus());
+        }
+
+        OrderPaymentMethod newMethod = OrderPaymentMethod.valueOf(method);
+        OrderPaymentMethod oldMethod = order.getPaymentMethod();
+
+        if(newMethod == oldMethod){
+            throw new ResourceAlreadyExistsException("Payment method of order " + id + " is already set to " + oldMethod);
+        }
+        order.setPaymentMethod(newMethod);
+
+        if(newMethod == OrderPaymentMethod.CASH){
+            order.setExpiresAt(order.getCreatedAt().plusMinutes(20));
+        } else {
+            order.setExpiresAt(order.getCreatedAt().plusMinutes(1));
         }
         orderRepository.save(order);
         return orderMapper.entityToDto(order);
@@ -111,7 +128,7 @@ public class OrderService {
         }
 
         orderToCancel.setStatus(OrderStatus.CANCELLED);
-        ticketRepository.deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus.CANCELLED, LocalDateTime.now());
+
         orderRepository.save(orderToCancel);
         return orderMapper.entityToDto(orderToCancel);
     }

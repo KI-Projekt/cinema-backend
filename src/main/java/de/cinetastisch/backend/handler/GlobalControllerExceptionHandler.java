@@ -15,13 +15,16 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 @Hidden
 @RestControllerAdvice
 public class GlobalControllerExceptionHandler {
 
-    @ExceptionHandler({ResourceNotFoundException.class, EntityNotFoundException.class, EmptyResultDataAccessException.class})
+    @ExceptionHandler({
+            ResourceNotFoundException.class,
+            EntityNotFoundException.class,
+            EmptyResultDataAccessException.class
+    })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessage handleResourceNotFound(RuntimeException ex, WebRequest webRequest){
         return new ErrorMessage(

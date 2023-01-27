@@ -21,9 +21,6 @@ import java.util.List;
 @RequestMapping("api/movies")
 public class MovieController {
 
-    private final String exampleJson = "{\n  \"id\": 1,\n  \"title\": \"Guardians of the Galaxy\",\n  \"releaseYear\": \"2014\",\n  \"posterImage\": \"https://m.media-amazon.com/images/M/MV5BZTkwZjU3MTctMGExMi00YjU5LTgwMDMtOWNkZDRlZjQ4NmZhXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg\",\n  \"rated\": \"PG-13\",\n  \"runtime\": \"121 min\",\n  \"genre\": \"Action, Adventure, Comedy\",\n  \"actors\": \"Chris Pratt, Vin Diesel, Bradley Cooper\",\n  \"plot\": \"A group of intergalactic criminals must pull together to stop a fanatical warrior with plans to purge the universe.\",\n  \"trailer\": \"TODO\",\n  \"imdbId\": \"tt2015381\",\n  \"imdbRating\": \"8.0\",\n  \"imdbRatingCount\": \"1,180,325\"\n}";
-    private final String exampleJsonNoId = "{\n  \"title\": \"Guardians of the Galaxy\",\n  \"releaseYear\": \"2014\",\n  \"posterImage\": \"https://m.media-amazon.com/images/M/MV5BZTkwZjU3MTctMGExMi00YjU5LTgwMDMtOWNkZDRlZjQ4NmZhXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg\",\n  \"rated\": \"PG-13\",\n  \"runtime\": \"121 min\",\n  \"genre\": \"Action, Adventure, Comedy\",\n  \"actors\": \"Chris Pratt, Vin Diesel, Bradley Cooper\",\n  \"plot\": \"A group of intergalactic criminals must pull together to stop a fanatical warrior with plans to purge the universe.\",\n  \"trailer\": \"TODO\",\n  \"imdbId\": \"tt2015381\",\n  \"imdbRating\": \"8.0\",\n  \"imdbRatingCount\": \"1,180,325\"\n}";
-
     private final MovieService movieService;
 
     public MovieController(MovieService movieService) {
@@ -58,9 +55,9 @@ public class MovieController {
     )
     @GetMapping
     public ResponseEntity<List<MovieResponseDto>> getAll(@RequestParam(value = "title", required = false) String title,
-                                              @RequestParam(value = "genre", required = false) String genre,
-                                              @RequestParam(value = "imdbId", required = false) String imdbId,
-                                              @RequestParam(value = "rated", required = false) String rated) {
+                                                         @RequestParam(value = "genre", required = false) String genre,
+                                                         @RequestParam(value = "imdbId", required = false) String imdbId,
+                                                         @RequestParam(value = "rated", required = false) String rated) {
         return new ResponseEntity<>(movieService.getAllMovies(title, genre, imdbId, rated), HttpStatus.OK);
     }
 
@@ -187,7 +184,7 @@ public class MovieController {
     )
     @PutMapping("/{id}")
     public ResponseEntity<MovieResponseDto> replaceOne(@PathVariable Long id,
-                                            @RequestBody MovieRequestDto movie){
+                                                       @RequestBody MovieRequestDto movie){
         return ResponseEntity.ok(movieService.replaceMovie(id, movie));
     }
 

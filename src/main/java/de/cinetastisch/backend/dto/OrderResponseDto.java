@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.dto;
 
+import de.cinetastisch.backend.enumeration.OrderPaymentMethod;
 import de.cinetastisch.backend.enumeration.OrderStatus;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ public record OrderResponseDto(
         String session,
         OrderStatus orderStatus,
         Double total,
+        OrderPaymentMethod paymentMethod,
         LocalDateTime createdAt,
         LocalDateTime expiresAt,
         List<TicketResponseDto> tickets

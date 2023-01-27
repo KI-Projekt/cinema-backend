@@ -1,9 +1,8 @@
 package de.cinetastisch.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import de.cinetastisch.backend.enumeration.OrderPaymentMethod;
 import de.cinetastisch.backend.enumeration.OrderStatus;
-import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Getter
@@ -23,35 +21,30 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Table(name = "orders")
 public class Order {
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Schema(accessMode = READ_ONLY)
     @SequenceGenerator(name = "orders_sequence", sequenceName = "orders_sequence", allocationSize = 1)
     @GeneratedValue(strategy = SEQUENCE, generator = "orders_sequence")
     @Column(name = "id")
     private @Id Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id",foreignKey = @ForeignKey(name = "order_user_id_fk"))
+    @Nullable
     private User user;
 
     private String session;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Column(name = "order_status",nullable = false)
+    @Column(name = "order_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.IN_PROGRESS;
 
     private Double total = 0.00;
+    @Column(name = "payment_method", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OrderPaymentMethod paymentMethod = OrderPaymentMethod.PAYPAL;
     private final LocalDateTime createdAt = LocalDateTime.now();
-    private final LocalDateTime expiresAt = this.createdAt.plusMinutes(1);
+    private LocalDateTime expiresAt = this.createdAt.plusMinutes(5);
 
-    @OneToMany(
-            mappedBy = "order",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    @JsonIgnore
+    @OneToMany(mappedBy = "order")
     private List<Ticket> tickets = new ArrayList<>();
 
     public Order(User user) {
@@ -77,38 +70,12 @@ public class Order {
         return Objects.hash(id, user, total, status, createdAt, tickets);
     }
 
-//    public Double getTotal() {
-//        double newTotal = 0.0;
-//        if(this.status == OrderStatus.IN_PROGRESS){
-//            for(Ticket t : this.tickets){
-//                newTotal = switch (t.getCategory()) {
-//                    case KID        -> newTotal + 8;
-//                    case STUDENT    -> newTotal + 10;
-//                    case ADULT      -> newTotal + 12;
-//                    case PENSIONER  -> newTotal + 11;
-//                };
-//            }
-//            this.total = newTotal;
-//        }
-//
-//        return total;
-//    }
 
-//    public OrderStatus getStatus() {
-//        if(this.status == OrderStatus.IN_PROGRESS && LocalDateTime.now().isAfter(this.expiresAt)){
-//            this.status = OrderStatus.CANCELLED;
-//        }
-//        return status;
-//    }
 
     @PrePersist // benefit of this would be marginal since usually you do not deal much with entity after persisting
     @PostLoad
-    private void updateStatusAndTotal() {
-        if (this.status == OrderStatus.IN_PROGRESS && expiresAt.isBefore(LocalDateTime.now())){
-            this.status = OrderStatus.CANCELLED;
-        }
-
-        if(this.status == OrderStatus.IN_PROGRESS){
+    private void updateTotalAndStatus() {
+        if (this.status == OrderStatus.IN_PROGRESS){
             double newTotal = 0.0;
             for(Ticket t : this.tickets){
                 newTotal = switch (t.getCategory()) {
@@ -119,6 +86,13 @@ public class Order {
                 };
             }
             this.total = newTotal;
+
+            if(expiresAt.isBefore(LocalDateTime.now())){
+                this.status = OrderStatus.CANCELLED;
+                this.tickets.forEach(ticket -> ticket.setDeleted(true));
+                this.tickets = new ArrayList<>();
+            }
+
         }
     }
 }

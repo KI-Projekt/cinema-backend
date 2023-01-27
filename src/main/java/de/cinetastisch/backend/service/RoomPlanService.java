@@ -32,8 +32,8 @@ public class RoomPlanService {
         Room room = screening.getRoom();
         List<Seat> seats = room.getSeats();
 
-        orderRepository.findAll();
-        ticketRepository.deleteAllByOrderStatus(OrderStatus.CANCELLED);
+        orderRepository.findAllByStatus(OrderStatus.IN_PROGRESS);
+        ticketRepository.findAll();
         List<Ticket> tickets = ticketRepository.findAllByScreening(screening);
         tickets = tickets.stream()
                          .filter(ticket -> ticket.getOrder().getStatus() != OrderStatus.CANCELLED)

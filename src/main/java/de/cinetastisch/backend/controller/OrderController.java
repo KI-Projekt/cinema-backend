@@ -58,4 +58,12 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> selectFares(@PathVariable("id") Long id, @RequestBody FaresDto fares){
         return ResponseEntity.ok(orderService.selectFares(id, fares));
     }
+
+    @Operation(
+            tags = {"Orders"}
+    )
+    @PutMapping("orders/{id}/selectPaymentMethod")
+    public ResponseEntity<OrderResponseDto> selectPaymentMethod(@PathVariable("id") Long id, @RequestParam(value = "method") String paymentMethod){
+        return ResponseEntity.ok(orderService.selectPaymentMethod(id, paymentMethod));
+    }
 }

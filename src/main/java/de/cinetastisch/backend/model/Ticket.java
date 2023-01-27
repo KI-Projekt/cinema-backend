@@ -31,15 +31,15 @@ public class Ticket {
     @Column(name = "id")
     private @Id Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "orders_id", foreignKey = @ForeignKey(name = "ticket_orders_id_fk"))
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "screening_id", foreignKey = @ForeignKey(name = "ticket_screening_id_fk"))
     private Screening screening;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "seat_id", foreignKey = @ForeignKey(name = "ticket_seat_id_fk"))
     private Seat seat;
 
@@ -82,6 +82,7 @@ public class Ticket {
         if (!this.deleted && this.order != null && this.order.getStatus() == OrderStatus.CANCELLED){
             System.out.println(this);
             this.deleted = true;
+            System.out.println(this);
         }
     }
 }

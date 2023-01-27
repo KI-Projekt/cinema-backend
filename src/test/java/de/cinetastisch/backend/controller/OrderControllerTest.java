@@ -3,6 +3,7 @@ package de.cinetastisch.backend.controller;
 import de.cinetastisch.backend.dto.OrderResponseDto;
 import de.cinetastisch.backend.dto.UserResponseDto;
 import de.cinetastisch.backend.enumeration.MovieRating;
+import de.cinetastisch.backend.enumeration.OrderPaymentMethod;
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Order;
@@ -32,8 +33,8 @@ class OrderControllerTest {
     @Test
     void getAll() {
         UserResponseDto userResponseDto = new UserResponseDto((long)1.222,"Anthon", "Maier","anthon.maier@test.de");
-        OrderResponseDto firstOrderResponseDto = new OrderResponseDto((long)1.222, userResponseDto, "session1",OrderStatus.IN_PROGRESS, 1222.0, LocalDateTime.now(), LocalDateTime.now(), null);
-        OrderResponseDto secondOrderResponseDto = new OrderResponseDto((long)1.222,userResponseDto, "session1",OrderStatus.IN_PROGRESS,1222.0, LocalDateTime.now(), LocalDateTime.now(), null);
+        OrderResponseDto firstOrderResponseDto = new OrderResponseDto((long)1.222, userResponseDto, "session1", OrderStatus.IN_PROGRESS, 1222.0, OrderPaymentMethod.CASH, LocalDateTime.now(), LocalDateTime.now(), null);
+        OrderResponseDto secondOrderResponseDto = new OrderResponseDto((long)1.222,userResponseDto, "session1", OrderStatus.IN_PROGRESS, 1222.0, OrderPaymentMethod.CASH, LocalDateTime.now(),  LocalDateTime.now(),null);
         List<OrderResponseDto> expected = List.of(firstOrderResponseDto, secondOrderResponseDto);
 
         when(orderService.getAllOrders((long)1.2222)).thenReturn(expected);

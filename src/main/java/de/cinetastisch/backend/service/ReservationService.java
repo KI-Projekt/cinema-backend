@@ -41,8 +41,8 @@ public class ReservationService {
 
     @Transactional
     public OrderResponseDto addReservation(ReservationRequestDto reservation, HttpSession session){
-        ticketRepository.deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus.CANCELLED, LocalDateTime.now());
         System.out.println(session.getId());
+        orderRepository.findAllByStatus(OrderStatus.IN_PROGRESS);
 
 
         Seat seat = seatRepository.getReferenceById(reservation.seatId());
@@ -66,6 +66,7 @@ public class ReservationService {
 //            order = new Order(session.getId());
 //        }
         if(reservation.userId() != null){
+            System.out.println("USER CREATION");
             User user = userRepository.getReferenceById(reservation.userId());
             if(orderRepository.existsByUserAndStatus(user, OrderStatus.IN_PROGRESS)){
                 order = orderRepository.findByUserAndStatus(user, OrderStatus.IN_PROGRESS);
@@ -73,13 +74,19 @@ public class ReservationService {
                 order = new Order(user);
             }
         } else {
-            order = orderRepository.existsBySessionAndStatus(session.getId(), OrderStatus.IN_PROGRESS) ? orderRepository.findBySessionAndStatus(
-                    session.getId(), OrderStatus.IN_PROGRESS) : new Order(session.getId());
+            System.out.println("SESSION CREATION");
+            if(orderRepository.existsBySessionAndStatus(session.getId(), OrderStatus.IN_PROGRESS)){
+                order = orderRepository.findBySessionAndStatus(session.getId(), OrderStatus.IN_PROGRESS);
+            } else {
+                order = new Order(session.getId());
+            }
         }
+
 
         ticket = new Ticket(order, screening, seat);
         order.getTickets().add(ticket);
         ticketRepository.save(ticket);
+        orderRepository.save(order);
         return orderMapper.entityToDto(orderRepository.getReferenceById(order.getId()));
     }
 
