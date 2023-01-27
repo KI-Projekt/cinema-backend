@@ -3,10 +3,12 @@ package de.cinetastisch.backend.service;
 import de.cinetastisch.backend.dto.ScreeningSeatDto;
 import de.cinetastisch.backend.dto.ScreeningSeatRowDto;
 import de.cinetastisch.backend.dto.SeatResponseDto;
+import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.model.Seat;
 import de.cinetastisch.backend.model.Ticket;
+import de.cinetastisch.backend.repository.OrderRepository;
 import de.cinetastisch.backend.repository.TicketRepository;
 import lombok.AllArgsConstructor;
 import org.mapstruct.Named;
@@ -23,12 +25,20 @@ import java.util.stream.Collectors;
 public class RoomPlanService {
 
     private final TicketRepository ticketRepository;
+    private final OrderRepository orderRepository;
 
     @Named("generateSeatingPlan")
     public List<ScreeningSeatRowDto> getSeatingPlan(Screening screening){
         Room room = screening.getRoom();
         List<Seat> seats = room.getSeats();
+
+        orderRepository.findAll();
+        ticketRepository.deleteAllByOrderStatus(OrderStatus.CANCELLED);
         List<Ticket> tickets = ticketRepository.findAllByScreening(screening);
+        tickets = tickets.stream()
+                         .filter(ticket -> ticket.getOrder().getStatus() != OrderStatus.CANCELLED)
+                         .filter(ticket -> ticket.getOrder().getStatus() != OrderStatus.REFUNDED)
+                         .toList();
 
         List<ScreeningSeatRowDto> roomPlan = new ArrayList<>();
 

@@ -29,7 +29,6 @@ public class OrderService {
 
 
     public List<OrderResponseDto> getAllOrders(Long userId){
-        ticketRepository.deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus.CANCELLED, LocalDateTime.now());
         if(userId != null){
             User user = referenceMapper.map(userId, User.class);
             return orderMapper.entityToDto(orderRepository.findAllByUser(user));
@@ -38,7 +37,6 @@ public class OrderService {
     }
 
     public OrderResponseDto getOrder(Long id){
-        ticketRepository.deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus.CANCELLED, LocalDateTime.now());
         Order order = orderRepository.getReferenceById(id);
         return orderMapper.entityToDto(order);
     }
@@ -46,8 +44,6 @@ public class OrderService {
     @Transactional
     public OrderResponseDto removeTicketOrder(Long orderId, Long ticketId){
         ticketRepository.deleteById(ticketId);
-        ticketRepository.deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus.CANCELLED, LocalDateTime.now());
-
         return orderMapper.entityToDto(orderRepository.getReferenceById(orderId));
     }
 
@@ -91,7 +87,6 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDto payOrder(Long id){
-        ticketRepository.deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus.CANCELLED, LocalDateTime.now());
         Order paidOrder = orderRepository.getReferenceById(id);
 
         if(paidOrder.getStatus() != OrderStatus.IN_PROGRESS){

@@ -44,7 +44,7 @@ public class ReservationService {
         ticketRepository.deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus.CANCELLED, LocalDateTime.now());
         System.out.println(session.getId());
 
-        User user = userRepository.getReferenceById(reservation.userId());
+
         Seat seat = seatRepository.getReferenceById(reservation.seatId());
         Screening screening = screeningRepository.getReferenceById(reservation.screeningId());
         Order order;
@@ -57,11 +57,24 @@ public class ReservationService {
             throw new ResourceAlreadyOccupiedException("Seat is already reserved");
         }
 
-        List<Order> existingOrders = orderRepository.findAllByUserAndStatus(user, OrderStatus.IN_PROGRESS);
-        if(existingOrders.size() > 0 && LocalDateTime.now().isBefore(existingOrders.get(0).getExpiresAt())){
-            order =  orderRepository.findAllByUserAndStatus(user, OrderStatus.IN_PROGRESS).get(0);
+////        List<Order> existingOrders = orderRepository.findAllByUserAndStatus(user, OrderStatus.IN_PROGRESS);
+//        List<Order> existingOrders = orderRepository.findAllBySession(session.getId());
+//        if(existingOrders.size() > 0 && LocalDateTime.now().isBefore(existingOrders.get(0).getExpiresAt())){
+////            order =  orderRepository.findAllByUserAndStatus(user, OrderStatus.IN_PROGRESS).get(0);
+//            order =  existingOrders.get(0);
+//        } else {
+//            order = new Order(session.getId());
+//        }
+        if(reservation.userId() != null){
+            User user = userRepository.getReferenceById(reservation.userId());
+            if(orderRepository.existsByUserAndStatus(user, OrderStatus.IN_PROGRESS)){
+                order = orderRepository.findByUserAndStatus(user, OrderStatus.IN_PROGRESS);
+            } else {
+                order = new Order(user);
+            }
         } else {
-            order = new Order(user);
+            order = orderRepository.existsBySessionAndStatus(session.getId(), OrderStatus.IN_PROGRESS) ? orderRepository.findBySessionAndStatus(
+                    session.getId(), OrderStatus.IN_PROGRESS) : new Order(session.getId());
         }
 
         ticket = new Ticket(order, screening, seat);

@@ -12,9 +12,11 @@ import java.util.List;
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findAllByOrder(Order order);
     List<Ticket> findAllByScreening(Screening screening);
+    List<Ticket> findAllByOrderExpiresAtIsLessThanEqual(LocalDateTime now);
 
     boolean existsByScreeningAndSeat(Screening screening, Seat seat);
 
-    Integer deleteAllByOrderStatus(OrderStatus status);
+    void deleteAllByOrderStatus(OrderStatus status);
+    void deleteAllByOrderExpiresAtIsLessThanEqual(LocalDateTime now);
     void deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus status, LocalDateTime now);
 }

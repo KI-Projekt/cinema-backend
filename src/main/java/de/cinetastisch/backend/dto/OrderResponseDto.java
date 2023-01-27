@@ -8,6 +8,7 @@ import java.util.List;
 public record OrderResponseDto(
         Long id,
         UserResponseDto user,
+        String session,
         OrderStatus orderStatus,
         Double total,
         LocalDateTime createdAt,

@@ -15,9 +15,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findAllByUser(User user);
     List<Order> findAllByStatus(OrderStatus orderStatus);
-    List<Order> findAllByUserAndStatus(User user, OrderStatus orderStatus);
+    List<Order> findAllByUserAndStatus(User user, OrderStatus status);
+    List<Order> findAllBySessionAndStatus(String session, OrderStatus status);
+
+    Order findByUserAndStatus(User user, OrderStatus status);
+    Order findBySessionAndStatus(String session, OrderStatus status);
 
 
     boolean existsByUserAndStatus(User user, OrderStatus status);
-
+    boolean existsBySessionAndStatus(String session, OrderStatus status);
 }

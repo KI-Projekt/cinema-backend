@@ -34,6 +34,8 @@ public class Order {
     @JoinColumn(name = "user_id",foreignKey = @ForeignKey(name = "order_user_id_fk"))
     private User user;
 
+    private String session;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Column(name = "order_status",nullable = false)
     @Enumerated(EnumType.STRING)
@@ -56,6 +58,10 @@ public class Order {
         this.user = user;
     }
 
+    public Order(String session) {
+        this.session = session;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,9 +77,39 @@ public class Order {
         return Objects.hash(id, user, total, status, createdAt, tickets);
     }
 
-    public Double getTotal() {
-        double newTotal = 0.0;
+//    public Double getTotal() {
+//        double newTotal = 0.0;
+//        if(this.status == OrderStatus.IN_PROGRESS){
+//            for(Ticket t : this.tickets){
+//                newTotal = switch (t.getCategory()) {
+//                    case KID        -> newTotal + 8;
+//                    case STUDENT    -> newTotal + 10;
+//                    case ADULT      -> newTotal + 12;
+//                    case PENSIONER  -> newTotal + 11;
+//                };
+//            }
+//            this.total = newTotal;
+//        }
+//
+//        return total;
+//    }
+
+//    public OrderStatus getStatus() {
+//        if(this.status == OrderStatus.IN_PROGRESS && LocalDateTime.now().isAfter(this.expiresAt)){
+//            this.status = OrderStatus.CANCELLED;
+//        }
+//        return status;
+//    }
+
+    @PrePersist // benefit of this would be marginal since usually you do not deal much with entity after persisting
+    @PostLoad
+    private void updateStatusAndTotal() {
+        if (this.status == OrderStatus.IN_PROGRESS && expiresAt.isBefore(LocalDateTime.now())){
+            this.status = OrderStatus.CANCELLED;
+        }
+
         if(this.status == OrderStatus.IN_PROGRESS){
+            double newTotal = 0.0;
             for(Ticket t : this.tickets){
                 newTotal = switch (t.getCategory()) {
                     case KID        -> newTotal + 8;
@@ -84,14 +120,5 @@ public class Order {
             }
             this.total = newTotal;
         }
-
-        return total;
-    }
-
-    public OrderStatus getStatus() {
-        if(this.status == OrderStatus.IN_PROGRESS && LocalDateTime.now().isAfter(this.expiresAt)){
-            this.status = OrderStatus.CANCELLED;
-        }
-        return status;
     }
 }

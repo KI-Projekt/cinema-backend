@@ -1,6 +1,5 @@
 package de.cinetastisch.backend.mapper;
 
-import de.cinetastisch.backend.dto.OrderRequestDto;
 import de.cinetastisch.backend.dto.OrderResponseDto;
 import de.cinetastisch.backend.model.Order;
 import org.mapstruct.Mapper;
@@ -14,13 +13,6 @@ import java.util.List;
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {ReferenceMapper.class, UserMapper.class, TicketMapper.class, ReservationMapper.class})
 public interface OrderMapper {
-
-    @Mapping(target = "tickets", ignore = true)
-    @Mapping(target = "total", ignore = true)
-    @Mapping(target = "user", source = "userId")
-    @Mapping(target = "status", defaultValue = "IN_PROGRESS", ignore = true)
-    @Mapping(target = "id", ignore = true)
-    Order dtoToEntity(OrderRequestDto orderRequestDto);
 
 //    @Mapping(target = "expiresAt", expression = "java(order.getStatus() == de.cinetastisch.backend.enumeration.OrderStatus.IN_PROGRESS ? order.getCreatedAt().plusMinutes(1) : null)")
     @Mapping(target = "orderStatus", source = "status")

@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.model;
 
+import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.TicketCategory;
 import de.cinetastisch.backend.enumeration.TicketType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -72,5 +73,15 @@ public class Ticket {
         this.seat = seat;
         this.category = category;
         this.type = type;
+    }
+
+
+    @PrePersist // benefit of this would be marginal since usually you do not deal much with entity after persisting
+    @PostLoad
+    private void updateStatus() {
+        if (!this.deleted && this.order != null && this.order.getStatus() == OrderStatus.CANCELLED){
+            System.out.println(this);
+            this.deleted = true;
+        }
     }
 }
