@@ -15,6 +15,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findAllByOrderExpiresAtIsLessThanEqual(LocalDateTime now);
 
     boolean existsByScreeningAndSeat(Screening screening, Seat seat);
+    List<Ticket> findAllByScreeningAndSeat(Screening screening, Seat seat);
 
     void deleteAllByOrderStatus(OrderStatus status);
     void deleteAllByOrderExpiresAtIsLessThanEqual(LocalDateTime now);

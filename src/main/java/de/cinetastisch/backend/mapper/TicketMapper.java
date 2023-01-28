@@ -1,6 +1,6 @@
 package de.cinetastisch.backend.mapper;
 
-import de.cinetastisch.backend.dto.TicketResponseDto;
+import de.cinetastisch.backend.dto.response.TicketResponseDto;
 import de.cinetastisch.backend.model.Ticket;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

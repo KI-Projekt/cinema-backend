@@ -1,10 +1,8 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.dto.SeatRequestDto;
-import de.cinetastisch.backend.dto.SeatResponseDto;
+import de.cinetastisch.backend.dto.request.SeatRequestDto;
+import de.cinetastisch.backend.dto.response.SeatResponseDto;
 import de.cinetastisch.backend.enumeration.SeatCategory;
-import de.cinetastisch.backend.model.Room;
-import de.cinetastisch.backend.model.Seat;
 import de.cinetastisch.backend.service.SeatService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +25,7 @@ class SeatControllerTest {
 
     @Test
     void getAll() {
-        SeatResponseDto firstseatResponseDto = new SeatResponseDto(null,null,null,null);
+        SeatResponseDto firstseatResponseDto = new SeatResponseDto(null, null, null, null);
         SeatResponseDto secondseatResponseDto = new SeatResponseDto(null,null,null,null);
         List<SeatResponseDto> responseDtoList = List.of(firstseatResponseDto,secondseatResponseDto);
 
@@ -41,7 +39,7 @@ class SeatControllerTest {
 
     @Test
     void addOne() {
-        SeatRequestDto seatDto = new SeatRequestDto(null,null,null,null,null);
+        SeatRequestDto seatDto = new SeatRequestDto(null, null, null, null, null);
         SeatResponseDto seatResponseDto = new SeatResponseDto(null,null,null,null);
         when(seatService.addSeat(seatDto)).thenReturn(seatResponseDto);
         ResponseEntity<?> response = seatController.addOne(seatDto);

@@ -1,6 +1,6 @@
 package de.cinetastisch.backend.mapper;
 
-import de.cinetastisch.backend.dto.OrderResponseDto;
+import de.cinetastisch.backend.dto.response.OrderResponseDto;
 import de.cinetastisch.backend.model.Order;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

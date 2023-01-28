@@ -1,7 +1,11 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.dto.*;
+import de.cinetastisch.backend.dto.request.ScreeningRequestDto;
+import de.cinetastisch.backend.dto.response.ScreeningFullResponseDto;
+import de.cinetastisch.backend.dto.response.ScreeningResponseDto;
+import de.cinetastisch.backend.enumeration.ScreeningStatus;
 import de.cinetastisch.backend.exception.NoResourcesException;
+import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
 import de.cinetastisch.backend.mapper.ScreeningMapper;
 import de.cinetastisch.backend.model.*;
@@ -60,6 +64,14 @@ public class ScreeningService {
             throw new ResourceAlreadyOccupiedException("Screenings " + runningScreenings + " already occupy the room for that time.");
         }
 
+        if(screening.isThreeD() && !screening.getRoom().getHasThreeD()){
+            throw new IllegalArgumentException("Selected Room doesn't support 3D");
+        }
+
+        if(screening.isDolbyAtmos() && !screening.getRoom().getHasDolbyAtmos()){
+            throw new IllegalArgumentException("Selected Room doesn't support Dolby Atmos");
+        }
+
         return mapper.entityToDto(screeningRepository.save(screening));
     }
 
@@ -70,6 +82,7 @@ public class ScreeningService {
         return mapper.entityToDto(screeningRepository.save(newScreening));
     }
 
+    @Transactional
     public void deleteScreening(Long id){
         Screening screening = screeningRepository.getReferenceById(id);
         screeningRepository.delete(screening);
@@ -78,5 +91,19 @@ public class ScreeningService {
     public LocalDateTime calculateEndDateTime(LocalDateTime start, Movie movie){
         LocalDateTime newTime = start.plusMinutes(Long.parseLong(movie.getRuntime().split(" ")[0]));
         return newTime.plusMinutes(30L); // + Ads + Cleaning
+    }
+
+    @Transactional
+    public ScreeningFullResponseDto cancelScreening(Long id) {
+        Screening screening = screeningRepository.getReferenceById(id);
+
+        if(screening.getStatus() == ScreeningStatus.CANCELLED){
+            throw new ResourceAlreadyExistsException("Screening is already cancelled");
+        }
+
+        screening.setStatus(ScreeningStatus.CANCELLED);
+        screeningRepository.save(screening);
+
+        return mapper.entityToDto(screening);
     }
 }

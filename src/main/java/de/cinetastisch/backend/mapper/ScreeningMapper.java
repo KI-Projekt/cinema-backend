@@ -1,6 +1,8 @@
 package de.cinetastisch.backend.mapper;
 
-import de.cinetastisch.backend.dto.*;
+import de.cinetastisch.backend.dto.request.ScreeningRequestDto;
+import de.cinetastisch.backend.dto.response.ScreeningFullResponseDto;
+import de.cinetastisch.backend.dto.response.ScreeningResponseDto;
 import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.service.RoomPlanService;
 import org.mapstruct.*;
@@ -12,6 +14,8 @@ import java.util.*;
 public interface ScreeningMapper {
 
 
+    @Mapping(target = "threeD", source = "isThreeD", defaultValue = "false")
+    @Mapping(target = "dolbyAtmos", source = "isDolbyAtmos", defaultValue = "false")
     @Mapping(target = "startDateTime", source="startDateTime", defaultExpression = "java(LocalDateTime.now())")
     @Mapping(target = "status", source = "status", defaultValue = "TICKET_SALE_OPEN")
     @Mapping(target = "room", source="roomId")
@@ -20,6 +24,8 @@ public interface ScreeningMapper {
     Screening dtoToEntity(ScreeningRequestDto request);
     List<Screening> dtoToEntity(Iterable<ScreeningRequestDto> requests);
 
+    @Mapping(target = "isThreeD", source = "threeD")
+    @Mapping(target = "isDolbyAtmos", source = "dolbyAtmos")
     @Mapping(target = "seatingPlan", source = "screening", qualifiedByName = "generateSeatingPlan")
     @Mapping(target = "id", expression = "java(screening.getId())")
     @Mapping(target = "duration", expression= "java(java.time.temporal.ChronoUnit.MINUTES.between(screening.getStartDateTime(), screening.getEndDateTime()))")

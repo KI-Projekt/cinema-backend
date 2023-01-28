@@ -1,7 +1,7 @@
 package de.cinetastisch.backend.mapper;
 
-import de.cinetastisch.backend.dto.UserRequestDto;
-import de.cinetastisch.backend.dto.UserResponseDto;
+import de.cinetastisch.backend.dto.request.UserRequestDto;
+import de.cinetastisch.backend.dto.response.UserResponseDto;
 import de.cinetastisch.backend.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,8 +1,7 @@
 package de.cinetastisch.backend.mapper;
 
-import de.cinetastisch.backend.dto.SeatPutRequestDto;
-import de.cinetastisch.backend.dto.SeatRequestDto;
-import de.cinetastisch.backend.dto.SeatResponseDto;
+import de.cinetastisch.backend.dto.request.SeatRequestDto;
+import de.cinetastisch.backend.dto.response.SeatResponseDto;
 import de.cinetastisch.backend.model.Seat;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

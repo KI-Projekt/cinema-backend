@@ -1,6 +1,10 @@
 package de.cinetastisch.backend.mapper;
 
-import de.cinetastisch.backend.dto.*;
+import de.cinetastisch.backend.dto.request.RoomRequestDto;
+import de.cinetastisch.backend.dto.response.RoomResponseDto;
+import de.cinetastisch.backend.dto.response.RoomSeatRowDto;
+import de.cinetastisch.backend.dto.response.RoomSlimResponseDto;
+import de.cinetastisch.backend.dto.response.SeatResponseDto;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Seat;
 import org.mapstruct.*;

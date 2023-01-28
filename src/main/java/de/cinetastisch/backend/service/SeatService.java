@@ -1,7 +1,7 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.dto.SeatRequestDto;
-import de.cinetastisch.backend.dto.SeatResponseDto;
+import de.cinetastisch.backend.dto.request.SeatRequestDto;
+import de.cinetastisch.backend.dto.response.SeatResponseDto;
 import de.cinetastisch.backend.enumeration.SeatCategory;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.mapper.SeatMapper;

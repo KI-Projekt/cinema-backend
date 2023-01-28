@@ -1,7 +1,10 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.dto.*;
+import de.cinetastisch.backend.dto.request.ReservationRequestDto;
+import de.cinetastisch.backend.dto.response.OrderResponseDto;
+import de.cinetastisch.backend.dto.response.TicketResponseDto;
 import de.cinetastisch.backend.enumeration.OrderStatus;
+import de.cinetastisch.backend.enumeration.ScreeningStatus;
 import de.cinetastisch.backend.enumeration.TicketType;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
 import de.cinetastisch.backend.mapper.OrderMapper;
@@ -50,9 +53,18 @@ public class ReservationService {
         Order order;
         Ticket ticket;
 
+        if(screening.getStatus() != ScreeningStatus.TICKET_SALE_OPEN){
+            throw new ResourceAlreadyOccupiedException("Can't Book Screenings which are cancelled or have already ended");
+        }
+
         if(seat.getRoom() != screening.getRoom()){
             throw new IllegalArgumentException("Seat ID not in Screening");
         }
+
+
+
+        System.out.println(ticketRepository.findAllByScreeningAndSeat(screening, seat));
+
         if(ticketRepository.existsByScreeningAndSeat(screening, seat)){
             throw new ResourceAlreadyOccupiedException("Seat is already reserved");
         }

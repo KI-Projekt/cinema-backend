@@ -1,13 +1,14 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.dto.*;
+import de.cinetastisch.backend.dto.request.ScreeningRequestDto;
+import de.cinetastisch.backend.dto.response.ScreeningFullResponseDto;
+import de.cinetastisch.backend.dto.response.ScreeningResponseDto;
 import de.cinetastisch.backend.service.ScreeningService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,6 @@ public class ScreeningController {
 
     private final ScreeningService screeningService;
 
-    @Autowired
     public ScreeningController(ScreeningService screeningService) {
         this.screeningService = screeningService;
     }
@@ -43,7 +43,8 @@ public class ScreeningController {
     }
 
     @Operation(
-            tags = {"Screenings"}
+            tags = {"Screenings"},
+            summary = "Returns screening with a seating plan of reservations"
     )
     @GetMapping("/{id}")
     public ResponseEntity<ScreeningFullResponseDto> getOne(@PathVariable Long id){
@@ -73,6 +74,16 @@ public class ScreeningController {
     public ResponseEntity<ScreeningFullResponseDto> replaceOne(@Valid @RequestBody ScreeningRequestDto screeningDto,
                                                 @Valid @PathVariable("id") Long id){
         return new ResponseEntity<>(screeningService.replaceScreening(id, screeningDto), HttpStatus.OK);
+    }
+
+    @Operation(
+            tags = {"Screenings"},
+            summary = "Cancel a Screening",
+            description = "Specified Screening will get cancelled, all reservations will be deleted and paid Orders will be refunded"
+    )
+    @PutMapping("{id}/cancel")
+    public ResponseEntity<ScreeningFullResponseDto> cancelScreening(@Valid @PathVariable("id") Long id){
+        return ResponseEntity.ok(screeningService.cancelScreening(id));
     }
 
     @Operation(

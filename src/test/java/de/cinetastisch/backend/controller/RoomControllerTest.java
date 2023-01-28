@@ -1,9 +1,9 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.dto.RoomPutRequestDto;
-import de.cinetastisch.backend.dto.RoomRequestDto;
-import de.cinetastisch.backend.dto.RoomResponseDto;
-import de.cinetastisch.backend.dto.RoomSlimResponseDto;
+import de.cinetastisch.backend.dto.request.RoomPutRequestDto;
+import de.cinetastisch.backend.dto.request.RoomRequestDto;
+import de.cinetastisch.backend.dto.response.RoomResponseDto;
+import de.cinetastisch.backend.dto.response.RoomSlimResponseDto;
 import de.cinetastisch.backend.service.RoomService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;

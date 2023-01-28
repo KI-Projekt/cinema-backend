@@ -1,20 +1,15 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.dto.OrderResponseDto;
-import de.cinetastisch.backend.dto.UserResponseDto;
-import de.cinetastisch.backend.enumeration.MovieRating;
+import de.cinetastisch.backend.dto.response.OrderResponseDto;
+import de.cinetastisch.backend.dto.response.UserResponseDto;
 import de.cinetastisch.backend.enumeration.OrderPaymentMethod;
 import de.cinetastisch.backend.enumeration.OrderStatus;
-import de.cinetastisch.backend.model.Movie;
-import de.cinetastisch.backend.model.Order;
-import de.cinetastisch.backend.model.User;
 import de.cinetastisch.backend.service.OrderService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;

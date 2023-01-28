@@ -1,9 +1,9 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.dto.RoomPutRequestDto;
-import de.cinetastisch.backend.dto.RoomRequestDto;
-import de.cinetastisch.backend.dto.RoomResponseDto;
-import de.cinetastisch.backend.dto.RoomSlimResponseDto;
+import de.cinetastisch.backend.dto.request.RoomPutRequestDto;
+import de.cinetastisch.backend.dto.request.RoomRequestDto;
+import de.cinetastisch.backend.dto.response.RoomResponseDto;
+import de.cinetastisch.backend.dto.response.RoomSlimResponseDto;
 import de.cinetastisch.backend.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

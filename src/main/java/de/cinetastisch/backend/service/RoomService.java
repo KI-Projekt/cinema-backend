@@ -1,6 +1,10 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.dto.*;
+import de.cinetastisch.backend.dto.request.RoomPutRequestDto;
+import de.cinetastisch.backend.dto.request.RoomRequestDto;
+import de.cinetastisch.backend.dto.request.SeatPutRequestDto;
+import de.cinetastisch.backend.dto.response.RoomResponseDto;
+import de.cinetastisch.backend.dto.response.RoomSlimResponseDto;
 import de.cinetastisch.backend.enumeration.SeatCategory;
 import de.cinetastisch.backend.exception.NoResourcesException;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;

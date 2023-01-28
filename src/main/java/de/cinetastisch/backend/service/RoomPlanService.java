@@ -1,8 +1,8 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.dto.ScreeningSeatDto;
-import de.cinetastisch.backend.dto.ScreeningSeatRowDto;
-import de.cinetastisch.backend.dto.SeatResponseDto;
+import de.cinetastisch.backend.dto.response.ScreeningSeatDto;
+import de.cinetastisch.backend.dto.response.ScreeningSeatRowDto;
+import de.cinetastisch.backend.dto.response.SeatResponseDto;
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.model.Room;
 import de.cinetastisch.backend.model.Screening;
