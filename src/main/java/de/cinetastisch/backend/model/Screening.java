@@ -37,25 +37,32 @@ public class Screening {
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
 
+    private boolean isThreeD = false;
+    private boolean isDolbyAtmos = false;
+
     @Enumerated(EnumType.STRING)
     private ScreeningStatus status = ScreeningStatus.TICKET_SALE_OPEN;
 
-    public Screening(Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime,
-                     ScreeningStatus status) {
+    public Screening(Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime, boolean isThreeD,
+                     boolean isDolbyAtmos, ScreeningStatus status) {
         this.movie = movie;
         this.room = room;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        this.isThreeD = isThreeD;
+        this.isDolbyAtmos = isDolbyAtmos;
         this.status = status;
     }
 
     public Screening(Long id, Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime,
-                     ScreeningStatus status) {
+                     boolean isThreeD, boolean isDolbyAtmos, ScreeningStatus status) {
         this.id = id;
         this.movie = movie;
         this.room = room;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        this.isThreeD = isThreeD;
+        this.isDolbyAtmos = isDolbyAtmos;
         this.status = status;
     }
 
@@ -70,5 +77,13 @@ public class Screening {
     @Override
     public int hashCode() {
         return Objects.hash(id, movie, room, startDateTime, endDateTime, status);
+    }
+
+    @PrePersist
+    @PostLoad
+    public void updateStatus(){
+        if(this.status == ScreeningStatus.TICKET_SALE_OPEN && this.endDateTime.isBefore(LocalDateTime.now())){
+            this.status = ScreeningStatus.TICKET_SALE_CLOSED;
+        }
     }
 }

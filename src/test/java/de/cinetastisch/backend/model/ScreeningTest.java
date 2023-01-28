@@ -32,7 +32,7 @@ class ScreeningTest {
 
     @Test
     void testToString() {
-        String exp = "Screening(id=null, movie=null, room=null, startDateTime=null, endDateTime=null, status=TICKET_SALE_OPEN)";
+        String exp = "Screening(id=null, movie=null, room=null, startDateTime=null, endDateTime=null, isThreeD=false, isDolbyAtmos=false, status=TICKET_SALE_OPEN)";
         assertEquals(exp, screening.toString());
     }
 }

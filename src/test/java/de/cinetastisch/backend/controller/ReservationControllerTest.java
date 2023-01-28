@@ -1,8 +1,6 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.dto.*;
-import de.cinetastisch.backend.enumeration.OrderStatus;
-import de.cinetastisch.backend.enumeration.SeatCategory;
+import de.cinetastisch.backend.dto.request.ReservationRequestDto;
 import de.cinetastisch.backend.service.ReservationService;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpSession;
@@ -14,11 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDateTime;
 import java.util.Enumeration;
-import java.util.List;
-
-import static org.mockito.Mockito.when;
 
 import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
@@ -111,7 +105,7 @@ class ReservationControllerTest {
                 return false;
             }
         };
-        ReservationRequestDto requestDto = new ReservationRequestDto((long)1.22,(long)1.22,(long)1.22);
+        ReservationRequestDto requestDto = new ReservationRequestDto((long)1.22, (long)1.22, (long)1.22);
         ResponseEntity<?> response = reservationController.addReservation(requestDto, session);
 
         assertEquals(HttpStatus.CREATED,response.getStatusCode());

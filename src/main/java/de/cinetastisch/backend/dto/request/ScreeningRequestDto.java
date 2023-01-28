@@ -1,4 +1,4 @@
-package de.cinetastisch.backend.dto;
+package de.cinetastisch.backend.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
@@ -11,5 +11,7 @@ public record ScreeningRequestDto(
         @NotNull @NotEmpty Long roomId,
         LocalDateTime startDateTime,
         LocalDateTime endDateTime,
+        String isThreeD,
+        String isDolbyAtmos,
         @JsonProperty(defaultValue = "TICKET_SALE_OPEN") String status
 ) {}

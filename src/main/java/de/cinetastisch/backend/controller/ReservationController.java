@@ -1,8 +1,8 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.dto.OrderResponseDto;
-import de.cinetastisch.backend.dto.ReservationRequestDto;
-import de.cinetastisch.backend.dto.TicketResponseDto;
+import de.cinetastisch.backend.dto.response.OrderResponseDto;
+import de.cinetastisch.backend.dto.request.ReservationRequestDto;
+import de.cinetastisch.backend.dto.response.TicketResponseDto;
 import de.cinetastisch.backend.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpSession;

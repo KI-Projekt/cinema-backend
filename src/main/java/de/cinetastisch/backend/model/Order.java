@@ -2,6 +2,7 @@ package de.cinetastisch.backend.model;
 
 import de.cinetastisch.backend.enumeration.OrderPaymentMethod;
 import de.cinetastisch.backend.enumeration.OrderStatus;
+import de.cinetastisch.backend.enumeration.ScreeningStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
@@ -93,6 +94,12 @@ public class Order {
                 this.tickets = new ArrayList<>();
             }
 
+        }
+
+        if(this.tickets.size() > 0 && this.tickets.get(0).getScreening().getStatus() == ScreeningStatus.CANCELLED){
+            this.status = this.status == OrderStatus.PAID ? OrderStatus.REFUNDED : OrderStatus.CANCELLED;
+            this.tickets.forEach(ticket -> ticket.setDeleted(true));
+            this.tickets = new ArrayList<>();
         }
     }
 }

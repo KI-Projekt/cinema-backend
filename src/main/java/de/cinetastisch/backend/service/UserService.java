@@ -1,6 +1,5 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.dto.UserRequestDto;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
 import de.cinetastisch.backend.model.User;
 import de.cinetastisch.backend.repository.UserRepository;

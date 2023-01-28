@@ -4,13 +4,10 @@ package de.cinetastisch.backend.controller;
 
 
 
-import de.cinetastisch.backend.dto.MovieRequestDto;
-import de.cinetastisch.backend.dto.MovieResponseDto;
-import de.cinetastisch.backend.dto.ScreeningResponseDto;
+import de.cinetastisch.backend.dto.request.MovieRequestDto;
+import de.cinetastisch.backend.dto.response.MovieResponseDto;
 import de.cinetastisch.backend.enumeration.MovieRating;
 import de.cinetastisch.backend.enumeration.MovieStatus;
-import de.cinetastisch.backend.model.Movie;
-import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.service.MovieService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

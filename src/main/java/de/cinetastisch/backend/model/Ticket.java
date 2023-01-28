@@ -1,6 +1,7 @@
 package de.cinetastisch.backend.model;
 
 import de.cinetastisch.backend.enumeration.OrderStatus;
+import de.cinetastisch.backend.enumeration.ScreeningStatus;
 import de.cinetastisch.backend.enumeration.TicketCategory;
 import de.cinetastisch.backend.enumeration.TicketType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -83,6 +84,10 @@ public class Ticket {
             System.out.println(this);
             this.deleted = true;
             System.out.println(this);
+        }
+
+        if(this.getScreening().getStatus() == ScreeningStatus.CANCELLED){
+            this.deleted = true;
         }
     }
 }

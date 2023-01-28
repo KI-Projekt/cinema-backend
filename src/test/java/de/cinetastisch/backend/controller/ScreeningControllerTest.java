@@ -1,9 +1,9 @@
 package de.cinetastisch.backend.controller;
 
 //import de.cinetastisch.backend.dto.RoomPlanResponseDto;
-import de.cinetastisch.backend.dto.ScreeningFullResponseDto;
-import de.cinetastisch.backend.dto.ScreeningRequestDto;
-import de.cinetastisch.backend.dto.ScreeningResponseDto;
+import de.cinetastisch.backend.dto.response.ScreeningFullResponseDto;
+import de.cinetastisch.backend.dto.request.ScreeningRequestDto;
+import de.cinetastisch.backend.dto.response.ScreeningResponseDto;
 import de.cinetastisch.backend.service.ScreeningService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,8 +27,8 @@ class ScreeningControllerTest {
 
     @Test
     void getAll() {
-        ScreeningResponseDto firstScreeningResponseDto = new ScreeningResponseDto(null,null,null,null,null,null,null);
-        ScreeningResponseDto secoundScreeningResponseDto = new ScreeningResponseDto(null,null,null,null,null,null,null);
+        ScreeningResponseDto firstScreeningResponseDto = new ScreeningResponseDto(null,null,null,null,null,null,false, false, null);
+        ScreeningResponseDto secoundScreeningResponseDto = new ScreeningResponseDto(null,null,null,null,null,null,false, false, null);
         List<ScreeningResponseDto> screeningResponseDtoList = List.of(firstScreeningResponseDto,secoundScreeningResponseDto);
 
         when(screeningService.getAllScreenings(null,null)).thenReturn(screeningResponseDtoList);
@@ -41,7 +41,7 @@ class ScreeningControllerTest {
 
     @Test
     void getOne() {
-        ScreeningFullResponseDto screeningResponseDto = new ScreeningFullResponseDto((long)1.2, null, null, null, null, null, null, null);
+        ScreeningFullResponseDto screeningResponseDto = new ScreeningFullResponseDto((long)1.2, null, null, null, null, null, null, false, false, null);
 
         when(screeningService.getScreening((long)1.2)).thenReturn(screeningResponseDto);
 
@@ -53,8 +53,8 @@ class ScreeningControllerTest {
 
     @Test
     void add() {
-        ScreeningRequestDto requestDto = new ScreeningRequestDto(null,null,null,null,null);
-        ScreeningFullResponseDto responseDto = new ScreeningFullResponseDto(null,null,null,null,null,null,null, null);
+        ScreeningRequestDto requestDto = new ScreeningRequestDto(null,null,null,null,"false", "false", null);
+        ScreeningFullResponseDto responseDto = new ScreeningFullResponseDto(null,null,null,null,null,null,null, false, false, null);
         when(screeningService.addScreening(requestDto)).thenReturn(responseDto);
 
         ResponseEntity<?> response = screeningController.add(requestDto);
@@ -64,8 +64,8 @@ class ScreeningControllerTest {
 
     @Test
     void replaceOne() {
-        ScreeningRequestDto requestDto = new ScreeningRequestDto(null,null,null,null,null);
-        ScreeningFullResponseDto responseDto = new ScreeningFullResponseDto(null,null,null,null,null,null,null,null);
+        ScreeningRequestDto requestDto = new ScreeningRequestDto(null,null,null,null,"false", "false", null);
+        ScreeningFullResponseDto responseDto = new ScreeningFullResponseDto(null,null,null,null,null,null,null,false, false, null);
 
         when(screeningService.replaceScreening((long)1.2, requestDto)).thenReturn(responseDto);
         ResponseEntity<?> response = screeningController.replaceOne(requestDto,(long)1.2);

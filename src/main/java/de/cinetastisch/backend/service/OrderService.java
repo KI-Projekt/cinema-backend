@@ -1,8 +1,8 @@
 package de.cinetastisch.backend.service;
 
 
-import de.cinetastisch.backend.dto.FaresDto;
-import de.cinetastisch.backend.dto.OrderResponseDto;
+import de.cinetastisch.backend.dto.request.FaresDto;
+import de.cinetastisch.backend.dto.response.OrderResponseDto;
 import de.cinetastisch.backend.enumeration.OrderPaymentMethod;
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.TicketCategory;
@@ -12,7 +12,6 @@ import de.cinetastisch.backend.mapper.OrderMapper;
 import de.cinetastisch.backend.mapper.ReferenceMapper;
 import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.*;
-import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

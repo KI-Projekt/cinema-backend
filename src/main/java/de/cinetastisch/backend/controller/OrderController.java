@@ -1,7 +1,7 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.dto.FaresDto;
-import de.cinetastisch.backend.dto.OrderResponseDto;
+import de.cinetastisch.backend.dto.request.FaresDto;
+import de.cinetastisch.backend.dto.response.OrderResponseDto;
 import de.cinetastisch.backend.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;

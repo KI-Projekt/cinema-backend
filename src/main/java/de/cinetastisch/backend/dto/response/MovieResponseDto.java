@@ -1,4 +1,4 @@
-package de.cinetastisch.backend.dto;
+package de.cinetastisch.backend.dto.response;
 
 import de.cinetastisch.backend.enumeration.MovieStatus;
 

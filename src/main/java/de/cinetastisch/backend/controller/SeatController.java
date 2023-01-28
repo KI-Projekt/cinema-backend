@@ -1,7 +1,7 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.dto.SeatRequestDto;
-import de.cinetastisch.backend.dto.SeatResponseDto;
+import de.cinetastisch.backend.dto.request.SeatRequestDto;
+import de.cinetastisch.backend.dto.response.SeatResponseDto;
 import de.cinetastisch.backend.service.SeatService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
