@@ -47,7 +47,6 @@ public class ReservationService {
         System.out.println(session.getId());
         orderRepository.findAllByStatus(OrderStatus.IN_PROGRESS);
 
-
         Seat seat = seatRepository.getReferenceById(reservation.seatId());
         Screening screening = screeningRepository.getReferenceById(reservation.screeningId());
         Order order;
@@ -61,22 +60,11 @@ public class ReservationService {
             throw new IllegalArgumentException("Seat ID not in Screening");
         }
 
-
-
         System.out.println(ticketRepository.findAllByScreeningAndSeat(screening, seat));
 
         if(ticketRepository.existsByScreeningAndSeat(screening, seat)){
             throw new ResourceAlreadyOccupiedException("Seat is already reserved");
         }
-
-////        List<Order> existingOrders = orderRepository.findAllByUserAndStatus(user, OrderStatus.IN_PROGRESS);
-//        List<Order> existingOrders = orderRepository.findAllBySession(session.getId());
-//        if(existingOrders.size() > 0 && LocalDateTime.now().isBefore(existingOrders.get(0).getExpiresAt())){
-////            order =  orderRepository.findAllByUserAndStatus(user, OrderStatus.IN_PROGRESS).get(0);
-//            order =  existingOrders.get(0);
-//        } else {
-//            order = new Order(session.getId());
-//        }
         if(reservation.userId() != null){
             System.out.println("USER CREATION");
             User user = userRepository.getReferenceById(reservation.userId());
