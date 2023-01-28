@@ -3,6 +3,8 @@ package de.cinetastisch.backend.controller;
 import de.cinetastisch.backend.dto.SeatRequestDto;
 import de.cinetastisch.backend.dto.SeatResponseDto;
 import de.cinetastisch.backend.enumeration.SeatCategory;
+import de.cinetastisch.backend.model.Room;
+import de.cinetastisch.backend.model.Seat;
 import de.cinetastisch.backend.service.SeatService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,20 +39,6 @@ class SeatControllerTest {
         assertEquals(HttpStatus.OK,response.getStatusCode());
     }
 
-//    @Test
-//    void getOne() {
-//        SeatResponseDto seatResponseDto = new SeatResponseDto(null,null,null,null);
-//        SeatRequestDto seatDto = new SeatRequestDto(null, null, null, null, null);
-//
-//
-//        when(seatService.replaceSeat((long)1.2,seatDto)).thenReturn(seatResponseDto);
-//
-//        ResponseEntity<?> response = seatController.getOne((long)1.2);
-//        assertEquals(seatResponseDto,response.getBody());
-//        assertEquals(HttpStatus.OK,response.getStatusCode());
-//
-//    }
-
     @Test
     void addOne() {
         SeatRequestDto seatDto = new SeatRequestDto(null,null,null,null,null);
@@ -64,17 +52,37 @@ class SeatControllerTest {
     @Test
     void GetOnebyId() {
         SeatResponseDto seatResponseDto = new SeatResponseDto(null,null,null,null);
-
-
-
         when(seatService.getSeat((long)1.2)).thenReturn(seatResponseDto);
-
         ResponseEntity<?> response = seatController.getOne((long)1.2);
         assertEquals(seatResponseDto,response.getBody());
         assertEquals(HttpStatus.OK,response.getStatusCode());
 
 
+    }
+    @Test
+    void replaceMultiple(){
+        SeatRequestDto seatRequestDto = new SeatRequestDto((long)1.2,(long)1.2,SeatCategory.NORMAL,2,3);
+        SeatResponseDto seatResponseDto = new SeatResponseDto((long)1.2,SeatCategory.NORMAL,2,2);
+        List<SeatResponseDto> responseDtoList = List.of(seatResponseDto,seatResponseDto);
+        List<SeatRequestDto> requestDtoList = List.of(seatRequestDto,seatRequestDto);
+        when(seatService.replaceSeats(requestDtoList)).thenReturn(responseDtoList);
 
+        ResponseEntity<?> response = seatController.replaceMultiple(requestDtoList);
+
+        assertEquals(responseDtoList, response.getBody());
+        assertEquals(HttpStatus.CREATED,response.getStatusCode());
 
     }
+    @Test
+    void replaceOne(){
+        SeatRequestDto seatRequestDto = new SeatRequestDto((long)1.2,(long)1.2,SeatCategory.NORMAL,2,3);
+        SeatResponseDto seatResponseDto = new SeatResponseDto((long)1.2,SeatCategory.NORMAL,2,2);
+
+        when(seatService.replaceSeat((long)1.2,seatRequestDto)).thenReturn(seatResponseDto);
+
+        ResponseEntity<?> response = seatController.replaceOne((long)1.2,seatRequestDto);
+
+        assertEquals(seatResponseDto, response.getBody());
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+        }
 }
