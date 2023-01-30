@@ -1,7 +1,7 @@
 package de.cinetastisch.backend.service;
 
-import de.cinetastisch.backend.dto.MovieRequestDto;
-import de.cinetastisch.backend.dto.MovieResponseDto;
+import de.cinetastisch.backend.dto.request.MovieRequestDto;
+import de.cinetastisch.backend.dto.response.MovieResponseDto;
 import de.cinetastisch.backend.enumeration.MovieRating;
 import de.cinetastisch.backend.enumeration.MovieStatus;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
