@@ -24,7 +24,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 				@Tag(name = "Reservations"),
 				@Tag(name = "Orders", description = "Weil die Order nicht nur auf den Ticketkauf spezialisiert ist, implementiert jedes eigene Produkt den Kauf"),
 				@Tag(name = "Tickets"),
-				@Tag(name = "Users")
+				@Tag(name = "Users"),
+				@Tag(name = "TicketFares")
 		}
 )
 @EnableScheduling

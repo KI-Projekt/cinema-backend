@@ -2,7 +2,6 @@ package de.cinetastisch.backend.model;
 
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.ScreeningStatus;
-import de.cinetastisch.backend.enumeration.TicketCategory;
 import de.cinetastisch.backend.enumeration.TicketType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -44,14 +43,14 @@ public class Ticket {
     @JoinColumn(name = "seat_id", foreignKey = @ForeignKey(name = "ticket_seat_id_fk"))
     private Seat seat;
 
-    @Enumerated(EnumType.STRING)
-    private TicketCategory category = TicketCategory.ADULT;
+    @ManyToOne
+    @JoinColumn(name = "ticket_fare_id", foreignKey = @ForeignKey(name = "ticket_ticket_fare_id_fk"))
+    private TicketFare selectedFare;
 
     @Enumerated(EnumType.STRING)
     private TicketType type = TicketType.RESERVATION;
 
     private final LocalDateTime createdAt = LocalDateTime.now();
-//    private final LocalDateTime expiresAt = this.order.getExpiresAt();
 
     private boolean deleted = Boolean.FALSE;
 
@@ -61,21 +60,30 @@ public class Ticket {
         this.seat = seat;
     }
 
-    public Ticket(Order order, Screening screening, Seat seat, TicketCategory category) {
+    public Ticket(Order order, Screening screening, Seat seat, TicketFare selectedFare) {
         this.order = order;
         this.screening = screening;
         this.seat = seat;
-        this.category = category;
+        this.selectedFare = selectedFare;
     }
 
-    public Ticket(Order order, Screening screening, Seat seat, TicketCategory category, TicketType type) {
+    public Ticket(Order order, Screening screening, Seat seat, TicketFare selectedFare, TicketType type) {
         this.order = order;
         this.screening = screening;
         this.seat = seat;
-        this.category = category;
+        this.selectedFare = selectedFare;
         this.type = type;
     }
 
+    public Ticket(Long id, Order order, Screening screening, Seat seat, TicketFare selectedFare, TicketType type, boolean deleted) {
+        this.id = id;
+        this.order = order;
+        this.screening = screening;
+        this.seat = seat;
+        this.selectedFare = selectedFare;
+        this.type = type;
+        this.deleted = deleted;
+    }
 
     @PrePersist // benefit of this would be marginal since usually you do not deal much with entity after persisting
     @PostLoad

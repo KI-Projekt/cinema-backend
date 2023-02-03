@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import net.kaczmarzyk.spring.data.jpa.domain.*;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.*;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Join;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -62,8 +63,9 @@ public class ScreeningController {
                 @Spec(path = "m.title", params = "movieTitle", spec = LikeIgnoreCase.class),
                 @Spec(path = "r.id", params = "roomId", spec = Equal.class),
                 @Spec(path = "r.name", params = "roomName", spec = LikeIgnoreCase.class)
-            }) Specification<Screening> spec){
-        return ResponseEntity.ok(screeningService.getAllScreenings(spec));
+            }) Specification<Screening> spec,
+            @RequestParam(required = false) Sort sort){
+        return ResponseEntity.ok(screeningService.getAllScreenings(spec, sort));
     }
 
     @Operation(

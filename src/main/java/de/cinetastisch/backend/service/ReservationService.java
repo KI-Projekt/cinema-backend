@@ -33,6 +33,7 @@ public class ReservationService {
     private final TicketMapper ticketMapper;
     private final OrderMapper orderMapper;
     private final ReferenceMapper referenceMapper;
+    private final TicketFareRepository ticketFareRepository;
 
     public List<TicketResponseDto> getAllReservations(Long userId, Long screeningId){
         ticketRepository.deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus.CANCELLED, LocalDateTime.now());
@@ -85,7 +86,7 @@ public class ReservationService {
         }
 
 
-        ticket = new Ticket(order, screening, seat);
+        ticket = new Ticket(order, screening, seat, ticketFareRepository.findByNameLikeIgnoreCase("Adult"));
         order.getTickets().add(ticket);
         ticketRepository.save(ticket);
         orderRepository.save(order);
