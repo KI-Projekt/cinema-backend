@@ -4,13 +4,13 @@ import de.cinetastisch.backend.dto.request.ScreeningRequestDto;
 import de.cinetastisch.backend.dto.response.ScreeningFullResponseDto;
 import de.cinetastisch.backend.dto.response.ScreeningResponseDto;
 import de.cinetastisch.backend.enumeration.ScreeningStatus;
-import de.cinetastisch.backend.exception.NoResourcesException;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
 import de.cinetastisch.backend.mapper.ScreeningMapper;
 import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.*;
 import lombok.AllArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,27 +23,6 @@ public class ScreeningService {
 
     private final ScreeningRepository screeningRepository;
     private final ScreeningMapper mapper;
-    private final MovieRepository movieRepository;
-
-    public List<ScreeningResponseDto> getAllScreenings(String startTime, Long movieId ){
-        List<Screening> result;
-        if (movieId != null && startTime != null){
-            Movie movie = movieRepository.getReferenceById(movieId);
-            result = screeningRepository.findAllByMovieAndStartDateTimeAfter(movie, LocalDateTime.parse(startTime));
-        } else if (movieId != null){
-            Movie movie = movieRepository.getReferenceById(movieId);
-            result = screeningRepository.findAllByMovie(movie);
-        } else if (startTime != null && !startTime.isBlank()){
-            result = screeningRepository.findAllByStartDateTimeAfter(LocalDateTime.parse(startTime));
-        } else {
-            result = screeningRepository.findAll();
-        }
-        if(result.size() == 0){
-            throw new NoResourcesException("No Screenings given");
-        }
-
-        return mapper.trimDto(mapper.entityToDto(result));
-    }
 
     public ScreeningFullResponseDto getScreening(Long id){
         return mapper.entityToDto(screeningRepository.getReferenceById(id));
@@ -105,5 +84,11 @@ public class ScreeningService {
         screeningRepository.save(screening);
 
         return mapper.entityToDto(screening);
+    }
+
+    public List<ScreeningResponseDto> getAllScreenings(Specification<Screening> spec) {
+        System.out.println(spec.toString());
+        List<Screening> result = screeningRepository.findAll(spec);
+        return mapper.trimDto(mapper.entityToDto(result));
     }
 }

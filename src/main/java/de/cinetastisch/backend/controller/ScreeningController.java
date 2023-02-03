@@ -3,15 +3,21 @@ package de.cinetastisch.backend.controller;
 import de.cinetastisch.backend.dto.request.ScreeningRequestDto;
 import de.cinetastisch.backend.dto.response.ScreeningFullResponseDto;
 import de.cinetastisch.backend.dto.response.ScreeningResponseDto;
+import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.service.ScreeningService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import net.kaczmarzyk.spring.data.jpa.domain.*;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.*;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.Join;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,17 +35,35 @@ public class ScreeningController {
     @Operation(
             tags = {"Screenings"},
             parameters = {
-                    @Parameter(
-                            name = "startTime",
-                            description = "Get all screenings after the specified start datetime",
-                            example = "2022-12-30T19:34:50.63"
-                    )
+                    @Parameter(name = "status", example = "TICKET_SALE_CLOSED"),
+                    @Parameter(name = "startDateTime"),
+                    @Parameter(name = "endDateTime"),
+                    @Parameter(name = "3D"),
+                    @Parameter(name = "dolby"),
+                    @Parameter(name = "movieId"),
+                    @Parameter(name = "movieTitle"),
+                    @Parameter(name = "roomId"),
+                    @Parameter(name = "roomName")
             }
+
     )
+    @Transactional
     @GetMapping
-    public ResponseEntity<List<ScreeningResponseDto>> getAll(@RequestParam(value = "startTime", required = false) String startTime,
-                                                             @RequestParam(value = "movieId", required = false) Long movieId){
-        return ResponseEntity.ok(screeningService.getAllScreenings(startTime, movieId));
+    public ResponseEntity<List<ScreeningResponseDto>> getAll(
+            @Join(path= "movie", alias = "m")
+            @Join(path= "room", alias = "r")
+            @And({
+                @Spec(path = "status", params = "status", paramSeparator = ',', spec = In.class, defaultVal = "TICKET_SALE_OPEN"),
+                @Spec(path = "startDateTime", params = "startDateTime", spec = GreaterThanOrEqual.class),
+                @Spec(path = "endDateTime", params = "endDateTime", spec = LessThanOrEqual.class),
+                @Spec(path = "isThreeD", params = "3D", spec = Equal.class),
+                @Spec(path = "isDolbyAtmos", params = "dolby", spec = Equal.class),
+                @Spec(path = "m.id", params = "movieId", spec = Equal.class),
+                @Spec(path = "m.title", params = "movieTitle", spec = LikeIgnoreCase.class),
+                @Spec(path = "r.id", params = "roomId", spec = Equal.class),
+                @Spec(path = "r.name", params = "roomName", spec = LikeIgnoreCase.class)
+            }) Specification<Screening> spec){
+        return ResponseEntity.ok(screeningService.getAllScreenings(spec));
     }
 
     @Operation(
