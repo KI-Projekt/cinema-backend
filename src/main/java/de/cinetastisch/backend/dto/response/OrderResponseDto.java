@@ -5,6 +5,7 @@ import de.cinetastisch.backend.enumeration.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public record OrderResponseDto(
         Long id,
@@ -15,6 +16,7 @@ public record OrderResponseDto(
         OrderPaymentMethod paymentMethod,
         LocalDateTime createdAt,
         LocalDateTime expiresAt,
+        Map<String, Long> faresSelected,
         List<TicketResponseDto> tickets
 ) {
 }
