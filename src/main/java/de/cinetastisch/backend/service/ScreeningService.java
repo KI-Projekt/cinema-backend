@@ -7,9 +7,11 @@ import de.cinetastisch.backend.enumeration.ScreeningStatus;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
 import de.cinetastisch.backend.mapper.ScreeningMapper;
-import de.cinetastisch.backend.model.*;
-import de.cinetastisch.backend.repository.*;
+import de.cinetastisch.backend.model.Movie;
+import de.cinetastisch.backend.model.Screening;
+import de.cinetastisch.backend.repository.ScreeningRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,9 +88,12 @@ public class ScreeningService {
         return mapper.entityToDto(screening);
     }
 
-    public List<ScreeningResponseDto> getAllScreenings(Specification<Screening> spec) {
-        System.out.println(spec.toString());
-        List<Screening> result = screeningRepository.findAll(spec);
+    public List<ScreeningResponseDto> getAllScreenings(Specification<Screening> spec, Sort sort) {
+        if(sort == null){
+            sort = Sort.by("startDateTime").ascending();
+        }
+
+        List<Screening> result = screeningRepository.findAll(spec, sort);
         return mapper.trimDto(mapper.entityToDto(result));
     }
 }

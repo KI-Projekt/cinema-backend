@@ -19,6 +19,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Entity
 @Table(name = "screening", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
 @SQLDelete(sql = "UPDATE screening SET status = 'CANCELLED' WHERE id=?")
+
 public class Screening {
 
     @Schema(accessMode = READ_ONLY)

@@ -1,6 +1,5 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.dto.request.FaresDto;
 import de.cinetastisch.backend.dto.response.OrderResponseDto;
 import de.cinetastisch.backend.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -55,8 +55,8 @@ public class OrderController {
             tags = {"Orders"}
     )
     @PutMapping("orders/{id}/selectFares")
-    public ResponseEntity<OrderResponseDto> selectFares(@PathVariable("id") Long id, @RequestBody FaresDto fares){
-        return ResponseEntity.ok(orderService.selectFares(id, fares));
+    public ResponseEntity<OrderResponseDto> selectFares(@PathVariable("id") Long id, @RequestBody Map<String, Integer> fareSelection){
+        return ResponseEntity.ok(orderService.selectFares(id, fareSelection));
     }
 
     @Operation(
