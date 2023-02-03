@@ -8,15 +8,24 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.NullValueCheckStrategy;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-        uses = {ReferenceMapper.class, UserMapper.class, TicketMapper.class, ReservationMapper.class})
+        uses = {ReferenceMapper.class, UserMapper.class, TicketMapper.class, ReservationMapper.class},
+        imports = Collectors.class)
 public interface OrderMapper {
 
-//    @Mapping(target = "expiresAt", expression = "java(order.getStatus() == de.cinetastisch.backend.enumeration.OrderStatus.IN_PROGRESS ? order.getCreatedAt().plusMinutes(1) : null)")
+    @Mapping(target = "faresSelected", expression = "java(order.getTickets().stream().collect(Collectors.groupingBy(o -> o.getSelectedFare().getName(), Collectors.counting())))")
     @Mapping(target = "orderStatus", source = "status")
     @Mapping(target = "id", expression = "java(order.getId())")
     OrderResponseDto entityToDto(Order order);
     List<OrderResponseDto> entityToDto(Iterable<Order> order);
+
+//    @Named("generateFareSelection")
+//    default Map<String, Long> generateFareSelection(Order order){
+//        return order.getTickets()
+//                                 .stream()
+//                                 .collect(Collectors.groupingBy(o -> o.getSelectedFare().getName(), Collectors.counting()));
+//    }
 }
