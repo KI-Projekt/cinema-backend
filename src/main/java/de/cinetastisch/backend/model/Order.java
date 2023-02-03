@@ -46,6 +46,7 @@ public class Order {
     private LocalDateTime expiresAt = this.createdAt.plusMinutes(5);
 
     @OneToMany(mappedBy = "order")
+    @OrderBy(value = "order.id, seat.id ASC")
     private List<Ticket> tickets = new ArrayList<>();
 
     public Order(User user) {
