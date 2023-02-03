@@ -72,6 +72,7 @@ public class ReservationService {
                 order = orderRepository.findByUserAndStatus(user, OrderStatus.IN_PROGRESS);
             } else {
                 order = new Order(user);
+                orderRepository.save(order);
             }
         } else {
             System.out.println("SESSION CREATION");
@@ -79,6 +80,7 @@ public class ReservationService {
                 order = orderRepository.findBySessionAndStatus(session.getId(), OrderStatus.IN_PROGRESS);
             } else {
                 order = new Order(session.getId());
+                orderRepository.save(order);
             }
         }
 
@@ -87,7 +89,7 @@ public class ReservationService {
         order.getTickets().add(ticket);
         ticketRepository.save(ticket);
         orderRepository.save(order);
-        return orderMapper.entityToDto(orderRepository.getReferenceById(order.getId()));
+        return orderMapper.entityToDto(referenceMapper.map(order.getId(), Order.class));
     }
 
     @Transactional

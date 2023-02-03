@@ -10,13 +10,9 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-//    @Query("select sum(t.price) from Order b join Ticket t on b.id = t.order.id where t.order.id = ?1")
-//    Double totalCost();
 
     List<Order> findAllByUser(User user);
     List<Order> findAllByStatus(OrderStatus orderStatus);
-    List<Order> findAllByUserAndStatus(User user, OrderStatus status);
-    List<Order> findAllBySessionAndStatus(String session, OrderStatus status);
 
     Order findByUserAndStatus(User user, OrderStatus status);
     Order findBySessionAndStatus(String session, OrderStatus status);
