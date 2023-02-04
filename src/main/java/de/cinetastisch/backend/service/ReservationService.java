@@ -46,7 +46,6 @@ public class ReservationService {
     @Transactional
     public OrderResponseDto addReservation(ReservationRequestDto reservation, HttpSession session){
         System.out.println(session.getId());
-        orderRepository.findAllByStatus(OrderStatus.IN_PROGRESS);
 
         Seat seat = seatRepository.getReferenceById(reservation.seatId());
         Screening screening = screeningRepository.getReferenceById(reservation.screeningId());
@@ -61,24 +60,22 @@ public class ReservationService {
             throw new IllegalArgumentException("Seat ID not in Screening");
         }
 
-        System.out.println(ticketRepository.findAllByScreeningAndSeat(screening, seat));
-
         if(ticketRepository.existsByScreeningAndSeat(screening, seat)){
             throw new ResourceAlreadyOccupiedException("Seat is already reserved");
         }
         if(reservation.userId() != null){
             System.out.println("USER CREATION");
             User user = userRepository.getReferenceById(reservation.userId());
-            if(orderRepository.existsByUserAndStatus(user, OrderStatus.IN_PROGRESS)){
-                order = orderRepository.findByUserAndStatus(user, OrderStatus.IN_PROGRESS);
+            if(orderRepository.existsByUserAndStatusAndTicketsScreening(user, OrderStatus.IN_PROGRESS, screening)){
+                order = orderRepository.findByUserAndStatusAndTicketsScreening(user, OrderStatus.IN_PROGRESS, screening);
             } else {
                 order = new Order(user);
                 orderRepository.save(order);
             }
         } else {
             System.out.println("SESSION CREATION");
-            if(orderRepository.existsBySessionAndStatus(session.getId(), OrderStatus.IN_PROGRESS)){
-                order = orderRepository.findBySessionAndStatus(session.getId(), OrderStatus.IN_PROGRESS);
+            if(orderRepository.existsBySessionAndStatusAndTicketsScreening(session.getId(), OrderStatus.IN_PROGRESS, screening)){
+                order = orderRepository.findBySessionAndStatusAndTicketsScreening(session.getId(), OrderStatus.IN_PROGRESS, screening);
             } else {
                 order = new Order(session.getId());
                 orderRepository.save(order);
