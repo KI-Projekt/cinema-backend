@@ -14,7 +14,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Setter
 @ToString
 @EqualsAndHashCode
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
 @Table(uniqueConstraints = {
         @UniqueConstraint(name = "movie_id_unique", columnNames = {"id"}),
@@ -46,10 +46,11 @@ public class Movie {
     @Enumerated(EnumType.STRING)
     private MovieStatus movieStatus = MovieStatus.IN_CATALOG;
 
-    public Movie(@NonNull String title, String releaseYear, String posterImage, MovieRating rated, String runtime,
-                 String genre,
-                 String director, String writer, String actors, String plot, String trailer, String imdbId,
-                 String imdbRating, String imdbRatingCount) {
+    public Movie(@NonNull String title, String releaseYear, String posterImage, @NonNull MovieRating rated,
+                 String runtime,
+                 String genre, String director, String writer, String actors, String plot, String trailer,
+                 String imdbId,
+                 String imdbRating, String imdbRatingCount, MovieStatus movieStatus) {
         this.title = title;
         this.releaseYear = releaseYear;
         this.posterImage = posterImage;
@@ -64,6 +65,29 @@ public class Movie {
         this.imdbId = imdbId;
         this.imdbRating = imdbRating;
         this.imdbRatingCount = imdbRatingCount;
+        this.movieStatus = movieStatus;
+    }
+
+    public Movie(Long id, @NonNull String title, String releaseYear, String posterImage, @NonNull MovieRating rated,
+                 String runtime, String genre, String director, String writer, String actors, String plot,
+                 String trailer,
+                 String imdbId, String imdbRating, String imdbRatingCount, MovieStatus movieStatus) {
+        this.id = id;
+        this.title = title;
+        this.releaseYear = releaseYear;
+        this.posterImage = posterImage;
+        this.rated = rated;
+        this.runtime = runtime;
+        this.genre = genre;
+        this.director = director;
+        this.writer = writer;
+        this.actors = actors;
+        this.plot = plot;
+        this.trailer = trailer;
+        this.imdbId = imdbId;
+        this.imdbRating = imdbRating;
+        this.imdbRatingCount = imdbRatingCount;
+        this.movieStatus = movieStatus;
     }
 
     public String getRated() {

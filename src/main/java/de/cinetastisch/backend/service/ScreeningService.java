@@ -11,7 +11,7 @@ import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.repository.ScreeningRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +26,10 @@ public class ScreeningService {
     private final ScreeningRepository screeningRepository;
     private final ScreeningMapper mapper;
 
+    public List<ScreeningResponseDto> getAllScreenings(Specification<Screening> spec, Pageable pageable) {
+        return mapper.trimDto(mapper.entityToDto(screeningRepository.findAll(spec, pageable)));
+    }
+
     public ScreeningFullResponseDto getScreening(Long id){
         return mapper.entityToDto(screeningRepository.getReferenceById(id));
     }
@@ -37,7 +41,6 @@ public class ScreeningService {
             screening.setEndDateTime(calculateEndDateTime(screening.getStartDateTime(), screening.getMovie()));
         }
 
-        // Check if room is already occupied for that time
         List<Screening> runningScreenings = screeningRepository.findAllByRoomAndTime(screening.getRoom(),
                                                                                      screening.getStartDateTime(),
                                                                                      screening.getEndDateTime());
@@ -84,16 +87,6 @@ public class ScreeningService {
 
         screening.setStatus(ScreeningStatus.CANCELLED);
         screeningRepository.save(screening);
-
         return mapper.entityToDto(screening);
-    }
-
-    public List<ScreeningResponseDto> getAllScreenings(Specification<Screening> spec, Sort sort) {
-        if(sort == null){
-            sort = Sort.by("startDateTime").ascending();
-        }
-
-        List<Screening> result = screeningRepository.findAll(spec, sort);
-        return mapper.trimDto(mapper.entityToDto(result));
     }
 }

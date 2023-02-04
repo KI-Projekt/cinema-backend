@@ -10,6 +10,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import net.kaczmarzyk.spring.data.jpa.domain.*;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,11 +61,26 @@ public class MovieController {
             }
     )
     @GetMapping
-    public ResponseEntity<List<MovieResponseDto>> getAll(@RequestParam(value = "title", required = false) String title,
-                                                         @RequestParam(value = "genre", required = false) String genre,
-                                                         @RequestParam(value = "imdbId", required = false) String imdbId,
-                                                         @RequestParam(value = "rated", required = false) String rated) {
-        return new ResponseEntity<>(movieService.getAllMovies(title, genre, imdbId, rated), HttpStatus.OK);
+    public ResponseEntity<List<MovieResponseDto>> getAll(
+            @And({
+                    @Spec(path = "movieStatus", params = "status", spec = EqualIgnoreCase.class, defaultVal = "IN_CATALOG"),
+                    @Spec(path = "title", params = "title", spec = LikeIgnoreCase.class),
+                    @Spec(path = "releaseYear", params = "releaseYear", spec = Equal.class),
+                    @Spec(path = "rated", params = "rated", paramSeparator = ',', spec = LessThanOrEqual.class),
+                    @Spec(path = "runtime", params = "runtime", spec = Equal.class),
+                    @Spec(path = "genre", params = "genre", paramSeparator = ',', spec = In.class),
+                    @Spec(path = "director", params = "director", spec = LikeIgnoreCase.class),
+                    @Spec(path = "writer", params = "writer", spec = LikeIgnoreCase.class),
+                    @Spec(path = "actors", params = "actor", spec = LikeIgnoreCase.class),
+                    @Spec(path = "actors", params = "actors", paramSeparator = ',', spec = In.class),
+                    @Spec(path = "plot", params = "plot", spec = LikeIgnoreCase.class),
+                    @Spec(path = "imdbId", params = "imdbId", spec = Equal.class),
+                    @Spec(path = "imdbRating", params = "imdbRating", spec = GreaterThanOrEqual.class)
+            }) Specification<Movie> spec,
+            @ParameterObject @PageableDefault(sort = "id") Pageable page
+    ) {
+        System.out.println(spec);
+        return new ResponseEntity<>(movieService.getAllMovies(spec, page), HttpStatus.OK);
     }
 
     @Operation(

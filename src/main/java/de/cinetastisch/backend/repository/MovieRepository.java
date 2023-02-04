@@ -1,27 +1,20 @@
 package de.cinetastisch.backend.repository;
 
-import de.cinetastisch.backend.enumeration.MovieRating;
 import de.cinetastisch.backend.model.Movie;
+import jakarta.annotation.Nullable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
-public interface MovieRepository extends JpaRepository<Movie, Long> {
-
-    Optional<Movie> findByTitleIgnoreCase(String title);
-    Optional<Movie> findByImdbIdIgnoreCase(String imdbId);
-
-    List<Movie> findAllByTitleLikeIgnoreCase(String formattedTitle);
-    List<Movie> findAllByImdbIdLikeIgnoreCase(String formattedImdbId);
-    List<Movie> findAllByGenreLikeIgnoreCase(String formattedGenre);
-//    List<Movie> findAllByRatedLikeIgnoreCase(String formattedRated);
-    List<Movie> findAllByRatedLessThanEqual(MovieRating rated);
-    List<Movie> findAllByActorsIgnoreCase(String actor);
-    List<Movie> findAllByReleaseYear(String year);
-
+public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecificationExecutor<Movie> {
     Boolean existsByTitleIgnoreCase(String title);
     Boolean existsByImdbIdIgnoreCase(String imdbId);
+
+    @Override
+    List<Movie> findAll(@Nullable Specification spec, Sort sort);
 }

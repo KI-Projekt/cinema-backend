@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,7 +24,8 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler({
             ResourceNotFoundException.class,
             EntityNotFoundException.class,
-            EmptyResultDataAccessException.class
+            EmptyResultDataAccessException.class,
+            PropertyReferenceException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessage handleResourceNotFound(RuntimeException ex, WebRequest webRequest){

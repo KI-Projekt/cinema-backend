@@ -1,9 +1,6 @@
 package de.cinetastisch.backend.controller;
 
 
-
-
-
 import de.cinetastisch.backend.dto.request.MovieRequestDto;
 import de.cinetastisch.backend.dto.response.MovieResponseDto;
 import de.cinetastisch.backend.enumeration.MovieRating;
@@ -15,13 +12,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,15 +32,13 @@ class MovieControllerTest {
 
     @Test
     void getAllsuccessfull() {
-
-
         MovieResponseDto movie1 = new MovieResponseDto(1L, "Test", "2000", "scr/test", MovieRating.G.toString(), "200", "Action", "Nora", "klemp", "Kevin", "jsdflhjkfasdlhjkjflasdklkjfsda", "www.ded.de", "2/20", "2/20", "200", MovieStatus.IN_CATALOG);
         MovieResponseDto movie2 = new MovieResponseDto(2L, "Test", "2000", "scr/test", MovieRating.G.toString(), "200", "Action", "Nora", "klemp", "Kevin", "jsdflhjkfasdlhjkjflasdklkjfsda", "www.ded.de", "2/20", "2/20", "200", MovieStatus.IN_CATALOG);
         List<MovieResponseDto> expected = List.of(movie1, movie2);
 
-        when(movieService.getAllMovies("Test", "", "", "")).thenReturn(expected);
+        when(movieService.getAllMovies(null, null)).thenReturn(expected);
 
-        ResponseEntity<List<MovieResponseDto>> response = movieController.getAll("Test", "", "", "");
+        ResponseEntity<List<MovieResponseDto>> response = movieController.getAll(null, null);
         assertAll(
                 () -> assertEquals(response.getBody(), expected),
                 () -> assertEquals(response.getStatusCode(), HttpStatus.OK)

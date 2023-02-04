@@ -13,10 +13,13 @@ import de.cinetastisch.backend.pojo.OmdbMovieResponse;
 import de.cinetastisch.backend.repository.MovieRepository;
 import de.cinetastisch.backend.repository.ScreeningRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,35 +31,28 @@ public class MovieService {
     private final MovieMapper movieMapper;
     private final ScreeningRepository screeningRepository;
 
+    @Transactional
+    public List<MovieResponseDto> getAllMovies(Specification<Movie> spec, Pageable pageable) {
+//        List<Sort.Order> orders = sort.stream()
+//                                        .flatMap(str -> str.contains(",")
+//                                                ? Stream.of(new Sort.Order(Sort.Direction.valueOf(str.split(",")[1].toUpperCase()), str.split(",")[0]))
+//                                                : Stream.of(new Sort.Order(Sort.Direction.ASC, str)))
+//                                        .toList();
 
-
-    // #########################
-    // CRUD
-    // #########################
-
-
-    public List<MovieResponseDto> getAllMovies(String title, String genre, String imdbId, String rated){
-        if (title != null && !title.isBlank() && genre != null && !genre.isBlank()){
-            throw new IllegalArgumentException("Only one query parameter at a time supported.");
+//        return movieMapper.entityToDto(movieRepository.findAll(
+//                spec,
+//                Sort.by(sort.contains(",")
+//                                ? new Sort.Order(Sort.Direction.valueOf(sort.split(",")[1].toUpperCase()), sort.split(",")[0])
+//                                : new Sort.Order(Sort.Direction.ASC, sort)
+//                )
+//        ));
+        Sort sort = pageable.getSort();
+        if ( sort.isEmpty() ){
+            sort = Sort.by("id");
         }
-
-        List<Movie> result = new ArrayList<>();
-
-        if(imdbId != null && !imdbId.isBlank()){
-            result.addAll(movieRepository.findAllByImdbIdLikeIgnoreCase("%" + imdbId + "%"));
-        } else if(title != null && !title.isBlank()){
-            result.addAll(movieRepository.findAllByTitleLikeIgnoreCase("%"+title+"%"));
-        } else if (genre != null && !genre.isBlank()){
-            result.addAll(movieRepository.findAllByGenreLikeIgnoreCase("%"+genre+"%"));
-        } else if (rated != null){
-            MovieRating movieRating = MovieRating.valueOfLabel(rated);
-            result.addAll(movieRepository.findAllByRatedLessThanEqual(movieRating));
-        } else {
-            result.addAll(movieRepository.findAll());
-        }
-
+        List<Movie> result = movieRepository.findAll(spec, sort);
+//        List<MovieResponseDto> result = movieRepository.findAll(spec, pageable).map(movieMapper::entityToDto);
         return movieMapper.entityToDto(result);
-//        List<MovieRequestDto>responseDto = response.stream().map(this::convertToDto).toList();
     }
 
     public MovieResponseDto getMovie(Long id){
@@ -111,10 +107,6 @@ public class MovieService {
         }
         movieRepository.delete(movie);
     }
-
-    // ##############
-    // Other
-    // ##############
 
     public Movie getOmdbMovieByTitle(String movieTitle){
         String uri = "https://www.omdbapi.com/?apikey=16be7c3b&t=" + movieTitle;
