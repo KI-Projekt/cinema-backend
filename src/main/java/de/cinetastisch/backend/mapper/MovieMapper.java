@@ -3,6 +3,7 @@ package de.cinetastisch.backend.mapper;
 import de.cinetastisch.backend.dto.request.MovieRequestDto;
 import de.cinetastisch.backend.dto.response.MovieResponseDto;
 import de.cinetastisch.backend.dto.response.MovieSlimResponseDto;
+import de.cinetastisch.backend.enumeration.MovieRating;
 import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.pojo.OmdbMovieResponse;
 import org.mapstruct.Mapper;
@@ -14,7 +15,9 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-        uses = {ReferenceMapper.class})
+        uses = {ReferenceMapper.class},
+        imports = {MovieRating.class}
+)
 public interface MovieMapper {
 
     @Mapping(target = "movieStatus", ignore = true, defaultExpression = "java(MovieStatus.IN_CATALOG)")

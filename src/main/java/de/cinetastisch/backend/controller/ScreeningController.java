@@ -11,10 +11,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import net.kaczmarzyk.spring.data.jpa.domain.*;
-import net.kaczmarzyk.spring.data.jpa.web.annotation.*;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Join;
-import org.springframework.data.domain.Sort;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,15 +39,8 @@ public class ScreeningController {
     @Operation(
             tags = {"Screenings"},
             parameters = {
-                    @Parameter(name = "status", example = "TICKET_SALE_CLOSED"),
-                    @Parameter(name = "startDateTime"),
-                    @Parameter(name = "endDateTime"),
-                    @Parameter(name = "3D"),
-                    @Parameter(name = "dolby"),
-                    @Parameter(name = "movieId"),
-                    @Parameter(name = "movieTitle"),
-                    @Parameter(name = "roomId"),
-                    @Parameter(name = "roomName")
+                    @Parameter(name = "sort"),
+                    @Parameter(name = "status", example = "TICKET_SALE_CLOSED")
             }
 
     )
@@ -61,11 +57,22 @@ public class ScreeningController {
                 @Spec(path = "isDolbyAtmos", params = "dolby", spec = Equal.class),
                 @Spec(path = "m.id", params = "movieId", spec = Equal.class),
                 @Spec(path = "m.title", params = "movieTitle", spec = LikeIgnoreCase.class),
+                @Spec(path = "m.releaseYear", params = "releaseYear", spec = Equal.class),
+                @Spec(path = "m.rated", params = "rated", paramSeparator = ',', spec = LessThanOrEqual.class),
+                @Spec(path = "m.runtime", params = "runtime", spec = Equal.class),
+                @Spec(path = "m.genre", params = "genre", paramSeparator = ',', spec = In.class),
+                @Spec(path = "m.director", params = "director", spec = LikeIgnoreCase.class),
+                @Spec(path = "m.writer", params = "writer", spec = LikeIgnoreCase.class),
+                @Spec(path = "m.actors", params = "actor", spec = LikeIgnoreCase.class),
+                @Spec(path = "m.actors", params = "actors", paramSeparator = ',', spec = In.class),
+                @Spec(path = "m.plot", params = "plot", spec = LikeIgnoreCase.class),
+                @Spec(path = "m.imdbId", params = "imdbId", spec = Equal.class),
+                @Spec(path = "m.imdbRating", params = "imdbRating", spec = GreaterThanOrEqual.class),
                 @Spec(path = "r.id", params = "roomId", spec = Equal.class),
                 @Spec(path = "r.name", params = "roomName", spec = LikeIgnoreCase.class)
             }) Specification<Screening> spec,
-            @RequestParam(required = false) Sort sort){
-        return ResponseEntity.ok(screeningService.getAllScreenings(spec, sort));
+            @ParameterObject @PageableDefault(sort = "startDateTime") Pageable page){
+        return ResponseEntity.ok(screeningService.getAllScreenings(spec, page));
     }
 
     @Operation(

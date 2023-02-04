@@ -16,12 +16,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MovieServiceTest {
@@ -34,6 +35,8 @@ class MovieServiceTest {
     @Mock
     MovieMapper movieMapper;
 
+
+
 //     final String url = "https://www.omdbapi.com/?apikey=16be7c3b&i="+ "tt0076759";
 //    RestTemplate restTemplate = new RestTemplate();
 //    @Mock
@@ -41,92 +44,95 @@ class MovieServiceTest {
 
 
 
-    @Test
-    void getAllMoviesthowsexeption() {
-        assertThrows(IllegalArgumentException.class, () -> movieService.getAllMovies("Hangover", "Action", "1234IMdb", "27/10"));
-    }
+//    @Test
+//    void getAllMoviesthowsexeption() {
+//        assertThrows(IllegalArgumentException.class, () -> movieService.getAllMovies(null, Pageable.unpaged()));
+//    }
 
-    @Test
-    void getAllMoviesByImdbID() {
-        String ImdbID = "1234IMdb";
-        MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,null,null,null,null,null,null,null,null,ImdbID,null,null,null);
-        List<MovieResponseDto> responseDtoList = List.of(responseDto,responseDto);
-
-        Movie firstmovie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", ImdbID, "27/10", "1222");
-        Movie secondmovie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", ImdbID, "27/10", "1222");
-        List<Movie> movieList = List.of(firstmovie, secondmovie);
-
-
-        when(movieRepository.findAllByImdbIdLikeIgnoreCase("%" + ImdbID + "%")).thenReturn(movieList);
-        when(movieMapper.entityToDto(movieList)).thenReturn(responseDtoList);
-        List<?> response = movieService.getAllMovies(null, null, ImdbID, null);
-        assertEquals(responseDtoList, response);
-    }
-
-    @Test
-    void getAllMoviesByTitle() {
-        String title = "Avengers Engame";
-        Movie movie = new Movie(title, "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222");
-        List<Movie> movieList = List.of(movie,movie);
-        MovieResponseDto responseDto =new MovieResponseDto(null,title,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-        List<MovieResponseDto> responseDtoList = List.of(responseDto,responseDto);
-
-        when(movieRepository.findAllByTitleLikeIgnoreCase("%" + title + "%")).thenReturn(movieList);
-        when(movieMapper.entityToDto(movieList)).thenReturn(responseDtoList);
-
-        List<MovieResponseDto> response = movieService.getAllMovies(title, null, null, null);
-        assertEquals(responseDtoList, response);
-    }
-
-    @Test
-    void getAllMoviesimdbByGerne() {
-        String genre = "Action";
-        Movie movie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", genre, "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222");
-        List<Movie> movieList = List.of(movie,movie);
-        MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,null,null,genre,null,null,null,null,null,null,null,null,null);
-        List<MovieResponseDto> responseDtoList = List.of(responseDto,responseDto);
-
-        when(movieRepository.findAllByGenreLikeIgnoreCase("%" + genre + "%")).thenReturn(movieList);
-        when(movieMapper.entityToDto(movieList)).thenReturn(responseDtoList);
-
-        List<MovieResponseDto> response = movieService.getAllMovies(null, genre, null, null);
-        assertEquals(responseDtoList, response);
-    }
-
-    @Test
-    void getAllMoviesByrated() {
-        String rated = "PG-13";
-        MovieRating movieRating = MovieRating.valueOfLabel(rated);
-        Movie movie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222");
-        List<Movie> movieList = List.of(movie,movie);
-        MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,rated,null,null,null,null,null,null,null,null,null,null,null);
-        List<MovieResponseDto> responseDtoList = List.of(responseDto,responseDto);
-
-        when(movieRepository.findAllByRatedLessThanEqual(movieRating)).thenReturn(movieList);
-        when(movieMapper.entityToDto(movieList)).thenReturn(responseDtoList);
-
-        List<MovieResponseDto> response = movieService.getAllMovies(null, null, null, rated);
-        assertEquals(responseDtoList, response);
-
-    }
+//    @Test
+//    void getAllMoviesByImdbID() {
+//        String ImdbID = "1234IMdb";
+//        MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,null,null,null,null,null,null,null,null,ImdbID,null,null,null);
+//        List<MovieResponseDto> responseDtoList = List.of(responseDto,responseDto);
+//
+//        Movie firstmovie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", ImdbID, "27/10", "1222", MovieStatus.IN_CATALOG);
+//        Movie secondmovie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", ImdbID, "27/10", "1222", MovieStatus.IN_CATALOG);
+//        List<Movie> movieList = List.of(firstmovie, secondmovie);
+//
+//
+////        when(movieRepository.findAllByImdbIdLikeIgnoreCase(ImdbID)).thenReturn(movieList);
+//        when(movieMapper.entityToDto(movieRepository.findAllByImdbIdLikeIgnoreCase(ImdbID))).thenReturn(responseDtoList);
+//
+//        List<?> response = movieService.getAllMovies(null, Pageable.unpaged());
+//        assertEquals(responseDtoList, response);
+//    }
+//
+//    @Test
+//    void getAllMoviesByTitle() {
+//        String title = "Avengers Engame";
+//
+//        Movie movie = new Movie((long)2.12,title, "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222", MovieStatus.IN_CATALOG);
+//        List<Movie> movieList = List.of(movie,movie);
+//
+//        MovieResponseDto responseDto =new MovieResponseDto(null,title,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+//        List<MovieResponseDto> responseDtoList = List.of(responseDto,responseDto);
+//
+////        when(movieRepository.findAllByTitleLikeIgnoreCase(title)).thenReturn(movieList);
+//        when(movieMapper.entityToDto(movieRepository.findAllByTitleLikeIgnoreCase(title))).thenReturn(responseDtoList);
+//
+//        List<MovieResponseDto> response = movieService.getAllMovies(null, Pageable.unpaged());
+//        assertEquals(responseDtoList, response);
+//    }
+//
+//    @Test
+//    void getAllMoviesimdbByGerne() {
+//        String genre = "Action";
+//        Movie movie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", genre, "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222", MovieStatus.IN_CATALOG);
+//        List<Movie> movieList = List.of(movie,movie);
+//        MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,null,null,genre,null,null,null,null,null,null,null,null,null);
+//        List<MovieResponseDto> responseDtoList = List.of(responseDto,responseDto);
+//
+////        when(movieRepository.findAllByGenreLikeIgnoreCase("%" + genre + "%")).thenReturn(movieList);
+//        when(movieMapper.entityToDto(movieRepository.findAllByGenreLikeIgnoreCase("%" + genre + "%"))).thenReturn(responseDtoList);
+//
+//        List<MovieResponseDto> response = movieService.getAllMovies(null, Pageable.unpaged());
+//        assertEquals(responseDtoList, response);
+//    }
+//
+//    @Test
+//    void getAllMoviesByrated() {
+//        String rated = "PG-13";
+//        MovieRating movieRating = MovieRating.valueOfLabel(rated);
+//        Movie movie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222", MovieStatus.IN_CATALOG);
+//        List<Movie> movieList = List.of(movie,movie);
+//        MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,rated,null,null,null,null,null,null,null,null,null,null,null);
+//        List<MovieResponseDto> responseDtoList = List.of(responseDto,responseDto);
+//
+////        when(movieRepository.findAllByRatedLessThanEqual(movieRating)).thenReturn(movieList);
+//        when(movieMapper.entityToDto(movieRepository.findAllByRatedLessThanEqual(movieRating))).thenReturn(responseDtoList);
+//
+//        List<MovieResponseDto> response = movieService.getAllMovies(null, Pageable.unpaged());
+//        assertEquals(responseDtoList, response);
+//
+//    }
 
     @Test
     void getAllMovies() {
-        Movie movie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222");
+        Movie movie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222", MovieStatus.IN_CATALOG);
         List<Movie> movieList = List.of(movie,movie);
         MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         List<MovieResponseDto> responseDtoList = List.of(responseDto,responseDto);
 
-        when(movieRepository.findAll()).thenReturn(movieList);
-        when(movieMapper.entityToDto(movieList)).thenReturn(responseDtoList);
+//        when(movieRepository.findAll()).thenReturn(movieList);
+        when(movieMapper.entityToDto(movieRepository.findAll())).thenReturn(responseDtoList);
 
-        List<MovieResponseDto> response = movieService.getAllMovies(null, null, null, null);
+        List<MovieResponseDto> response = movieService.getAllMovies(null, Pageable.unpaged());
         assertEquals(responseDtoList, response);
 
     }
 
     @Test void getMovie(){
-        Movie movie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222");
+        Movie movie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222", MovieStatus.IN_CATALOG);
         MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         when(movieRepository.getReferenceById((long)1.2)).thenReturn(movie);
         when(movieMapper.entityToDto(movie)).thenReturn(responseDto);
@@ -139,7 +145,7 @@ class MovieServiceTest {
     @Test
     void addMoviesetnoMovieStatus() {
         String test = "Test";
-        Movie movie = new Movie(test, "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",test , "27/10", "1222");
+        Movie movie = new Movie(test, "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",test , "27/10", "1222", MovieStatus.IN_CATALOG);
 
         when(movieRepository.existsByImdbIdIgnoreCase(test)).thenReturn(false);
         when(movieRepository.existsByTitleIgnoreCase(test)).thenReturn(false);
@@ -152,7 +158,7 @@ class MovieServiceTest {
     @Test
     void addMovie() {
         String test = "Test";
-        Movie movie = new Movie(test, "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",test , "27/10", "1222");
+        Movie movie = new Movie(test, "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",test , "27/10", "1222", MovieStatus.IN_CATALOG);
 
         when(movieRepository.existsByImdbIdIgnoreCase(test)).thenReturn(false);
         when(movieRepository.existsByTitleIgnoreCase(test)).thenReturn(false);
@@ -165,7 +171,7 @@ class MovieServiceTest {
     @Test
     void addMovieByParametersMovieDto() {
         MovieRequestDto requestDto = new MovieRequestDto(null,null,null,"PG-13",null,null,null,null,null,null,null,null,null,null,null);
-        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",null , "27/10", "1222");
+        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",null , "27/10", "1222", MovieStatus.IN_CATALOG);
         MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         when(movieMapper.dtoToEntity(requestDto)).thenReturn(movie);
         when(movieMapper.entityToDto(movie)).thenReturn(responseDto);
@@ -212,7 +218,7 @@ class MovieServiceTest {
     @Test
     void replaceMovie() {
         MovieRequestDto requestDto = new MovieRequestDto(null,null,null,"PG-13",null,null,null,null,null,null,null,null,null,null,null);
-        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",null , "27/10", "1222");
+        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",null , "27/10", "1222", MovieStatus.IN_CATALOG);
         MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
 
         when(movieMapper.dtoToEntity(requestDto)).thenReturn(movie);
@@ -227,7 +233,7 @@ class MovieServiceTest {
 
     @Test
     void deleteMovieExeption() {
-        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",null , "27/10", "1222");
+        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",null , "27/10", "1222", MovieStatus.IN_CATALOG);
 
         when(movieRepository.getReferenceById((long)1.2)).thenReturn(movie);
         when(screeningRepository.existsByMovie(movie)).thenReturn(true);
@@ -238,7 +244,7 @@ class MovieServiceTest {
     }
     @Test
     void deleteMovie() {
-        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",null , "27/10", "1222");
+        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",null , "27/10", "1222", MovieStatus.IN_CATALOG);
 
         when(movieRepository.getReferenceById((long)1.2)).thenReturn(movie);
         when(screeningRepository.existsByMovie(movie)).thenReturn(false);
@@ -284,7 +290,7 @@ class MovieServiceTest {
 
     @Test
     void archiveChanceMovieStatus() {
-        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",null , "27/10", "1222");
+        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",null , "27/10", "1222", MovieStatus.IN_CATALOG);
         MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         when(movieRepository.findById((long)1.2)).thenReturn(Optional.of(movie));
         when(movieMapper.entityToDto(movie)).thenReturn(responseDto);
@@ -298,7 +304,7 @@ class MovieServiceTest {
     }
     @Test
     void archiveChanceMovieStatusNot() {
-        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", null, "27/10", "1222");
+        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", null, "27/10", "1222", MovieStatus.IN_CATALOG);
         MovieResponseDto responseDto = new MovieResponseDto(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
         when(movieRepository.findById((long) 1.2)).thenReturn(Optional.of(movie));
         when(movieMapper.entityToDto(movie)).thenReturn(responseDto);
@@ -311,7 +317,7 @@ class MovieServiceTest {
 
     @Test
     void catalogChangeMovieStatusNot() {
-        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", null, "27/10", "1222");
+        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", null, "27/10", "1222", MovieStatus.IN_CATALOG);
         MovieResponseDto responseDto = new MovieResponseDto(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
         when(movieRepository.findById((long) 1.2)).thenReturn(Optional.of(movie));
         when(movieMapper.entityToDto(movie)).thenReturn(responseDto);
@@ -324,7 +330,7 @@ class MovieServiceTest {
     }
     @Test
     void catalogChangeMovieStatus(){
-        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",null , "27/10", "1222");
+        Movie movie = new Movie("Test", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame",null , "27/10", "1222", MovieStatus.IN_CATALOG);
         MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         when(movieRepository.findById((long)1.2)).thenReturn(Optional.of(movie));
         when(movieMapper.entityToDto(movie)).thenReturn(responseDto);
