@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.0</version>
+		<version>3.0.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>de.cinetastisch.backend</groupId>
 	<artifactId>spring-azure-cinema</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>spring-azure-cinema</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
@@ -60,10 +60,6 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.0.2</version>
@@ -98,21 +94,33 @@
 			<artifactId>lombok-mapstruct-binding</artifactId>
 			<version>${lombok-mapstruct-binding.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.session</groupId>
-			<artifactId>spring-session-jdbc</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.session</groupId>-->
+<!--			<artifactId>spring-session-jdbc</artifactId>-->
+<!--		</dependency>-->
 		<!-- https://mvnrepository.com/artifact/net.kaczmarzyk/specification-arg-resolver -->
 		<dependency>
 			<groupId>net.kaczmarzyk</groupId>
 			<artifactId>specification-arg-resolver</artifactId>
 			<version>3.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
+	<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security -->
 
 
 
-<!--	<dependencyManagement>-->
+
+
+	<!--	<dependencyManagement>-->
 <!--		<dependencies>-->
 <!--			<dependency>-->
 <!--				<groupId>com.azure.spring</groupId>-->
@@ -126,6 +134,21 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>1.8.0</version>
+				<configuration>
+					<!-- openjdk:11.0.5-jre -->
+<!--					<from>-->
+<!--						<image>openjdk:11.0.5-jre</image>-->
+<!--					</from>-->
+					<to>
+						<image>docker.io/930C/cinetastisch-backend</image>
+						<credHelper>pass</credHelper>
+					</to>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

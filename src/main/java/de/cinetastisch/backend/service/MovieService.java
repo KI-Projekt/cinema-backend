@@ -33,6 +33,7 @@ public class MovieService {
 
     @Transactional
     public List<MovieResponseDto> getAllMovies(Specification<Movie> spec, Pageable pageable) {
+
 //        List<Sort.Order> orders = sort.stream()
 //                                        .flatMap(str -> str.contains(",")
 //                                                ? Stream.of(new Sort.Order(Sort.Direction.valueOf(str.split(",")[1].toUpperCase()), str.split(",")[0]))

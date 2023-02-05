@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import net.kaczmarzyk.spring.data.jpa.domain.*;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
@@ -20,6 +21,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -77,9 +79,7 @@ public class MovieController {
                     @Spec(path = "imdbId", params = "imdbId", spec = Equal.class),
                     @Spec(path = "imdbRating", params = "imdbRating", spec = GreaterThanOrEqual.class)
             }) Specification<Movie> spec,
-            @ParameterObject @PageableDefault(sort = "id") Pageable page
-    ) {
-        System.out.println(spec);
+            @ParameterObject @PageableDefault(sort = "id") Pageable page) {
         return new ResponseEntity<>(movieService.getAllMovies(spec, page), HttpStatus.OK);
     }
 
@@ -158,7 +158,9 @@ public class MovieController {
                     )
             }
     )
-    @PostMapping()
+    @SecurityRequirement(name="auth")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping
     public ResponseEntity<MovieResponseDto> addOne(@Valid @RequestBody(required = false) MovieRequestDto movie,
                                                    @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
                                                    @Valid @RequestParam(value = "title", required = false) String title){
@@ -204,6 +206,8 @@ public class MovieController {
                     )
             }
     )
+    @SecurityRequirement(name="auth")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<MovieResponseDto> replaceOne(@PathVariable Long id,
                                                        @RequestBody MovieRequestDto movie){
@@ -235,6 +239,8 @@ public class MovieController {
                     )
             }
     )
+    @SecurityRequirement(name="auth")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOne(@PathVariable("id") Long id){
         movieService.deleteMovie(id);
@@ -247,6 +253,8 @@ public class MovieController {
             summary = "Archive a movie by id",
             description = "It's an alternative for deleting movies"
     )
+    @SecurityRequirement(name="auth")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}/archive")
     public ResponseEntity<MovieResponseDto> archiveMovie(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.archive(id));
@@ -257,6 +265,8 @@ public class MovieController {
             operationId = "catalogMovie",
             summary = "Catalog a movie by id"
     )
+    @SecurityRequirement(name="auth")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}/catalog")
     public ResponseEntity<MovieResponseDto> catalogMovie(@PathVariable("id") Long id){
         return ResponseEntity.ok(movieService.catalog(id));

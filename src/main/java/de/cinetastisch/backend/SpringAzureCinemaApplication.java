@@ -1,6 +1,10 @@
 package de.cinetastisch.backend;
+
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import net.kaczmarzyk.spring.data.jpa.swagger.springdoc.SpecificationArgResolverSpringdocOperationCustomizer;
@@ -8,14 +12,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 @OpenAPIDefinition(
 		info = @Info(title = "Cinema API", version = "1.0.0"),
-		servers = {@Server(url = "https://api.c930.net/"), @Server(url = "http://localhost:8080/")},
+		servers = {@Server(url = "http://localhost:8080/"), @Server(url = "https://api.c930.net/")},
 		tags = {
 				@Tag(name = "Movies", description = "Alles über die gespeicherten Filme"),
 				@Tag(name = "Rooms", description = "Alles über die Filmsäle"),
@@ -28,8 +31,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 				@Tag(name = "TicketFares")
 		}
 )
+@SecurityScheme(name = "auth", scheme = "basic", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.COOKIE)
 @EnableScheduling
-@EnableSpringHttpSession
 public class SpringAzureCinemaApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringAzureCinemaApplication.class, args);

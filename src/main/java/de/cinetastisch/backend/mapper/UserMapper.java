@@ -15,6 +15,7 @@ import java.util.List;
         uses = {ReferenceMapper.class})
 public interface UserMapper {
 
+    @Mapping(target = "role", ignore = true)
     @Mapping(target = "id", ignore = true)
     User dtoToEntity(UserRequestDto userRequestDto);
     List<User> dtoToEntity(Iterable<UserRequestDto> userRequestDto);
