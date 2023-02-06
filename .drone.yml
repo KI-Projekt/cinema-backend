@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: docker
-name: hello-world
+name: cinetastisch-cicd-pipeline
 steps:
 #  - name: docker
 #  image: plugins/docker
@@ -38,8 +38,13 @@ steps:
 #      - name: cache
 #        path: /tmp/.cache/google-cloud-tools-java/
 
-  - name: deploy docker image
+  - name: deploy-docker-image
     image: maven:3-sapmachine-17
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker-username
+      DOCKER_PASSWORD:
+        from_secret: docker-password
     commands:
       - mvn compile jib:build
     volumes:

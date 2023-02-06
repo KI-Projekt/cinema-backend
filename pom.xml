@@ -128,6 +128,12 @@
 						<image>azul/zulu-openjdk:17-jre</image>
 					</from>
 					<to>
+						<auth>
+							<!--suppress UnresolvedMavenProperty -->
+							<username>${env.DOCKER_USERNAME}</username>
+							<!--suppress UnresolvedMavenProperty -->
+							<password>${env.DOCKER_PASSWORD}</password>
+						</auth>
 						<image>registry.hub.docker.com/930c/cinetastisch-backend</image>
 					</to>
 				</configuration>
