@@ -14,6 +14,8 @@ import de.cinetastisch.backend.model.User;
 import de.cinetastisch.backend.repository.OrderRepository;
 import de.cinetastisch.backend.repository.TicketFareRepository;
 import de.cinetastisch.backend.repository.TicketRepository;
+import de.cinetastisch.backend.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ public class OrderService {
     private final ReferenceMapper referenceMapper;
     private final TicketFareRepository ticketFareRepository;
     private final TicketRepository ticketRepository;
+    private final UserRepository userRepository;
 
 
     public List<OrderResponseDto> getAllOrders(Long userId){
@@ -128,6 +131,15 @@ public class OrderService {
 
         orderRepository.save(orderToCancel);
         return orderMapper.entityToDto(orderToCancel);
+    }
+
+    @Transactional
+    public void transferOrderToUser(HttpServletRequest request){
+        System.out.println("NUR NOCH DAS");
+        List<Order> orders = orderRepository.findAllBySession(request.getRequestedSessionId());
+        for (Order order : orders) {
+            order.setUser(userRepository.getByEmail(request.getUserPrincipal().getName()));
+        }
     }
 
 }

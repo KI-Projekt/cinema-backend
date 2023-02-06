@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -29,7 +30,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).and()
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/register").permitAll()
@@ -37,25 +38,32 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/login*").permitAll()
-                        .anyRequest().authenticated()
                 )
                 .userDetailsService(jpaUserDetailsServer)
                 .headers(headers -> headers.frameOptions().sameOrigin())
                 .httpBasic(Customizer.withDefaults())
-                .formLogin()
-                    .usernameParameter("email")
-                    .loginProcessingUrl("/api/auth/login").permitAll()
+//                .formLogin()
+//                    .usernameParameter("email")
+//                    .loginProcessingUrl("/api/auth/login").permitAll()
 //                    .loginPage("/api/auth/login") //faulty
 //                    .defaultSuccessUrl("/api/screenings")
 //                    .permitAll()
-                .and()
-                .logout()
-                    .clearAuthentication(true)
-                    .invalidateHttpSession(true)
-                    .deleteCookies("JSESSIONID")
-                    .permitAll()
+//                .and()
+//                .logout()
+//                    .clearAuthentication(true)
+//                    .invalidateHttpSession(true)
+//                    .deleteCookies("JSESSIONID")
+//                    .permitAll()
+                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/logout.done").deleteCookies("JSESSIONID")
+                .invalidateHttpSession(true)
                 .and().requestCache()
-                .and().build();
+                .and().sessionManagement(
+                        (session) -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                                            .sessionConcurrency(
+                                (concurrency) -> concurrency.maximumSessions(1)
+                                                            .expiredUrl("/login?expired")))
+                .build();
     }
 
     @Bean

@@ -7,9 +7,9 @@ import de.cinetastisch.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -25,7 +25,7 @@ public class UserController {
     @Operation(
             tags = {"Users"}
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> getAll() {
         return ResponseEntity.ok(userService.getAllUsers());
@@ -34,7 +34,16 @@ public class UserController {
     @Operation(
             tags = {"Users"}
     )
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/session")
+    public ResponseEntity<List<UserResponseDto>> getAll(Principal principal) {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+
+    @Operation(
+            tags = {"Users"}
+    )
+//    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getOne(@PathVariable("id") Long id) {
         return ResponseEntity.ok(userService.getUser(id));
@@ -45,7 +54,7 @@ public class UserController {
     )
     @PostMapping("/registration")
     public ResponseEntity<UserResponseDto> registerUser(@RequestBody UserRequestDto request) {
-        return new ResponseEntity<UserResponseDto>(userService.registerUser(request), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.registerUser(request), HttpStatus.CREATED);
     }
 
 
@@ -53,16 +62,16 @@ public class UserController {
     @Operation(
             tags = {"Users"}
     )
-    @PreAuthorize("hasRole('ROLE_USER')")
+//    @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> replaceOne(@PathVariable("id") Long id, @RequestBody User newUser) {
-        return new ResponseEntity<UserResponseDto>(userService.replaceUser(id, newUser), HttpStatus.OK);
+        return new ResponseEntity<>(userService.replaceUser(id, newUser), HttpStatus.OK);
     }
 
     @Operation(
             tags = {"Users"}
     )
-    @PreAuthorize("hasRole('ROLE_USER')")
+//    @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOne(@PathVariable("id") Long id){
         userService.deleteUser(id);
