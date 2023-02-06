@@ -1,5 +1,10 @@
 package de.cinetastisch.backend.enumeration;
 
 public enum SeatCategory {
-    NORMAL, PREMIUM, WHEELCHAIR_ACCESSIBLE
+    NOT_SPECIFIED,
+    NORMAL,
+    PREMIUM,
+    WHEELCHAIR_ACCESSIBLE,
+    STAIRS,
+    PATH
 }

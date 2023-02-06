@@ -1,15 +1,23 @@
 package de.cinetastisch.backend.controller;
 
+import de.cinetastisch.backend.dto.request.MovieRequestDto;
+import de.cinetastisch.backend.dto.response.MovieResponseDto;
 import de.cinetastisch.backend.model.Movie;
-import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.service.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import net.kaczmarzyk.spring.data.jpa.domain.*;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +28,6 @@ import java.util.List;
 @RestController
 @RequestMapping("api/movies")
 public class MovieController {
-
-    private final String exampleJson = "{\n  \"id\": 1,\n  \"title\": \"Guardians of the Galaxy\",\n  \"releaseYear\": \"2014\",\n  \"posterImage\": \"https://m.media-amazon.com/images/M/MV5BZTkwZjU3MTctMGExMi00YjU5LTgwMDMtOWNkZDRlZjQ4NmZhXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg\",\n  \"rated\": \"PG-13\",\n  \"runtime\": \"121 min\",\n  \"genre\": \"Action, Adventure, Comedy\",\n  \"actors\": \"Chris Pratt, Vin Diesel, Bradley Cooper\",\n  \"plot\": \"A group of intergalactic criminals must pull together to stop a fanatical warrior with plans to purge the universe.\",\n  \"trailer\": \"TODO\",\n  \"imdbId\": \"tt2015381\",\n  \"imdbRating\": \"8.0\",\n  \"imdbRatingCount\": \"1,180,325\"\n}";
-    private final String exampleJsonNoId = "{\n  \"title\": \"Guardians of the Galaxy\",\n  \"releaseYear\": \"2014\",\n  \"posterImage\": \"https://m.media-amazon.com/images/M/MV5BZTkwZjU3MTctMGExMi00YjU5LTgwMDMtOWNkZDRlZjQ4NmZhXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg\",\n  \"rated\": \"PG-13\",\n  \"runtime\": \"121 min\",\n  \"genre\": \"Action, Adventure, Comedy\",\n  \"actors\": \"Chris Pratt, Vin Diesel, Bradley Cooper\",\n  \"plot\": \"A group of intergalactic criminals must pull together to stop a fanatical warrior with plans to purge the universe.\",\n  \"trailer\": \"TODO\",\n  \"imdbId\": \"tt2015381\",\n  \"imdbRating\": \"8.0\",\n  \"imdbRatingCount\": \"1,180,325\"\n}";
 
     private final MovieService movieService;
 
@@ -35,26 +40,13 @@ public class MovieController {
             operationId = "getMovies",
             summary = "Fetch all movies",
             description = "Retrieve all movies from the database with optional query-parameters.",
-            parameters = {
-                    @Parameter(
-                            name = "title",
-                            description = "Query movies by title",
-                            example = "Galaxy"
-                    ),
-                    @Parameter(
-                            name = "genre",
-                            description = "Lists all movies with a specific genre",
-                            example = "Action"
-                    )
-            },
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Successful",
                             content = @Content(
                                     schema = @Schema(implementation = Movie.class),
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    examples = {@ExampleObject(name = "Successful Example", value = "[\n"+exampleJson+"\n]")}
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE
                             )
                     ),
                     @ApiResponse(
@@ -64,16 +56,30 @@ public class MovieController {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "Invalid input supplied",
+                            description = "Invalid inputs supplied",
                             content = @Content
                     )
             }
     )
     @GetMapping
-    public ResponseEntity<List<Movie>> getAll(@RequestParam(value = "title", required = false) String title,
-                                              @RequestParam(value = "genre", required = false) String genre,
-                                              @RequestParam(value = "imdbId", required = false) String imdbId) {
-        return new ResponseEntity<>(movieService.getAllMovies(title, genre, imdbId), HttpStatus.OK);
+    public ResponseEntity<List<MovieResponseDto>> getAll(
+            @And({
+                    @Spec(path = "movieStatus", params = "status", spec = EqualIgnoreCase.class, defaultVal = "IN_CATALOG"),
+                    @Spec(path = "title", params = "title", spec = LikeIgnoreCase.class),
+                    @Spec(path = "releaseYear", params = "releaseYear", spec = Equal.class),
+                    @Spec(path = "rated", params = "rated", paramSeparator = ',', spec = LessThanOrEqual.class),
+                    @Spec(path = "runtime", params = "runtime", spec = Equal.class),
+                    @Spec(path = "genre", params = "genre", paramSeparator = ',', spec = In.class),
+                    @Spec(path = "director", params = "director", spec = LikeIgnoreCase.class),
+                    @Spec(path = "writer", params = "writer", spec = LikeIgnoreCase.class),
+                    @Spec(path = "actors", params = "actor", spec = LikeIgnoreCase.class),
+                    @Spec(path = "actors", params = "actors", paramSeparator = ',', spec = In.class),
+                    @Spec(path = "plot", params = "plot", spec = LikeIgnoreCase.class),
+                    @Spec(path = "imdbId", params = "imdbId", spec = Equal.class),
+                    @Spec(path = "imdbRating", params = "imdbRating", spec = GreaterThanOrEqual.class)
+            }) Specification<Movie> spec,
+            @ParameterObject @PageableDefault(sort = "id") Pageable page) {
+        return new ResponseEntity<>(movieService.getAllMovies(spec, page), HttpStatus.OK);
     }
 
     @Operation(
@@ -81,7 +87,7 @@ public class MovieController {
             operationId = "getMovie",
             summary = "Get movie by id",
             parameters = {
-                    @Parameter(name = "id", example = "1")
+                    @Parameter(name = "id")
             },
             responses = {
                     @ApiResponse(
@@ -89,13 +95,12 @@ public class MovieController {
                             description = "Successful",
                             content = @Content(
                                     schema = @Schema(implementation = Movie.class),
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    examples = {@ExampleObject(name = "Successful Example", value = exampleJson)}
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE
                             )
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "Invalid input supplied",
+                            description = "Invalid inputs supplied",
                             content = @Content
                     ),
                     @ApiResponse(
@@ -106,9 +111,10 @@ public class MovieController {
             }
     )
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getOne(@PathVariable("id") Long id){
+    public ResponseEntity<MovieResponseDto> getOne(@PathVariable("id") Long id){
         return new ResponseEntity<>(movieService.getMovie(id), HttpStatus.OK);
     }
+
 
     @Operation(
             tags = {"Movies"},
@@ -116,14 +122,13 @@ public class MovieController {
             summary = "Add movie by imdbId, title or your own json request body",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
-                            schema = @Schema(implementation = Movie.class),
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            examples = {@ExampleObject(name = "Movie Request Example", value = exampleJsonNoId)}
+                            schema = @Schema(implementation = MovieRequestDto.class),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
                     )
             ),
             parameters = {
                     @Parameter(name = "imdbId", example = "tt4154664"),
-                    @Parameter(name = "title", example = "Captain Marvel")
+                    @Parameter(name = "title")
             },
             responses = {
                     @ApiResponse(
@@ -136,7 +141,7 @@ public class MovieController {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "Invalid input supplied",
+                            description = "Invalid inputs supplied",
                             content = @Content
                     ),
                     @ApiResponse(
@@ -152,10 +157,12 @@ public class MovieController {
                     )
             }
     )
-    @PostMapping()
-    public ResponseEntity<?> addOne(@Valid @RequestBody(required = false) Movie movie,
-                                           @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
-                                           @Valid @RequestParam(value = "title", required = false) String title){
+    @SecurityRequirement(name="auth")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping
+    public ResponseEntity<MovieResponseDto> addOne(@Valid @RequestBody(required = false) MovieRequestDto movie,
+                                                   @Valid @RequestParam(value = "imdbId", required = false) String imdbId,
+                                                   @Valid @RequestParam(value = "title", required = false) String title){
         return new ResponseEntity<>(movieService.addMovieByParameters(movie, imdbId, title), HttpStatus.CREATED);
     }
 
@@ -164,21 +171,26 @@ public class MovieController {
             operationId = "replaceMovie",
             summary = "Replace a movie by id with request body",
             parameters = {
-                    @Parameter(name = "id", example = "1")
+                    @Parameter(name = "id")
             },
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            schema = @Schema(implementation = MovieRequestDto.class),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            ),
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Successful",
                             content = @Content(
                                     schema = @Schema(implementation = Movie.class),
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    examples = {@ExampleObject(name = "Successful Example", value = exampleJson)}
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE
                             )
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "Invalid input supplied",
+                            description = "Invalid inputs supplied",
                             content = @Content
                     ),
                     @ApiResponse(
@@ -193,8 +205,11 @@ public class MovieController {
                     )
             }
     )
+    @SecurityRequirement(name="auth")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> replaceOne(@PathVariable Long id, @RequestBody Movie movie){
+    public ResponseEntity<MovieResponseDto> replaceOne(@PathVariable Long id,
+                                                       @RequestBody MovieRequestDto movie){
         return ResponseEntity.ok(movieService.replaceMovie(id, movie));
     }
 
@@ -203,7 +218,7 @@ public class MovieController {
             operationId = "deleteMovie",
             summary = "Delete movie by id",
             parameters = {
-                    @Parameter(name = "id", example = "1")
+                    @Parameter(name = "id")
             },
             responses = {
                     @ApiResponse(
@@ -223,6 +238,8 @@ public class MovieController {
                     )
             }
     )
+    @SecurityRequirement(name="auth")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOne(@PathVariable("id") Long id){
         movieService.deleteMovie(id);
@@ -230,40 +247,27 @@ public class MovieController {
     }
 
     @Operation(
-            tags = {"Movies", "Screenings"},
-            operationId = "getScreeningsOfMovie",
-            summary = "Get Screenings of a movie",
-            parameters = {
-                    @Parameter(name = "id", example = "1")
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Successful",
-                            content = @Content(
-                                    schema = @Schema(implementation = Screening.class),
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "204",
-                            description = "No content",
-                            content = @Content
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Invalid input supplied",
-                            content = @Content
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Movie not found",
-                            content = @Content
-                    )
-            }
+            tags = {"Movies"},
+            operationId = "archiveMovie",
+            summary = "Archive a movie by id",
+            description = "It's an alternative for deleting movies"
     )
-    @GetMapping("{id}/screenings") //TODO: set timespan
-    public ResponseEntity<List<Screening>> getScreenings(@PathVariable("id") Long id){
-        return ResponseEntity.ok(movieService.getAllScreeningsByMovie(id));
+    @SecurityRequirement(name="auth")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/{id}/archive")
+    public ResponseEntity<MovieResponseDto> archiveMovie(@PathVariable("id") Long id){
+        return ResponseEntity.ok(movieService.archive(id));
+    }
+
+    @Operation(
+            tags = {"Movies"},
+            operationId = "catalogMovie",
+            summary = "Catalog a movie by id"
+    )
+    @SecurityRequirement(name="auth")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/{id}/catalog")
+    public ResponseEntity<MovieResponseDto> catalogMovie(@PathVariable("id") Long id){
+        return ResponseEntity.ok(movieService.catalog(id));
     }
 }

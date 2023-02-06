@@ -1,15 +1,16 @@
 package de.cinetastisch.backend.controller;
 
-import de.cinetastisch.backend.model.Order;
+import de.cinetastisch.backend.dto.response.OrderResponseDto;
 import de.cinetastisch.backend.service.OrderService;
-import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
-@Hidden
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/api")
 public class OrderController {
 
     private final OrderService orderService;
@@ -18,23 +19,51 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    @Operation(
+            tags = {"Orders"}
+    )
     @GetMapping("/orders")
-    public List<Order> getAll(){
-        return orderService.getAllOrders();
+    public ResponseEntity<List<OrderResponseDto>> getAll(@RequestParam(value = "userId", required = false) Long userId){
+        return ResponseEntity.ok(orderService.getAllOrders(userId));
     }
 
-    @GetMapping("orders/{id}")
-    public Order getOne(@PathVariable("id") Long id){
-        return orderService.getOrderById(id);
+    @Operation(
+            tags = {"Orders"}
+    )
+    @GetMapping("/orders/{id}")
+    public ResponseEntity<OrderResponseDto> getOne(@PathVariable("id") Long id){
+        return ResponseEntity.ok(orderService.getOrder(id)); //get every information and relation
     }
 
-    @GetMapping("/users/orders/{userId}")
-    public List<Order> getAllByUserId(@PathVariable("userId") Long userId){
-        return orderService.getOrderByUserId(userId);
+    @Operation(
+            tags = {"Orders"}
+    )
+    @PutMapping("/orders/{id}/cancel")
+    public ResponseEntity<OrderResponseDto> cancel(@PathVariable("id") Long id){
+        return ResponseEntity.ok(orderService.cancelOrder(id));
     }
 
-    @PostMapping("/orders")
-    public Order placeOrder(@RequestBody de.cinetastisch.backend.pojo.Order order){
-        return orderService.createOrder(order);
+    @Operation(
+            tags = {"Orders"}
+    )
+    @PutMapping("orders/{id}/pay")
+    public ResponseEntity<OrderResponseDto> pay(@PathVariable("id") Long id){
+        return ResponseEntity.ok(orderService.payOrder(id));
+    }
+
+    @Operation(
+            tags = {"Orders"}
+    )
+    @PutMapping("orders/{id}/selectFares")
+    public ResponseEntity<OrderResponseDto> selectFares(@PathVariable("id") Long id, @RequestBody Map<String, Integer> fareSelection){
+        return ResponseEntity.ok(orderService.selectFares(id, fareSelection));
+    }
+
+    @Operation(
+            tags = {"Orders"}
+    )
+    @PutMapping("orders/{id}/selectPaymentMethod")
+    public ResponseEntity<OrderResponseDto> selectPaymentMethod(@PathVariable("id") Long id, @RequestParam(value = "method") String paymentMethod){
+        return ResponseEntity.ok(orderService.selectPaymentMethod(id, paymentMethod));
     }
 }

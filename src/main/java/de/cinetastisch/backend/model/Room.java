@@ -6,15 +6,16 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.lang.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-@Builder
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "seats")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(uniqueConstraints = {
@@ -34,12 +35,22 @@ public class Room {
     private Boolean hasThreeD;
     private Boolean hasDolbyAtmos;
 
-    public Room(Long id, @NonNull String name, Boolean hasThreeD, Boolean hasDolbyAtmos) {
-        this.id = id;
+    @OneToMany(
+            mappedBy = "room",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL
+    )
+    private List<Seat> seats = new ArrayList<>();
+
+
+    public Room(@NonNull String name, Boolean hasThreeD, Boolean hasDolbyAtmos) {
         this.name = name;
         this.hasThreeD = hasThreeD;
         this.hasDolbyAtmos = hasDolbyAtmos;
     }
+
+//    public Room(long l, String avengers, boolean b, boolean b1) {
+//    }
 
     @Override
     public boolean equals(Object o) {

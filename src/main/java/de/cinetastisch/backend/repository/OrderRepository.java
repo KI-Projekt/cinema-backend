@@ -1,22 +1,26 @@
 package de.cinetastisch.backend.repository;
 
+import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.model.Order;
-import de.cinetastisch.backend.model.Ticket;
+import de.cinetastisch.backend.model.Screening;
+import de.cinetastisch.backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    @Query("select sum(t.price) from Order b join Ticket t on b.id = t.order.id where t.order.id = ?1")
-    Double totalCost();
 
-    @Query("SELECT t FROM Order b join Ticket t on b.id = t.order.id where t.order.id = ?1 AND b.user.id = :userId")
-    List<Ticket> getTicketsByUser(@Param("userId") Long userID);
+    List<Order> findAllByUser(User user);
+    List<Order> findAllByStatus(OrderStatus orderStatus);
+    List<Order> findAllBySession(String session);
 
-    @Query("SELECT b FROM Order b where b.id = ?1 AND b.user.id = :userId")
-    List<Order> getOrdersByUserId(@Param("userId") Long userId);
+    Order findByUserAndStatusAndTicketsScreening(User user, OrderStatus status, Screening screening);
+    Order findBySessionAndStatusAndTicketsScreening(String session, OrderStatus status, Screening screening);
+
+    boolean existsByUserAndStatusAndTicketsScreening(User user, OrderStatus status, Screening screening);
+    boolean existsBySessionAndStatusAndTicketsScreening(String session, OrderStatus status, Screening screening);
+
+
 }

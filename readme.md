@@ -1,5 +1,8 @@
 # Cinema Backend (WWI21SEB Gruppe 4)
 
+[![Build Status](https://drone.c930.net/api/badges/mabu2807/cinema-backend/status.svg)](https://drone.c930.net/mabu2807/cinema-backend)
+ [![codecov](https://codecov.io/gh/mabu2807/cinema-backend/branch/main/graph/badge.svg)](https://codecov.io/gh/mabu2807/cinema-backend)
+
 ## Bi-direktionale vs Uni-direktionale Datenbankbeziehungen
 
 Als Notiz möchte ich hier vermerken, was der Unterschied zwischen eier **Bi-direktionalen** Datenbankbeziehung 

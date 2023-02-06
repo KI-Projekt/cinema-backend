@@ -4,6 +4,7 @@ import de.cinetastisch.backend.enumeration.ScreeningStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -11,14 +12,14 @@ import java.util.Objects;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-@Builder
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
 @Table(name = "screening", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+@SQLDelete(sql = "UPDATE screening SET status = 'CANCELLED' WHERE id=?")
+
 public class Screening {
 
     @Schema(accessMode = READ_ONLY)
@@ -27,32 +28,42 @@ public class Screening {
     @Column(name = "id")
     private @Id Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_movie_id_fk"))
     private Movie movie;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_room_id_fk"))
     private Room room;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
 
+    private boolean isThreeD = false;
+    private boolean isDolbyAtmos = false;
+
     @Enumerated(EnumType.STRING)
     private ScreeningStatus status = ScreeningStatus.TICKET_SALE_OPEN;
 
-    public Screening(Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public Screening(Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime, boolean isThreeD,
+                     boolean isDolbyAtmos, ScreeningStatus status) {
         this.movie = movie;
         this.room = room;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        this.isThreeD = isThreeD;
+        this.isDolbyAtmos = isDolbyAtmos;
+        this.status = status;
     }
 
-    public Screening(Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime,
-                     ScreeningStatus status) {
+    public Screening(Long id, Movie movie, Room room, LocalDateTime startDateTime, LocalDateTime endDateTime,
+                     boolean isThreeD, boolean isDolbyAtmos, ScreeningStatus status) {
+        this.id = id;
         this.movie = movie;
         this.room = room;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        this.isThreeD = isThreeD;
+        this.isDolbyAtmos = isDolbyAtmos;
         this.status = status;
     }
 
@@ -67,5 +78,13 @@ public class Screening {
     @Override
     public int hashCode() {
         return Objects.hash(id, movie, room, startDateTime, endDateTime, status);
+    }
+
+    @PrePersist
+    @PostLoad
+    public void updateStatus(){
+        if(this.status == ScreeningStatus.TICKET_SALE_OPEN && this.endDateTime.isBefore(LocalDateTime.now())){
+            this.status = ScreeningStatus.TICKET_SALE_CLOSED;
+        }
     }
 }
