@@ -37,6 +37,4 @@ steps:
 
 volumes:
   - name: cache
-#    temp: {}
-    host:
-      path: /var/lib/cache
+    temp: {}
