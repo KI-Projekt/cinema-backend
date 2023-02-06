@@ -13,6 +13,7 @@ import de.cinetastisch.backend.model.Ticket;
 import de.cinetastisch.backend.model.User;
 import de.cinetastisch.backend.repository.OrderRepository;
 import de.cinetastisch.backend.repository.TicketFareRepository;
+import de.cinetastisch.backend.repository.TicketRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ public class OrderService {
     private final OrderMapper orderMapper;
     private final ReferenceMapper referenceMapper;
     private final TicketFareRepository ticketFareRepository;
+    private final TicketRepository ticketRepository;
 
 
     public List<OrderResponseDto> getAllOrders(Long userId){
@@ -47,29 +49,30 @@ public class OrderService {
     @Transactional
     public OrderResponseDto selectFares(Long id, Map<String, Integer> fares) {
         Order order = orderRepository.getReferenceById(id);
+        List<Ticket> tickets = ticketRepository.findAllByOrder(order);
+        System.out.println(fares);
 
         if(order.getStatus() != OrderStatus.IN_PROGRESS){
             throw new ResourceAlreadyExistsException("Order is already " + order.getStatus());
         }
 
         Integer sumOfFares = 0;
-
         for(Map.Entry<String,Integer> f : new ArrayList<>(fares.entrySet())){
             sumOfFares += f.getValue();
         }
-
-        if(order.getTickets().size() != sumOfFares){
+        if(tickets.size() != sumOfFares){
             throw new IllegalArgumentException("Number of fares does not match with the number of reservations");
         }
 
+        int ticketCount = 0;
         for(Map.Entry<String, Integer> f : new ArrayList<>(fares.entrySet())){
             for(int i = 0; i < f.getValue(); i++){
-                order.getTickets().get(i).setSelectedFare(ticketFareRepository.findByNameLikeIgnoreCase(f.getKey()));
+                tickets.get(ticketCount).setSelectedFare(ticketFareRepository.findByNameLikeIgnoreCase(f.getKey()));
+                ticketCount++;
             }
         }
-
-        orderRepository.save(order);
-        return orderMapper.entityToDto(order);
+        ticketRepository.saveAll(tickets);
+        return orderMapper.entityToDto(orderRepository.getReferenceById(id));
     }
 
     public OrderResponseDto selectPaymentMethod(Long id, String method){

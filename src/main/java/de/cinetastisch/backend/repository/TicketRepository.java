@@ -11,9 +11,9 @@ import java.util.List;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findAllByScreening(Screening screening);
+    List<Ticket> findAllByOrder(Order order);
 
     boolean existsByScreeningAndSeat(Screening screening, Seat seat);
-    List<Ticket> findAllByScreeningAndSeat(Screening screening, Seat seat);
 
     void deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus status, LocalDateTime now);
 }
