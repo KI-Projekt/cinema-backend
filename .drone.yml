@@ -3,17 +3,6 @@ kind: pipeline
 type: docker
 name: cinetastisch-cicd-pipeline
 steps:
-#  - name: docker
-#  image: plugins/docker
-#  settings:
-#    repo:<dockerhub_username>/docker-hello-world
-#    username:
-#      from_secret: docker_username
-#    password:
-#      from_secret: docker_password
-#    tags:
-#      - latest
-
   - name: testing
     image: maven:3-sapmachine-17
     commands:
@@ -25,18 +14,10 @@ steps:
   - name: build
     image: maven:3-sapmachine-17
     commands:
-      - mvn clean install -DskipTests -Ddockerfile.skip
+      - mvn install -DskipTests -Ddockerfile.skip
     volumes:
       - name: cache
         path: /root/.m2/repository/
-
-#  - name: publish
-#    image: trion/jib-cli
-#    commands:
-#      - jib build --build-file=jib/jib.yaml --target=registry.hub.docker.com/930c/cinetastisch-backend:${DRONE_COMMIT_SHA:0:7}
-#    volumes:
-#      - name: cache
-#        path: /tmp/.cache/google-cloud-tools-java/
 
   - name: deploy-docker-image
     image: maven:3-sapmachine-17
@@ -50,10 +31,12 @@ steps:
     volumes:
       - name: cache
         path: /root/.m2/repository/
-#    when:
-#      branch: [main]
-#      event: push
+    when:
+      branch: [main]
+      event: push
 
 volumes:
   - name: cache
-    temp: {}
+#    temp: {}
+    host:
+      path: /var/lib/cache
