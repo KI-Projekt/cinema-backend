@@ -114,38 +114,21 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security -->
-
-
-
-
-
-	<!--	<dependencyManagement>-->
-<!--		<dependencies>-->
-<!--			<dependency>-->
-<!--				<groupId>com.azure.spring</groupId>-->
-<!--				<artifactId>spring-cloud-azure-dependencies</artifactId>-->
-<!--				<version>${spring-cloud-azure.version}</version>-->
-<!--				<type>pom</type>-->
-<!--				<scope>import</scope>-->
-<!--			</dependency>-->
-<!--		</dependencies>-->
-<!--	</dependencyManagement>-->
-
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
-				<version>1.8.0</version>
+				<version>3.3.1</version>
 				<configuration>
-					<!-- openjdk:11.0.5-jre -->
-<!--					<from>-->
-<!--						<image>openjdk:11.0.5-jre</image>-->
-<!--					</from>-->
+					<container>
+						<mainClass>de.cinetastisch.backend.SpringAzureCinemaApplication</mainClass>
+					</container>
+					<from>
+						<image>azul/zulu-openjdk:17-jre</image>
+					</from>
 					<to>
-						<image>docker.io/930C/cinetastisch-backend</image>
-						<credHelper>pass</credHelper>
+						<image>registry.hub.docker.com/930c/cinetastisch-backend</image>
 					</to>
 				</configuration>
 			</plugin>
@@ -196,5 +179,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
