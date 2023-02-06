@@ -1,7 +1,7 @@
 package de.cinetastisch.backend.service;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -17,13 +17,13 @@ public class EmailService {
 
     private TemplateEngine templateEngine;
 
-    public void sendTicket(String to, String film, String date, String time, int ticketCount) throws Exception{
+    public void sendTicket(String to, String film, String date, String time, String places) throws Exception{
         Context context = new Context();
 
         context.setVariable("film",film);
         context.setVariable("date",date);
         context.setVariable("time",time);
-        context.setVariable("ticketCount",ticketCount);
+        context.setVariable("places",places);
 
         String body = templateEngine.process("src/main/resources/EmailTemplates/TicketMail.html",context);
 
