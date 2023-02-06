@@ -1,34 +1,35 @@
 package de.cinetastisch.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+import lombok.Data;
 
-import java.sql.Time;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 
-@Getter
-@Setter
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+import static jakarta.persistence.GenerationType.SEQUENCE;
+
+@Data
 @Entity
 @Table
 public class OpeningHour {
-    @Id
-    @GeneratedValue
-    public int openingHour_id;
-    public String weekday;
-    public Time openingtime;
-    public Time closingtime;
+
+    @Schema(accessMode = READ_ONLY)
+    @SequenceGenerator(name = "opening_hour_id", sequenceName = "opening_hour_id", allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "opening_hour_id")
+    @Column(name = "id")
+    public @Id Long id;
+    @Enumerated(EnumType.STRING)
+    public DayOfWeek weekday;
+    public LocalTime openingtime;
+    public LocalTime closingtime;
 
     protected OpeningHour() {}
 
-    public OpeningHour(int openingHour_id, String day, Time begin, Time end) {
-        this.openingHour_id = openingHour_id;
-        this.weekday = day;
-        this.openingtime = begin;
-        this.closingtime = end;
+    public OpeningHour(DayOfWeek weekday, LocalTime openingtime, LocalTime closingtime) {
+        this.weekday = weekday;
+        this.openingtime = openingtime;
+        this.closingtime = closingtime;
     }
-
-
 }
