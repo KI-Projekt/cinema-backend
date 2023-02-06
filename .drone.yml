@@ -24,17 +24,15 @@ steps:
     commands:
       - mvn compile
 
-  - name: publish
-    image: trion/jib-cli
-    commands:
-      - jib build --build-file=jib/jib.yaml --target=registry.hub.docker.com/930c/cinetastisch-backend:${DRONE_COMMIT_SHA:0:7}
-    volumes:
-      - name: cache
-        path: /tmp/.cache/google-cloud-tools-java/
+#  - name: publish
+#    image: trion/jib-cli
+#    commands:
+#      - jib build --build-file=jib/jib.yaml --target=registry.hub.docker.com/930c/cinetastisch-backend:${DRONE_COMMIT_SHA:0:7}
+#    volumes:
+#      - name: cache
+#        path: /tmp/.cache/google-cloud-tools-java/
 
   - name: deploy
     image: maven:3-sapmachine-17
     commands:
       - mvn compile jib:build
-    when:
-      branch: master
