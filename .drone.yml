@@ -15,12 +15,12 @@ steps:
 #      - latest
 
   - name: testing
-    image: maven/3.8.7-eclipse-temurin-17-focal
+    image: maven:3-sapmachine-17
     commands:
       - mvn test
 
   - name: build & deploy
-    image: maven/maven:3.8.7-eclipse-temurin-17-focal
+    image: maven:3-sapmachine-17
     commands:
       - mvn compile jib:build
     when:
