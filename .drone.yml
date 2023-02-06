@@ -19,7 +19,12 @@ steps:
     commands:
       - mvn test
 
-  - name: build & deploy
+  - name: build
+    image: maven:3-sapmachine-17
+    commands:
+      - mvn compile
+
+  - name: deploy
     image: maven:3-sapmachine-17
     commands:
       - mvn compile jib:build
