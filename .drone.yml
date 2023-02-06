@@ -17,12 +17,18 @@ steps:
   - name: testing
     image: maven:3-sapmachine-17
     commands:
-      - mvn test
+      - mvn test -Dspring.profiles.active=test
+    volumes:
+      - name: cache
+        path: /root/.m2/repository/
 
   - name: build
     image: maven:3-sapmachine-17
     commands:
-      - mvn compile
+      - mvn clean install -DskipTests -Ddockerfile.skip
+    volumes:
+      - name: cache
+        path: /root/.m2/repository/
 
 #  - name: publish
 #    image: trion/jib-cli
@@ -32,7 +38,17 @@ steps:
 #      - name: cache
 #        path: /tmp/.cache/google-cloud-tools-java/
 
-  - name: deploy
+  - name: deploy docker image
     image: maven:3-sapmachine-17
     commands:
       - mvn compile jib:build
+    volumes:
+      - name: cache
+        path: /root/.m2/repository/
+#    when:
+#      branch: [main]
+#      event: push
+
+volumes:
+  - name: cache
+    temp: {}
