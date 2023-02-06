@@ -27,7 +27,7 @@ class OrderControllerTest {
 
     @Test
     void getAll() {
-        UserResponseDto userResponseDto = new UserResponseDto((long)1.222,"Anthon", "Maier","anthon.maier@test.de");
+        UserResponseDto userResponseDto = new UserResponseDto((long)1.222,"Anthon", "Maier","ROLE_USER","anthon.maier@test.de");
         OrderResponseDto firstOrderResponseDto = new OrderResponseDto((long)1.222, userResponseDto, "session1", OrderStatus.IN_PROGRESS, 1222.0, OrderPaymentMethod.CASH, LocalDateTime.now(), LocalDateTime.now(), null,null);
         OrderResponseDto secondOrderResponseDto = new OrderResponseDto((long)1.222,userResponseDto, "session1", OrderStatus.IN_PROGRESS, 1222.0, OrderPaymentMethod.CASH, LocalDateTime.now(),  LocalDateTime.now(),null,null);
         List<OrderResponseDto> expected = List.of(firstOrderResponseDto, secondOrderResponseDto);

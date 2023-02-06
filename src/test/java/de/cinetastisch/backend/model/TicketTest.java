@@ -4,11 +4,13 @@ import de.cinetastisch.backend.enumeration.SeatCategory;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TicketTest {
     @Mock
-    User user = new User("Luca", "Chmiprogramierski","luca@gmail.com","12345","2.2.22","Deutschland","Mannheim","68259","Baumstr", 3);
+    User user = new User("Luca", "Chmiprogramierski", "luca@gmail.com", "12345", LocalDate.of(2020,1,2), "Deutschland", "Mannheim", "68259", "Baumstr", 3);
 
     @Mock
     Screening screening = new Screening();

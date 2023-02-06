@@ -1,0 +1,40 @@
+---
+kind: pipeline
+type: docker
+name: cinetastisch-cicd-pipeline
+steps:
+  - name: testing
+    image: maven:3-sapmachine-17
+    commands:
+      - mvn test -Dspring.profiles.active=test
+    volumes:
+      - name: cache
+        path: /root/.m2/repository/
+
+  - name: build
+    image: maven:3-sapmachine-17
+    commands:
+      - mvn install -DskipTests -Ddockerfile.skip -P prod
+    volumes:
+      - name: cache
+        path: /root/.m2/repository/
+
+  - name: deploy-docker-image
+    image: maven:3-sapmachine-17
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker-username
+      DOCKER_PASSWORD:
+        from_secret: docker-password
+    commands:
+      - mvn compile jib:build -P prod
+    volumes:
+      - name: cache
+        path: /root/.m2/repository/
+    when:
+      branch: [main]
+      event: push
+
+volumes:
+  - name: cache
+    temp: {}

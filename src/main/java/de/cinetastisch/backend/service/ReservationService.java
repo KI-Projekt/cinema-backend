@@ -12,7 +12,7 @@ import de.cinetastisch.backend.mapper.ReferenceMapper;
 import de.cinetastisch.backend.mapper.TicketMapper;
 import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.*;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.data.annotation.Transient;
 import org.springframework.stereotype.Service;
@@ -44,8 +44,14 @@ public class ReservationService {
     }
 
     @Transactional
-    public OrderResponseDto addReservation(ReservationRequestDto reservation, HttpSession session){
-        System.out.println(session.getId());
+    public OrderResponseDto addReservation(ReservationRequestDto reservation, HttpServletRequest request){
+
+        if(request.getUserPrincipal() != null){
+            System.out.println(request.getUserPrincipal().getName());
+        }
+
+        System.out.println("req " + request.getRequestedSessionId() + " " + request.getSession().getId() + " " + request.getSession().getAttribute("JSESSIONID"));
+
 
         Seat seat = seatRepository.getReferenceById(reservation.seatId());
         Screening screening = screeningRepository.getReferenceById(reservation.screeningId());
@@ -63,9 +69,11 @@ public class ReservationService {
         if(ticketRepository.existsByScreeningAndSeat(screening, seat)){
             throw new ResourceAlreadyOccupiedException("Seat is already reserved");
         }
-        if(reservation.userId() != null){
+        if(request.getUserPrincipal() != null){
             System.out.println("USER CREATION");
-            User user = userRepository.getReferenceById(reservation.userId());
+
+            User user = userRepository.getByEmail(request.getUserPrincipal().getName());
+
             if(orderRepository.existsByUserAndStatusAndTicketsScreening(user, OrderStatus.IN_PROGRESS, screening)){
                 order = orderRepository.findByUserAndStatusAndTicketsScreening(user, OrderStatus.IN_PROGRESS, screening);
             } else {
@@ -74,10 +82,10 @@ public class ReservationService {
             }
         } else {
             System.out.println("SESSION CREATION");
-            if(orderRepository.existsBySessionAndStatusAndTicketsScreening(session.getId(), OrderStatus.IN_PROGRESS, screening)){
-                order = orderRepository.findBySessionAndStatusAndTicketsScreening(session.getId(), OrderStatus.IN_PROGRESS, screening);
+            if(orderRepository.existsBySessionAndStatusAndTicketsScreening(request.getRequestedSessionId(), OrderStatus.IN_PROGRESS, screening)){
+                order = orderRepository.findBySessionAndStatusAndTicketsScreening(request.getRequestedSessionId(), OrderStatus.IN_PROGRESS, screening);
             } else {
-                order = new Order(session.getId());
+                order = new Order(request.getRequestedSessionId());
                 orderRepository.save(order);
             }
         }
