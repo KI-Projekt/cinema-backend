@@ -4,7 +4,10 @@ import de.cinetastisch.backend.dto.response.OrderResponseDto;
 import de.cinetastisch.backend.model.Order;
 import de.cinetastisch.backend.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
-import net.kaczmarzyk.spring.data.jpa.domain.*;
+import net.kaczmarzyk.spring.data.jpa.domain.Equal;
+import net.kaczmarzyk.spring.data.jpa.domain.GreaterThanOrEqual;
+import net.kaczmarzyk.spring.data.jpa.domain.In;
+import net.kaczmarzyk.spring.data.jpa.domain.LikeIgnoreCase;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Join;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
@@ -35,7 +38,7 @@ public class OrderController {
     public ResponseEntity<List<OrderResponseDto>> getAll(
             @Join(path= "user", alias = "u")
             @And({
-                    @Spec(path = "status", params = "status", paramSeparator = ',', spec = In.class, defaultVal = "IN_PROGRESS,PAID"),
+                    @Spec(path = "status", params = "status", paramSeparator = ',', spec = In.class, defaultVal = {"IN_PROGRESS","PAID"}),
                     @Spec(path = "createdAt", params = "createdAt", spec = GreaterThanOrEqual.class),
                     @Spec(path = "u.id", params = "userId", spec = Equal.class),
                     @Spec(path = "u.email", params = "userEmail", spec = LikeIgnoreCase.class)
