@@ -30,7 +30,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf().disable()
-
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/register").permitAll()
@@ -42,21 +41,6 @@ public class SecurityConfig {
                 .userDetailsService(jpaUserDetailsServer)
                 .headers(headers -> headers.frameOptions().sameOrigin())
                 .httpBasic(Customizer.withDefaults())
-//                .formLogin()
-//                    .usernameParameter("email")
-//                    .loginProcessingUrl("/api/auth/login").permitAll()
-//                    .loginPage("/api/auth/login") //faulty
-//                    .defaultSuccessUrl("/api/screenings")
-//                    .permitAll()
-//                .and()
-//                .logout()
-//                    .clearAuthentication(true)
-//                    .invalidateHttpSession(true)
-//                    .deleteCookies("JSESSIONID")
-//                    .permitAll()
-//                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).clearAuthentication(true)
-//                .logoutSuccessUrl("/logout.done").deleteCookies("JSESSIONID")
-//                .invalidateHttpSession(true)
                 .logout(logout -> logout
                         .clearAuthentication(true)
                         .logoutRequestMatcher(new AntPathRequestMatcher("/api/auth/logout"))

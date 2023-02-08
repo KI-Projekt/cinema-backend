@@ -7,8 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public record ScreeningRequestDto(
-        @NotNull @NotEmpty Long movieId,
-        @NotNull @NotEmpty Long roomId,
+        Long movieId,
+        Long roomId,
         LocalDateTime startDateTime,
         LocalDateTime endDateTime,
         String isThreeD,
