@@ -64,7 +64,7 @@ public class RoomService {
 
     @Transactional
     public RoomResponseDto replaceRoom(Long id, RoomPutRequestDto request) {
-        if(id != request.id()){
+        if(!id.equals(request.id())){
             throw new IllegalArgumentException("Different ids given");
         }
 
@@ -76,7 +76,7 @@ public class RoomService {
             oldRoom.setHasThreeD(Boolean.getBoolean(request.hasThreeD()));
         }
         if(request.hasDolbyAtmos() != null){
-            oldRoom.setHasThreeD(Boolean.getBoolean(request.hasDolbyAtmos()));
+            oldRoom.setHasDolbyAtmos(Boolean.getBoolean(request.hasDolbyAtmos()));
         }
 
         if(request.seats().size() > 0){
