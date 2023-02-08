@@ -65,7 +65,7 @@ public class AuthController {
 
         User user = userMapper.dtoToEntity(registerDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("ROLE_USER,ROLE_ADMIN");
+        user.setRole("ROLE_USER");
 
         userRepository.save(user);
         return user;

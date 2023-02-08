@@ -69,10 +69,15 @@ public class ReservationService {
         if(ticketRepository.existsByScreeningAndSeat(screening, seat)){
             throw new ResourceAlreadyOccupiedException("Seat is already reserved");
         }
-        if(request.getUserPrincipal() != null){
+        if(request.getUserPrincipal() != null || reservation.userId() != null){
             System.out.println("USER CREATION");
+            User user;
 
-            User user = userRepository.getByEmail(request.getUserPrincipal().getName());
+            if(reservation.userId() != null) {
+                user = userRepository.getReferenceById(reservation.userId());
+            } else {
+                user = userRepository.getByEmail(request.getUserPrincipal().getName());
+            }
 
             if(orderRepository.existsByUserAndStatusAndTicketsScreening(user, OrderStatus.IN_PROGRESS, screening)){
                 order = orderRepository.findByUserAndStatusAndTicketsScreening(user, OrderStatus.IN_PROGRESS, screening);
