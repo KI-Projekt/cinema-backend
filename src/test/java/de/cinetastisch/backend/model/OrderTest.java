@@ -4,11 +4,13 @@ import de.cinetastisch.backend.enumeration.OrderStatus;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class OrderTest {
     @Mock
-    User user = new User("Peter", "Schmitt", "p.s@mail.de", "password", "31.12.2000", "Deutschland", "Mannheim", "68245", "Strasse", 4);
+    User user = new User("Peter", "Schmitt", "p.s@mail.de", "password", LocalDate.of(2020, 1, 2), "Deutschland", "Mannheim", "68245", "Strasse", 4);
 
     @Mock
     Order order = new Order(user);

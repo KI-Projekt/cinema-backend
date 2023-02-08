@@ -16,28 +16,49 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MovieServiceTest {
+
     @InjectMocks
     MovieService movieService;
+
     @Mock
     MovieRepository movieRepository;
+
     @Mock
     ScreeningRepository screeningRepository;
+
     @Mock
     MovieMapper movieMapper;
 
+    final Pageable pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
+    final Specification<Movie> spec = null;
+    final Movie movie1 = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222", MovieStatus.IN_CATALOG);
+    final MovieResponseDto responseDto = new MovieResponseDto(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
 
 
-//     final String url = "https://www.omdbapi.com/?apikey=16be7c3b&i="+ "tt0076759";
+    @Test
+    void canGetAllStudents(){
+        //when
+        movieService.getAllMovies(spec, pageable);
+        //then
+        verify(movieRepository).findAll(spec, pageable.getSort());
+    }
+
+
+    //     final String url = "https://www.omdbapi.com/?apikey=16be7c3b&i="+ "tt0076759";
 //    RestTemplate restTemplate = new RestTemplate();
 //    @Mock
 //    OmdbMovieResponse omdbMovieResponse = restTemplate.getForObject(url, OmdbMovieResponse.class);
@@ -45,6 +66,7 @@ class MovieServiceTest {
 
 
 //    @Test
+//    @Disabled
 //    void getAllMoviesthowsexeption() {
 //        assertThrows(IllegalArgumentException.class, () -> movieService.getAllMovies(null, Pageable.unpaged()));
 //    }
@@ -118,20 +140,20 @@ class MovieServiceTest {
 
     @Test
     void getAllMovies() {
-        Movie movie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222", MovieStatus.IN_CATALOG);
-        List<Movie> movieList = List.of(movie,movie);
-        MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+        //Given (Arrange)
+        List<Movie> movieList = List.of(movie1,movie1);
         List<MovieResponseDto> responseDtoList = List.of(responseDto,responseDto);
+        //When (Act)
+        when(movieRepository.findAll(spec, pageable.getSort())).thenReturn(movieList);
+        when(movieMapper.entityToDto(movieList)).thenReturn(responseDtoList);
+        List<MovieResponseDto> response = movieService.getAllMovies(null, pageable);
 
-//        when(movieRepository.findAll()).thenReturn(movieList);
-        when(movieMapper.entityToDto(movieRepository.findAll())).thenReturn(responseDtoList);
-
-        List<MovieResponseDto> response = movieService.getAllMovies(null, Pageable.unpaged());
+        //Then (Assert)
         assertEquals(responseDtoList, response);
-
     }
 
-    @Test void getMovie(){
+    @Test
+    void getMovie(){
         Movie movie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222", MovieStatus.IN_CATALOG);
         MovieResponseDto responseDto =new MovieResponseDto(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         when(movieRepository.getReferenceById((long)1.2)).thenReturn(movie);
@@ -151,9 +173,9 @@ class MovieServiceTest {
         when(movieRepository.existsByTitleIgnoreCase(test)).thenReturn(false);
         when(movieRepository.save(movie)).thenReturn(movie);
         movie.setMovieStatus(null);
-        Movie respone = movieService.addMovie(movie);
+        Movie response = movieService.addMovie(movie);
 
-        assertEquals(movie,respone);
+        assertEquals(movie,response);
     }
     @Test
     void addMovie() {

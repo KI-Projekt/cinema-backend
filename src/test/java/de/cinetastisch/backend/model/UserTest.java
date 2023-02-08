@@ -3,11 +3,13 @@ package de.cinetastisch.backend.model;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
     @Mock
-    User user = new User("Luca", "Chmiprogramierski","luca@gmail.com","12345","2.2.22","Deutschland","Mannheim","68259","Baumstr", 3);
+    User user = new User("Luca", "Chmiprogramierski", "luca@gmail.com", "12345", LocalDate.of(2020, 1, 2), "Deutschland", "Mannheim", "68259", "Baumstr", 3);
 
 
     @Test
@@ -106,8 +108,8 @@ class UserTest {
 
     @Test
     void setBirthday() {
-        user.setBirthday("12.12.12");
-        assertEquals("12.12.12", user.getBirthday());
+        user.setBirthday(LocalDate.of(2020,1,2));
+        assertEquals(LocalDate.of(2020,1,2), user.getBirthday());
     }
 
     @Test

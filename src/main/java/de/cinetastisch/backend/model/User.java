@@ -1,11 +1,12 @@
 package de.cinetastisch.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.Objects;
+import java.time.LocalDate;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -13,7 +14,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity(name = "User")
 @Table(name = "user",
         uniqueConstraints = { /* E-Mail soll eindeutig sein (pro User eine eindeutige E-Mail-Adresse) */
@@ -32,14 +33,15 @@ public class User {
     @Column(name = "email", nullable = false, columnDefinition = "VARCHAR(200)" /* Sonst MySQL-Error "BLOB/TEXT column 'email' used in key specification without a key length" */)
     private String email;
     private String password;
-    private String birthday;
+    private LocalDate birthday;
     private String country;
     private String city;
     private String zip;
     private String street;
     private Integer houseNumber;
+    private String role = "ROLE_USER";
 
-    public User(String firstName, String lastName, String email, String password, String birthday, String country,
+    public User(String firstName, String lastName, String email, String password, LocalDate birthday, String country,
                 String city, String zip, String street, Integer houseNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -56,13 +58,25 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+
         if (o == null || getClass() != o.getClass()) return false;
+
         User user = (User) o;
-        return id.equals(user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && email.equals(user.email) && Objects.equals(password, user.password) && Objects.equals(birthday, user.birthday) && Objects.equals(country, user.country) && Objects.equals(city, user.city) && Objects.equals(zip, user.zip) && Objects.equals(street, user.street) && Objects.equals(houseNumber, user.houseNumber);
+
+        return new EqualsBuilder().append(id, user.id).append(firstName,
+                                                              user.firstName).append(
+                lastName, user.lastName).append(email, user.email).append(password, user.password).append(birthday,
+                                                                                                          user.birthday).append(
+                country, user.country).append(city, user.city).append(zip, user.zip).append(street, user.street).append(
+                houseNumber, user.houseNumber).append(role, user.role).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, password, birthday, country, city, zip, street, houseNumber);
+        return new HashCodeBuilder(17, 37).append(id).append(firstName).append(lastName).append(email).append(
+                password).append(birthday).append(country).append(city).append(zip).append(street).append(
+                houseNumber).append(role).toHashCode();
     }
+
+
 }

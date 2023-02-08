@@ -3,6 +3,7 @@ package de.cinetastisch.backend.model;
 import de.cinetastisch.backend.enumeration.ScreeningStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 
@@ -35,8 +36,8 @@ public class Screening {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "screening_room_id_fk"))
     private Room room;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
+    private @NotNull LocalDateTime startDateTime;
+    private @NotNull LocalDateTime endDateTime;
 
     private boolean isThreeD = false;
     private boolean isDolbyAtmos = false;

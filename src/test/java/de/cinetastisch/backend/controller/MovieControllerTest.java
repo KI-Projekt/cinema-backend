@@ -5,12 +5,17 @@ import de.cinetastisch.backend.dto.request.MovieRequestDto;
 import de.cinetastisch.backend.dto.response.MovieResponseDto;
 import de.cinetastisch.backend.enumeration.MovieRating;
 import de.cinetastisch.backend.enumeration.MovieStatus;
+import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.service.MovieService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -30,15 +35,18 @@ class MovieControllerTest {
     @Mock
     MovieService movieService;
 
+    final Pageable pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
+    final Specification<Movie> spec = null;
+
     @Test
     void getAllsuccessfull() {
         MovieResponseDto movie1 = new MovieResponseDto(1L, "Test", "2000", "scr/test", MovieRating.G.toString(), "200", "Action", "Nora", "klemp", "Kevin", "jsdflhjkfasdlhjkjflasdklkjfsda", "www.ded.de", "2/20", "2/20", "200", MovieStatus.IN_CATALOG);
         MovieResponseDto movie2 = new MovieResponseDto(2L, "Test", "2000", "scr/test", MovieRating.G.toString(), "200", "Action", "Nora", "klemp", "Kevin", "jsdflhjkfasdlhjkjflasdklkjfsda", "www.ded.de", "2/20", "2/20", "200", MovieStatus.IN_CATALOG);
         List<MovieResponseDto> expected = List.of(movie1, movie2);
 
-        when(movieService.getAllMovies(null, null)).thenReturn(expected);
+        when(movieService.getAllMovies(null, pageable)).thenReturn(expected);
 
-        ResponseEntity<List<MovieResponseDto>> response = movieController.getAll(null, null);
+        ResponseEntity<List<MovieResponseDto>> response = movieController.getAll(spec, pageable);
         assertAll(
                 () -> assertEquals(response.getBody(), expected),
                 () -> assertEquals(response.getStatusCode(), HttpStatus.OK)
