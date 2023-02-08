@@ -44,9 +44,10 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .clearAuthentication(true)
                         .logoutRequestMatcher(new AntPathRequestMatcher("/api/auth/logout"))
-                        .logoutSuccessUrl("/api/auth/login")
+                        .logoutSuccessUrl("/api/auth")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
+                        .permitAll()
                 )
                 .requestCache()
                 .and().sessionManagement(

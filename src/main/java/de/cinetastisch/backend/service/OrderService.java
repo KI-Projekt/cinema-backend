@@ -7,16 +7,16 @@ import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.TicketType;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.mapper.OrderMapper;
-import de.cinetastisch.backend.mapper.ReferenceMapper;
 import de.cinetastisch.backend.model.Order;
 import de.cinetastisch.backend.model.Ticket;
-import de.cinetastisch.backend.model.User;
 import de.cinetastisch.backend.repository.OrderRepository;
 import de.cinetastisch.backend.repository.TicketFareRepository;
 import de.cinetastisch.backend.repository.TicketRepository;
 import de.cinetastisch.backend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,18 +30,13 @@ import java.util.Map;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private final ReferenceMapper referenceMapper;
     private final TicketFareRepository ticketFareRepository;
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
 
 
-    public List<OrderResponseDto> getAllOrders(Long userId){
-        if(userId != null){
-            User user = referenceMapper.map(userId, User.class);
-            return orderMapper.entityToDto(orderRepository.findAllByUser(user));
-        }
-        return orderMapper.entityToDto(orderRepository.findAll());
+    public List<OrderResponseDto> getAllOrders(Specification<Order> spec, Pageable pageable){
+        return orderMapper.entityToDto(orderRepository.findAll(spec, pageable));
     }
 
     public OrderResponseDto getOrder(Long id){
@@ -135,10 +130,11 @@ public class OrderService {
 
     @Transactional
     public void transferOrderToUser(HttpServletRequest request){
-        System.out.println("NUR NOCH DAS");
         List<Order> orders = orderRepository.findAllBySession(request.getRequestedSessionId());
         for (Order order : orders) {
-            order.setUser(userRepository.getByEmail(request.getUserPrincipal().getName()));
+            if(order.getUser() == null){
+                order.setUser(userRepository.getByEmail(request.getUserPrincipal().getName()));
+            }
         }
     }
 
