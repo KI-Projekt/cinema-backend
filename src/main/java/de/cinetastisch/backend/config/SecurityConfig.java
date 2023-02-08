@@ -54,10 +54,17 @@ public class SecurityConfig {
 //                    .invalidateHttpSession(true)
 //                    .deleteCookies("JSESSIONID")
 //                    .permitAll()
-                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).clearAuthentication(true)
-                .logoutSuccessUrl("/logout.done").deleteCookies("JSESSIONID")
-                .invalidateHttpSession(true)
-                .and().requestCache()
+//                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).clearAuthentication(true)
+//                .logoutSuccessUrl("/logout.done").deleteCookies("JSESSIONID")
+//                .invalidateHttpSession(true)
+                .logout(logout -> logout
+                        .clearAuthentication(true)
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/api/auth/logout"))
+                        .logoutSuccessUrl("/api/auth/login")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                )
+                .requestCache()
                 .and().sessionManagement(
                         (session) -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                                             .sessionConcurrency(
