@@ -9,11 +9,11 @@ import de.cinetastisch.backend.repository.UserRepository;
 import de.cinetastisch.backend.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -24,15 +24,15 @@ import java.security.Principal;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    private OrderService orderService;
+    private final OrderService orderService;
 
     public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
                           PasswordEncoder passwordEncoder, UserMapper userMapper, OrderService orderService) {
@@ -45,17 +45,19 @@ public class AuthController {
 
     @Transactional
     @PostMapping("/login")
-    public ResponseEntity<String> authenticateUser(@RequestBody UserLoginRequestDto loginDto, HttpServletRequest request){
+    @ResponseStatus(HttpStatus.OK)
+    public User authenticateUser(@RequestBody UserLoginRequestDto loginDto, HttpServletRequest request){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.email(), loginDto.password()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         orderService.transferOrderToUser(request);
 
-        return new ResponseEntity<>("User signed in successfully! " + authentication.toString(), HttpStatus.OK);
+        return userRepository.findByEmail(request.getUserPrincipal().getName()).orElseThrow(() -> new UsernameNotFoundException("Email not found"));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserRequestDto registerDto){
+    @ResponseStatus(HttpStatus.CREATED)
+    public User registerUser(@RequestBody UserRequestDto registerDto){
         if(userRepository.existsByEmail(registerDto.email())){
             throw new ResourceAlreadyExistsException("Email is already taken!");
         }
@@ -65,7 +67,7 @@ public class AuthController {
         user.setRole("ROLE_USER,ROLE_ADMIN");
 
         userRepository.save(user);
-        return new ResponseEntity<>("User registered sicessfully!", HttpStatus.OK);
+        return user;
     }
 
     @GetMapping
