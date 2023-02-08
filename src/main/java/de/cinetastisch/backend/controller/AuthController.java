@@ -9,6 +9,7 @@ import de.cinetastisch.backend.repository.UserRepository;
 import de.cinetastisch.backend.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -76,5 +77,13 @@ public class AuthController {
             return test;
         }
         return null;
+    }
+
+    @GetMapping("/currentUser")
+    public User checkUser(Principal test){
+        if(test != null){
+            return userRepository.getByEmail(test.getName());
+        }
+        throw new AuthenticationCredentialsNotFoundException("Not authenticated");
     }
 }

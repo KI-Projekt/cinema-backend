@@ -8,6 +8,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,7 +26,8 @@ public class GlobalControllerExceptionHandler {
             ResourceNotFoundException.class,
             EntityNotFoundException.class,
             EmptyResultDataAccessException.class,
-            PropertyReferenceException.class
+            PropertyReferenceException.class,
+            AuthenticationCredentialsNotFoundException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessage handleResourceNotFound(RuntimeException ex, WebRequest webRequest){
