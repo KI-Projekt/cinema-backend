@@ -4,6 +4,8 @@ import de.cinetastisch.backend.enumeration.ScreeningStatus;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ScreeningTest {
@@ -34,5 +36,18 @@ class ScreeningTest {
     void testToString() {
         String exp = "Screening(id=null, movie=null, room=null, startDateTime=null, endDateTime=null, isThreeD=false, isDolbyAtmos=false, status=TICKET_SALE_OPEN)";
         assertEquals(exp, screening.toString());
+    }
+    @Test
+    void testUpdateStatus(){
+        screening.setStatus(ScreeningStatus.TICKET_SALE_OPEN);
+        screening.setEndDateTime(LocalDateTime.now().minusMinutes(2));
+        screening.updateStatus();
+        assertEquals(ScreeningStatus.TICKET_SALE_CLOSED,screening.getStatus());
+        screening.setStatus(ScreeningStatus.TICKET_SALE_OPEN);
+        screening.setEndDateTime(LocalDateTime.now().plusMinutes(3));
+        screening.updateStatus();
+        assertEquals(ScreeningStatus.TICKET_SALE_OPEN,screening.getStatus());
+
+
     }
 }

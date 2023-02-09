@@ -29,13 +29,6 @@ class MovieTest {
         assertFalse(movie.equals(testmovie));
     }
 
-//    @Test
-//    void testHashCode() {
-//        int act = movie.hashCode();
-//        int exp = 667170207;
-//        assertEquals(exp, act);
-//    }
-//
     @Test
     void getTitle() {
         String exp = "Avengers Endgame";
@@ -257,7 +250,7 @@ class MovieTest {
 
     @Test
     void testToString() {
-//        String exp = "Movie(id=null, title=Avengers Endgame, releaseYear=2019, posterImage=/src/datei.png, rated=PG-13, runtime=120, genre=Action, director=Anthony Russo, writer=Christopher Markus, actors=Chris Evens, plot=Viel BumBum, trailer=www.youtube.com/Endgame, imdid=1234IMdb, imdbRating=27/10, imdbRatingCount=1222";
-//        assertEquals(exp, movie.toString());
+        String exp = "Movie(id=null, title=Avengers Endgame, releaseYear=2019, posterImage=/src/datei.png, rated=PG-13, runtime=120, genre=Action, director=Anthony Russo, writer=Christopher Markus, actors=Chris Evens, plot=Viel BumBum, trailer=www.youtube.com/Endgame, imdbId=1234IMdb, imdbRating=27/10, imdbRatingCount=1222, movieStatus=IN_CATALOG)";
+        assertEquals(exp, movie.toString());
     }
 }
