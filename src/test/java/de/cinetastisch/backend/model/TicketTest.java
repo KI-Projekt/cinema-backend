@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -94,9 +95,4 @@ class TicketTest {
         assertEquals(fare1, ticket.getSelectedFare());
     }
 
-//    @Test
-//    void testToString() {
-//        String exp = "Ticket(id=null, order=Order(id=null, user=User(id=null, firstName=Luca, lastName=Chmiprogramierski, email=luca@gmail.com, password=12345, birthday=2.2.22, country=Deutschland, city=Mannheim, zip=68259, street=Baumstr, houseNumber=3), orderStatus=IN_PROGRESS, total=null), screening=Screening(id=null, movie=null, room=null, startDateTime=null, endDateTime=null, status=TICKET_SALE_OPEN), seat=Seat(id=null, room=Room(id=null, name=Avengers, hasThreeD=true, hasDolbyAtmos=false), row=4, column=7, category=NORMAL), category=STUDENT)";
-//        assertEquals(exp , ticket.toString());
-//    }
 }
