@@ -23,7 +23,8 @@ class ReservationTest {
     @Mock
     Seat seat = new Seat(room, 2, 3, SeatCategory.NORMAL);
     @Mock
-    Order order = new Order(user, session);
+
+    Order order = new Order();
 
 //    @Mock
 //    Reservation reservation = new Reservation(user, screening, seat, order);

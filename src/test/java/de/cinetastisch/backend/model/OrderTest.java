@@ -1,10 +1,13 @@
 package de.cinetastisch.backend.model;
 
 import de.cinetastisch.backend.enumeration.OrderStatus;
+import de.cinetastisch.backend.enumeration.ScreeningStatus;
+import de.cinetastisch.backend.enumeration.TicketType;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +16,9 @@ class OrderTest {
     User user = new User("Peter", "Schmitt", "p.s@mail.de", "password", LocalDate.of(2020, 1, 2), "Deutschland", "Mannheim", "68245", "Strasse", 4);
     private final String session = "test";
     @Mock
-    Order order = new Order(user, session);
+
+    Order order = new Order();
+
 
     @Test
     void testEquals() {
@@ -32,10 +37,6 @@ class OrderTest {
     }
 
 
-    @Test
-    void getUser() {
-        assertEquals(user,order.getUser());
-    }
 
     @Test
     void getOrderStatus() {
@@ -45,19 +46,13 @@ class OrderTest {
         assertEquals(exp, act);
     }
 
-//    @Test
-//    void getTotal() {
-//        Double exp = 100.0;
-//        order.setTotal(100.0);
-//        Double act = order.getTotal();
-//        assertEquals(exp,act);
-//    }
+
 
     @Test
     void setUser() {
         User user1 = new User();
         order.setUser(user1);
-        assertEquals(order.getUser(),user1);
+        assertEquals(order.getUser(), user1);
     }
 
     @Test
@@ -68,13 +63,18 @@ class OrderTest {
         assertEquals(exp, act);
     }
 
-//    @Test
-//    void setTotal() {
-//        Double exp = 100.0;
-//        order.setTotal(100.0);
-//        Double act = order.getTotal();
-//        assertEquals(exp,act);
-//    }
+    @Test
+    void updateTotalAndStatus() {
+        Screening screening = new Screening(null, null, null, null, true, true, ScreeningStatus.CANCELLED);
+        TicketFare ticketFare = new TicketFare("Test", 2.0, "test");
+        Ticket ticket3 = new Ticket(null, null, screening, null, ticketFare, null, false);
+        List<Ticket> ticketList = List.of(ticket3, ticket3);
+        order.setTickets(ticketList);
+        order.setStatus(OrderStatus.IN_PROGRESS);
+        order.updateTotalAndStatus();
+
+
+    }
 
 //    @Test
 //    void testToString() {

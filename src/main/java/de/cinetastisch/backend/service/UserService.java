@@ -27,7 +27,7 @@ public class UserService {
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
         return userMapper.entityToDto(user);
-    }
+}
 
     public UserResponseDto getUser(Long id) {
         return userMapper.entityToDto(userRepository.getReferenceById(id));
