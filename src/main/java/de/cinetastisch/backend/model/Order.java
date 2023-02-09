@@ -103,9 +103,5 @@ public class Order {
             this.tickets.forEach(ticket -> ticket.setDeleted(true));
             this.tickets = new ArrayList<>();
         }
-
-        if(this.tickets.size() == 0) {
-            this.status = OrderStatus.CANCELLED;
-        }
     }
 }

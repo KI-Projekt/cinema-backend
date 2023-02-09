@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TicketTest {
     @Mock
     User user = new User("Luca", "Chmiprogramierski", "luca@gmail.com", "12345", LocalDate.of(2020,1,2), "Deutschland", "Mannheim", "68259", "Baumstr", 3);
-
+    private final String session = "test";
     @Mock
     Screening screening = new Screening();
 
@@ -24,7 +24,9 @@ class TicketTest {
     Seat seat = new Seat(room, 4, 7, SeatCategory.NORMAL);
 
     @Mock
+
     Order order = new Order();
+
     @Mock
     Ticket ticket = new Ticket(order,screening,seat, null);
 
