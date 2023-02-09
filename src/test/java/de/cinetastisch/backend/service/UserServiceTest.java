@@ -89,8 +89,4 @@ class UserServiceTest {
         assertEquals(userResponseDto, response);
     }
 
-    @Test
-    void deleteUser() {
-
-    }
 }

@@ -32,7 +32,7 @@ public class TicketFareController {
     public ResponseEntity<List<TicketFare>> getAll(
             @And({
                     @Spec(path = "name", params = "name", spec = LikeIgnoreCase.class)
-            }) Specification<TicketFare> spec){
+            }) Specification<TicketFare> spec) {
         return ResponseEntity.ok(ticketFareRepository.findAll(spec));
     }
 
@@ -40,7 +40,7 @@ public class TicketFareController {
             tags = {"TicketFares"}
     )
     @GetMapping("/{id}")
-    public ResponseEntity<TicketFare> getOneById(@PathVariable("id") Long id){
+    public ResponseEntity<TicketFare> getOneById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(ticketFareRepository.getReferenceById(id));
     }
 
@@ -48,7 +48,7 @@ public class TicketFareController {
             tags = {"TicketFares"}
     )
     @PostMapping
-    public ResponseEntity<TicketFare> addOne(@RequestBody TicketFare ticketFare){
+    public ResponseEntity<TicketFare> addOne(@RequestBody TicketFare ticketFare) {
         ticketFare.setId(null);
         return new ResponseEntity<>(ticketFareRepository.save(ticketFare), HttpStatus.CREATED);
     }
@@ -57,8 +57,8 @@ public class TicketFareController {
             tags = {"TicketFares"}
     )
     @PutMapping("/{id}")
-    public ResponseEntity<TicketFare> replaceOne(@PathVariable("id") Long id, @RequestBody TicketFare ticketFare){
-        if(!id.equals(ticketFare.getId())){
+    public ResponseEntity<TicketFare> replaceOne(@PathVariable("id") Long id, @RequestBody TicketFare ticketFare) {
+        if (!id.equals(ticketFare.getId())) {
             throw new IllegalArgumentException("IDs do not match");
         }
         return ResponseEntity.ok(ticketFareRepository.save(ticketFare));
@@ -68,7 +68,7 @@ public class TicketFareController {
             tags = {"TicketFares"}
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteOne(@PathVariable("id") Long id){
+    public ResponseEntity<?> deleteOne(@PathVariable("id") Long id) {
         ticketFareRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
