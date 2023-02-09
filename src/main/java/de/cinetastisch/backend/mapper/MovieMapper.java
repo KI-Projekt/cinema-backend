@@ -21,7 +21,7 @@ import java.util.List;
 public interface MovieMapper {
 
     @Mapping(target = "movieStatus", ignore = true, defaultExpression = "java(MovieStatus.IN_CATALOG)")
-    @Mapping(target = "rated", expression = "java(MovieRating.valueOfLabel(request.rated().substring(0, Math.min(5, request.getRated().length()))))")
+    @Mapping(target = "rated", expression = "java(MovieRating.valueOfLabel(request.rated().substring(0, Math.min(5, request.rated().length()))))")
     @Mapping(target = "id", ignore = true)
     Movie dtoToEntity(MovieRequestDto request);
     List<Movie> dtoToEntity(Iterable<MovieRequestDto> requests);
