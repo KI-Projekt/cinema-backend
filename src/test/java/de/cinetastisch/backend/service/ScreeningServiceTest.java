@@ -3,7 +3,12 @@ package de.cinetastisch.backend.service;
 import de.cinetastisch.backend.dto.request.ScreeningRequestDto;
 import de.cinetastisch.backend.dto.response.ScreeningFullResponseDto;
 import de.cinetastisch.backend.dto.response.ScreeningResponseDto;
+import de.cinetastisch.backend.enumeration.MovieRating;
+import de.cinetastisch.backend.enumeration.MovieStatus;
+import de.cinetastisch.backend.enumeration.ScreeningStatus;
+import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.mapper.ScreeningMapper;
+import de.cinetastisch.backend.model.Movie;
 import de.cinetastisch.backend.model.Screening;
 import de.cinetastisch.backend.repository.ScreeningRepository;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
@@ -17,6 +22,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 
 //import java.awt.print.Pageable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -98,10 +104,30 @@ class ScreeningServiceTest {
 
     @Test
     void calculateEndDateTime() {
+        Movie movie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "10", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222", MovieStatus.IN_CATALOG);
+        LocalDateTime localDateTime = LocalDateTime.of(12,12,12,12,10,12);
+        LocalDateTime localDateTimePlus = LocalDateTime.of(12,12,12,12,50,12);
+        LocalDateTime response = screeningService.calculateEndDateTime(localDateTime,movie);
 
+        assertEquals(localDateTimePlus,response);
     }
 
     @Test
     void cancelScreening() {
+        Screening screening = new Screening(null, null, null, null, null, true, true, null);
+        ScreeningFullResponseDto screeningFullResponseDto = new ScreeningFullResponseDto(null, null, null, null, null, null, null, true, true, null );
+        when(screeningRepository.getReferenceById((long)1.2)).thenReturn(screening);
+        when(screeningRepository.save(screening)).thenReturn(screening);
+        when(screeningMapper.entityToDto(screening)).thenReturn(screeningFullResponseDto);
+        ScreeningFullResponseDto response = screeningService.cancelScreening((long)1.2);
+
+        assertEquals(screeningFullResponseDto, response);
+    }
+
+    @Test
+    void cancelScreeningAlready(){
+        Screening screening = new Screening(null, null, null, null, null, true, true, ScreeningStatus.CANCELLED);
+        when(screeningRepository.getReferenceById((long)1.2)).thenReturn(screening);
+        assertThrows(ResourceAlreadyExistsException.class, ()->screeningService.cancelScreening((long)1.2));
     }
 }
