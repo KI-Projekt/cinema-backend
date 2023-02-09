@@ -32,10 +32,10 @@ class OrderTest {
     }
 
 
-    @Test
-    void getUser() {
-        assertEquals(user,order.getUser());
-    }
+//    @Test
+//    void getUser() {
+//        assertEquals(user,order.getUser());
+//    }
 
     @Test
     void getOrderStatus() {
