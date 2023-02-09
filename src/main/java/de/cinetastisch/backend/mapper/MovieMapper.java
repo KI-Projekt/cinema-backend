@@ -21,12 +21,12 @@ import java.util.List;
 public interface MovieMapper {
 
     @Mapping(target = "movieStatus", ignore = true, defaultExpression = "java(MovieStatus.IN_CATALOG)")
-    @Mapping(target = "rated", expression = "java(MovieRating.valueOfLabel(request.rated().substring(0, Math.min(5, inputString.length()))))")
+    @Mapping(target = "rated", expression = "java(MovieRating.valueOfLabel(request.rated().substring(0, Math.min(5, request.length()))))")
     @Mapping(target = "id", ignore = true)
     Movie dtoToEntity(MovieRequestDto request);
     List<Movie> dtoToEntity(Iterable<MovieRequestDto> requests);
 
-    @Mapping(target = "rated", expression = "java(MovieRating.valueOfLabel(response.getRated().substring(0, Math.min(5, inputString.length()))))")
+    @Mapping(target = "rated", expression = "java(MovieRating.valueOfLabel(response.getRated().substring(0, Math.min(5, response.length()))))")
     @Mapping(target = "movieStatus", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "trailer", ignore = true)
