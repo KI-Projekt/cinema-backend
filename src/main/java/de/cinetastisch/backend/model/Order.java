@@ -5,7 +5,6 @@ import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.ScreeningStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +33,7 @@ public class Order {
     @Nullable
     private User user;
 
-    private @NotNull String session;
+    private String session;
 
     @Column(name = "order_status", nullable = false)
     @Enumerated(EnumType.STRING)

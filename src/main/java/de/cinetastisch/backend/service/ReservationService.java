@@ -46,6 +46,10 @@ public class ReservationService {
     @Transactional
     public OrderResponseDto addReservation(ReservationRequestDto reservation, HttpServletRequest request){
 
+        String sessionString = request.getSession().getId();
+
+        System.out.println("SESSION: -------------------" + sessionString);
+
         if(request.getUserPrincipal() != null){
             System.out.println(request.getUserPrincipal().getName());
         }
@@ -82,15 +86,15 @@ public class ReservationService {
             if(orderRepository.existsByUserAndStatusAndTicketsScreening(user, OrderStatus.IN_PROGRESS, screening)){
                 order = orderRepository.findByUserAndStatusAndTicketsScreening(user, OrderStatus.IN_PROGRESS, screening);
             } else {
-                order = new Order(user, request.getRequestedSessionId());
+                order = new Order(user, sessionString);
                 orderRepository.save(order);
             }
         } else {
             System.out.println("SESSION CREATION");
-            if(orderRepository.existsBySessionAndStatusAndTicketsScreening(request.getRequestedSessionId(), OrderStatus.IN_PROGRESS, screening)){
-                order = orderRepository.findBySessionAndStatusAndTicketsScreening(request.getRequestedSessionId(), OrderStatus.IN_PROGRESS, screening);
+            if(orderRepository.existsBySessionAndStatusAndTicketsScreening(sessionString, OrderStatus.IN_PROGRESS, screening)){
+                order = orderRepository.findBySessionAndStatusAndTicketsScreening(sessionString, OrderStatus.IN_PROGRESS, screening);
             } else {
-                order = new Order(request.getRequestedSessionId());
+                order = new Order(sessionString);
                 orderRepository.save(order);
             }
         }

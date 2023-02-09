@@ -128,21 +128,11 @@ public class OrderService {
         }
 
         orderToCancel.setStatus(OrderStatus.CANCELLED);
+        orderToCancel.setTickets(new ArrayList<>());
 
         orderRepository.save(orderToCancel);
         return orderMapper.entityToDto(orderToCancel);
     }
-
-//    @Transactional
-//    public void transferOrderToUser(HttpServletRequest request){
-//        List<Order> orders = orderRepository.findAllBySession(request.getRequestedSessionId());
-//        for (Order order : orders) {
-//            if(order.getUser() == null){
-//                order.setUser(userRepository.getByEmail(request.getUserPrincipal().getName()));
-//                System.out.println("DEBUG" + order);
-//            }
-//        }
-//    }
 
     @Transactional
     public OrderResponseDto transferOrderToUser(Long orderId, Long userId){
@@ -157,4 +147,22 @@ public class OrderService {
         }
     }
 
+    @Transactional
+    public OrderResponseDto refundOrder(Long id) {
+        Order order = orderRepository.getReferenceById(id);
+
+        if(order.getStatus() == OrderStatus.REFUNDED){
+            throw new ResourceAlreadyExistsException("Order already refunded");
+        }
+
+        if(order.getStatus() != OrderStatus.PAID){
+            throw new ResourceAlreadyExistsException("Order has not not been paid for.");
+        }
+
+        order.setStatus(OrderStatus.REFUNDED);
+        order.setTickets(new ArrayList<>());
+
+        orderRepository.save(order);
+        return orderMapper.entityToDto(order);
+    }
 }

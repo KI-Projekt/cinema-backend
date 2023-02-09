@@ -49,7 +49,7 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
-//                .requestCache(cache -> cache.disable())
+                .requestCache(cache -> cache.disable())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                         .maximumSessions(1).maxSessionsPreventsLogin(true)

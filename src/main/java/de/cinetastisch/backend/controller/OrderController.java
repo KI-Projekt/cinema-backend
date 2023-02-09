@@ -67,6 +67,14 @@ public class OrderController {
     @Operation(
             tags = {"Orders"}
     )
+    @PutMapping("/orders/{id}/refund")
+    public ResponseEntity<OrderResponseDto> refund(@PathVariable("id") Long id){
+        return ResponseEntity.ok(orderService.refundOrder(id));
+    }
+
+    @Operation(
+            tags = {"Orders"}
+    )
     @PutMapping("orders/{id}/pay")
     public ResponseEntity<OrderResponseDto> pay(@PathVariable("id") Long id){
         return ResponseEntity.ok(orderService.payOrder(id));
