@@ -13,7 +13,7 @@ class OrderTest {
     User user = new User("Peter", "Schmitt", "p.s@mail.de", "password", LocalDate.of(2020, 1, 2), "Deutschland", "Mannheim", "68245", "Strasse", 4);
 
     @Mock
-    Order order = new Order(user);
+    Order order = new Order();
 
     @Test
     void testEquals() {

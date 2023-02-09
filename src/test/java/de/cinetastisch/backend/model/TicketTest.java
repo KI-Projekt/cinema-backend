@@ -22,7 +22,7 @@ class TicketTest {
     Seat seat = new Seat(room, 4, 7, SeatCategory.NORMAL);
 
     @Mock
-    Order order = new Order(user);
+    Order order = new Order();
     @Mock
     Ticket ticket = new Ticket(order,screening,seat, null);
 
