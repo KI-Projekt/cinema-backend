@@ -82,7 +82,7 @@ public class ReservationService {
             if(orderRepository.existsByUserAndStatusAndTicketsScreening(user, OrderStatus.IN_PROGRESS, screening)){
                 order = orderRepository.findByUserAndStatusAndTicketsScreening(user, OrderStatus.IN_PROGRESS, screening);
             } else {
-                order = new Order(user);
+                order = new Order(user, request.getRequestedSessionId());
                 orderRepository.save(order);
             }
         } else {

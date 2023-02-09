@@ -52,8 +52,9 @@ public class Order {
     @OrderBy(value = "order.id, seat.id ASC")
     private List<Ticket> tickets = new ArrayList<>();
 
-    public Order(User user) {
+    public Order(User user, String session) {
         this.user = user;
+        this.session = session;
     }
 
     public Order(String session) {
