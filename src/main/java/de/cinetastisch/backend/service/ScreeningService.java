@@ -44,8 +44,11 @@ public class ScreeningService {
         List<Screening> runningScreenings = screeningRepository.findAllByRoomAndTime(screening.getRoom(),
                                                                                      screening.getStartDateTime(),
                                                                                      screening.getEndDateTime());
-        if(runningScreenings.size() != 0){
-            throw new ResourceAlreadyOccupiedException("Screenings " + runningScreenings + " already occupy the room for that time.");
+//        if(runningScreenings.size() != 0){
+        for( Screening s : runningScreenings){
+            if(s.getStatus() != ScreeningStatus.CANCELLED){
+                throw new ResourceAlreadyOccupiedException("Screenings " + runningScreenings + " already occupy the room for that time.");
+            }
         }
 
         if(screening.isThreeD() && !screening.getRoom().getHasThreeD()){
