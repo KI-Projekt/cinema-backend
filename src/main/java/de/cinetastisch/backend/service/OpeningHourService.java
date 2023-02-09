@@ -13,6 +13,7 @@ import java.util.List;
 @Service
 public class OpeningHourService {
 
+
     OpeningHourRepository openingHourRepository;
 
     public List<OpeningHour> getAllOpeningHours(){
