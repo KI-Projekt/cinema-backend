@@ -63,6 +63,7 @@ class SeatServiceTest {
 
     @Test
     void getAllSeatsByCategory(){
+        Room room = new Room( "Avengers", true, false);
 
     }
 
