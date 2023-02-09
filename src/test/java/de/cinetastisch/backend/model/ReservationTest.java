@@ -10,6 +10,7 @@ import java.time.LocalDate;
 class ReservationTest {
     @Mock
     User user = new User("Peter", "Schmitt", "p.s@mail.de", "password", LocalDate.of(2022, 2, 2), "Deutschland", "Mannheim", "68245", "Strasse", 4);
+    private final String session = "test";
 
     @Mock
     Movie movie = new Movie("Avengers Endgame", "2019", "/src/datei.png", MovieRating.PG13, "120", "Action", "Anthony Russo", "Christopher Markus", "Chris Evens", "Viel BumBum", "www.youtube.com/Endgame", "1234IMdb", "27/10", "1222", MovieStatus.IN_CATALOG);
@@ -22,7 +23,7 @@ class ReservationTest {
     @Mock
     Seat seat = new Seat(room, 2, 3, SeatCategory.NORMAL);
     @Mock
-    Order order = new Order(user);
+    Order order = new Order(user, session);
 
 //    @Mock
 //    Reservation reservation = new Reservation(user, screening, seat, order);
