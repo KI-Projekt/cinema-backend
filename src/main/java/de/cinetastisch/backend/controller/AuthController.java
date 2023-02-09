@@ -51,7 +51,6 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.email(), loginDto.password()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        orderService.transferOrderToUser(request);
 
         return userRepository.findByEmail(request.getUserPrincipal().getName()).orElseThrow(() -> new UsernameNotFoundException("Email not found"));
     }

@@ -87,4 +87,12 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> selectPaymentMethod(@PathVariable("id") Long id, @RequestParam(value = "method") String paymentMethod){
         return ResponseEntity.ok(orderService.selectPaymentMethod(id, paymentMethod));
     }
+
+    @Operation(
+            tags = {"Orders"}
+    )
+    @PutMapping("orders/{id}/convertToUser/{userid}")
+    public ResponseEntity<OrderResponseDto> convertSessionToUser(@PathVariable("id") Long id, @PathVariable("userid") Long userId){
+        return ResponseEntity.ok(orderService.transferOrderToUser(id, userId));
+    }
 }

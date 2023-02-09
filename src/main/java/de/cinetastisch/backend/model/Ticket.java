@@ -88,10 +88,8 @@ public class Ticket {
     @PrePersist // benefit of this would be marginal since usually you do not deal much with entity after persisting
     @PostLoad
     private void updateStatus() {
-        if (!this.deleted && this.order != null && this.order.getStatus() == OrderStatus.CANCELLED){
-            System.out.println(this);
+        if (!this.deleted && this.order.getStatus() == OrderStatus.CANCELLED){
             this.deleted = true;
-            System.out.println(this);
         }
 
         if(this.getScreening().getStatus() == ScreeningStatus.CANCELLED){

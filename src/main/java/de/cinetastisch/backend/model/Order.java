@@ -5,7 +5,9 @@ import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.ScreeningStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,24 +30,25 @@ public class Order {
     private @Id Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id",foreignKey = @ForeignKey(name = "order_user_id_fk"))
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "order_user_id_fk"))
     @Nullable
     private User user;
 
-    private String session;
+    private @NotNull String session;
 
     @Column(name = "order_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.IN_PROGRESS;
 
     private Double total = 0.00;
+
     @Column(name = "payment_method", nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderPaymentMethod paymentMethod = OrderPaymentMethod.PAYPAL;
     private final LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime expiresAt = this.createdAt.plusMinutes(5);
+    private LocalDateTime expiresAt = this.createdAt.plusMinutes(20);
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.REFRESH)
     @OrderBy(value = "order.id, seat.id ASC")
     private List<Ticket> tickets = new ArrayList<>();
 
@@ -76,7 +79,9 @@ public class Order {
 
     @PrePersist // benefit of this would be marginal since usually you do not deal much with entity after persisting
     @PostLoad
-    private void updateTotalAndStatus() {
+    @Transactional
+    public void updateTotalAndStatus() {
+        System.out.println("Order update");
         if (this.status == OrderStatus.IN_PROGRESS){
             double newTotal = 0.0;
             for(Ticket t : this.tickets){
@@ -96,6 +101,10 @@ public class Order {
             this.status = this.status == OrderStatus.PAID ? OrderStatus.REFUNDED : OrderStatus.CANCELLED;
             this.tickets.forEach(ticket -> ticket.setDeleted(true));
             this.tickets = new ArrayList<>();
+        }
+
+        if(this.tickets.size() == 0) {
+            this.status = OrderStatus.CANCELLED;
         }
     }
 }

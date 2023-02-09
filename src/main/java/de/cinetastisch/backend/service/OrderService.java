@@ -9,13 +9,14 @@ import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.mapper.OrderMapper;
 import de.cinetastisch.backend.model.Order;
 import de.cinetastisch.backend.model.Ticket;
+import de.cinetastisch.backend.model.User;
 import de.cinetastisch.backend.repository.OrderRepository;
 import de.cinetastisch.backend.repository.TicketFareRepository;
 import de.cinetastisch.backend.repository.TicketRepository;
 import de.cinetastisch.backend.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,11 @@ public class OrderService {
 
 
     public List<OrderResponseDto> getAllOrders(Specification<Order> spec, Pageable pageable){
+        Sort sort = pageable.getSort();
+        if ( sort.isEmpty() ){
+            sort = Sort.by("id");
+            return orderMapper.entityToDto(orderRepository.findAll(spec, sort));
+        }
         return orderMapper.entityToDto(orderRepository.findAll(spec, pageable));
     }
 
@@ -48,7 +54,6 @@ public class OrderService {
     public OrderResponseDto selectFares(Long id, Map<String, Integer> fares) {
         Order order = orderRepository.getReferenceById(id);
         List<Ticket> tickets = ticketRepository.findAllByOrder(order);
-        System.out.println(fares);
 
         if(order.getStatus() != OrderStatus.IN_PROGRESS){
             throw new ResourceAlreadyExistsException("Order is already " + order.getStatus());
@@ -89,7 +94,7 @@ public class OrderService {
         order.setPaymentMethod(newMethod);
 
         if(newMethod == OrderPaymentMethod.CASH){
-            order.setExpiresAt(order.getCreatedAt().plusMinutes(20));
+            order.setExpiresAt(order.getCreatedAt().plusDays(1));
         } else {
             order.setExpiresAt(order.getCreatedAt().plusMinutes(1));
         }
@@ -128,13 +133,27 @@ public class OrderService {
         return orderMapper.entityToDto(orderToCancel);
     }
 
+//    @Transactional
+//    public void transferOrderToUser(HttpServletRequest request){
+//        List<Order> orders = orderRepository.findAllBySession(request.getRequestedSessionId());
+//        for (Order order : orders) {
+//            if(order.getUser() == null){
+//                order.setUser(userRepository.getByEmail(request.getUserPrincipal().getName()));
+//                System.out.println("DEBUG" + order);
+//            }
+//        }
+//    }
+
     @Transactional
-    public void transferOrderToUser(HttpServletRequest request){
-        List<Order> orders = orderRepository.findAllBySession(request.getRequestedSessionId());
-        for (Order order : orders) {
-            if(order.getUser() == null){
-                order.setUser(userRepository.getByEmail(request.getUserPrincipal().getName()));
-            }
+    public OrderResponseDto transferOrderToUser(Long orderId, Long userId){
+        Order order = orderRepository.getReferenceById(orderId);
+        User user = userRepository.getReferenceById(userId);
+
+        if(order.getUser() == null){
+            order.setUser(user);
+            return orderMapper.entityToDto(order);
+        } else {
+            throw new ResourceAlreadyExistsException("User is already assigned to user " + order.getUser());
         }
     }
 

@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -39,7 +40,6 @@ public class SecurityConfig {
                         .requestMatchers("/login*").permitAll()
                 )
                 .userDetailsService(jpaUserDetailsServer)
-                .headers(headers -> headers.frameOptions().sameOrigin())
                 .httpBasic(Customizer.withDefaults())
                 .logout(logout -> logout
                         .clearAuthentication(true)
@@ -49,12 +49,11 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
-                .requestCache()
-                .and().sessionManagement(
-                        (session) -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-                                            .sessionConcurrency(
-                                (concurrency) -> concurrency.maximumSessions(1)
-                                                            .expiredUrl("/login?expired")))
+                .requestCache(cache -> cache.disable())
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        .maximumSessions(1).maxSessionsPreventsLogin(true)
+                )
                 .build();
     }
 
@@ -66,5 +65,10 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
     }
 }

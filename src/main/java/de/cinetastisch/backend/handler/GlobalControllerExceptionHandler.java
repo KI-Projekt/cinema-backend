@@ -17,6 +17,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 
 @Hidden
 @RestControllerAdvice
@@ -57,7 +58,8 @@ public class GlobalControllerExceptionHandler {
             IllegalStateException.class,
             MethodArgumentNotValidException.class,
             MethodArgumentTypeMismatchException.class,
-            DataIntegrityViolationException.class
+            DataIntegrityViolationException.class,
+            DateTimeParseException.class
     })
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<ErrorMessage> handleInvalidInputConflicts(RuntimeException ex, WebRequest webRequest){

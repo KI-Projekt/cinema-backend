@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.controller;
 
+import de.cinetastisch.backend.dto.request.OpeningHourRequestDto;
 import de.cinetastisch.backend.model.OpeningHour;
 import de.cinetastisch.backend.service.OpeningHourService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +31,7 @@ public class OpeningHourController {
             tags = {"Opening Hours"}
     )
     @PutMapping("/{id}")
-    public ResponseEntity<OpeningHour> replace(@PathVariable("id")Long id, @RequestBody OpeningHour openingHour){
+    public ResponseEntity<OpeningHour> replace(@PathVariable("id")Long id, @RequestBody OpeningHourRequestDto openingHour){
         return ResponseEntity.ok(openingHourService.replaceOpeningHour(id, openingHour));
     }
 
