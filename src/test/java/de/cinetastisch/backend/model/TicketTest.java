@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.model;
 
+import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.SeatCategory;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -31,10 +32,9 @@ class TicketTest {
     void testEquals() {
         ticket.setId((long)1.2222);
         Ticket ticket1 = ticket;
-        Ticket ticket2 = new Ticket();
-        ticket2.setId((long)1.444);
+        Ticket ticket3 = new Ticket(null,null,null,null,null,null,false);
         assertTrue(ticket.equals(ticket1));
-        assertFalse(ticket.equals(ticket2));
+        assertFalse(ticket.equals(ticket3));
     }
 
     @Test
@@ -94,5 +94,6 @@ class TicketTest {
         ticket.setSelectedFare(fare1);
         assertEquals(fare1, ticket.getSelectedFare());
     }
+
 
 }
