@@ -67,16 +67,15 @@ public class RoomService {
         if(!id.equals(request.id())){
             throw new IllegalArgumentException("Different ids given");
         }
-
         Room oldRoom = roomRepository.getReferenceById(id);
         if(request.name() != null){
             oldRoom.setName(request.name());
         }
         if(request.hasThreeD() != null){
-            oldRoom.setHasThreeD(Boolean.getBoolean(request.hasThreeD()));
+            oldRoom.setHasThreeD(Boolean.valueOf(request.hasThreeD()));
         }
         if(request.hasDolbyAtmos() != null){
-            oldRoom.setHasDolbyAtmos(Boolean.getBoolean(request.hasDolbyAtmos()));
+            oldRoom.setHasDolbyAtmos(Boolean.valueOf(request.hasDolbyAtmos()));
         }
 
         if(request.seats().size() > 0){
