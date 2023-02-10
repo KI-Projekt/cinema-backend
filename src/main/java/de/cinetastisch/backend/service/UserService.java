@@ -19,6 +19,8 @@ public class UserService {
     private final UserMapper userMapper;
     private PasswordEncoder encoder;
 
+    private EmailService emailService;
+
     public UserResponseDto registerUser(UserRequestDto userCredentials){
         if(userRepository.existsByEmail(userCredentials.email())){
             throw new ResourceAlreadyExistsException("User already exists with this email");
@@ -26,6 +28,11 @@ public class UserService {
         User user = userMapper.dtoToEntity(userCredentials);
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
+        try{
+            emailService.registration(user.getEmail(),user.getFirstName(),user.getLastName());
+        }catch(Exception e){
+            System.out.println("error by send Mail");
+        }
         return userMapper.entityToDto(user);
 }
 
