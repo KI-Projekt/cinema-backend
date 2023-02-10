@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.service;
 
+import de.cinetastisch.backend.dto.request.FaresDto;
 import de.cinetastisch.backend.dto.response.OrderResponseDto;
 import de.cinetastisch.backend.enumeration.OrderPaymentMethod;
 import de.cinetastisch.backend.enumeration.OrderStatus;
@@ -25,6 +26,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.when;
 
@@ -50,12 +52,6 @@ class OrderServiceTest {
     @Mock
     UserRepository userRepository;
 
-    final Specification<Screening> spec = null;
-    final Pageable pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
-
-    @Test
-    void getAllOrders() {
-    }
 
     @Test
     void getOrder() {
@@ -70,7 +66,55 @@ class OrderServiceTest {
     }
 
     @Test
+    void selectFaresexeption() {
+        OrderResponseDto orderResponseDto = new OrderResponseDto(null, null, null, null, null, null, null, null, null, null);
+        Ticket ticket = new Ticket(null, null, null, null, null);
+        List<Ticket> ticketList = List.of(ticket);
+        Order order = new Order(null, null);
+        order.setStatus(OrderStatus.PAID);
+
+        when(orderRepository.getReferenceById((long)1.2)).thenReturn(order);
+        when(ticketRepository.findAllByOrder(order)).thenReturn(ticketList);
+
+        assertThrows(ResourceAlreadyExistsException.class,()->orderService.selectFares((long)1.2,null));
+
+
+    }
+    @Test
     void selectFares() {
+
+        OrderResponseDto orderResponseDto = new OrderResponseDto(null, null, null, null, null, null, null, null, null, null);
+        Ticket ticket = new Ticket(null, null, null, null, null);
+        Map<String,Integer> fares = Map.of("Adult",1);
+        List<Ticket> ticketList = List.of(ticket);
+        Order order = new Order(null, null);
+        order.setStatus(OrderStatus.IN_PROGRESS);
+
+        when(orderRepository.getReferenceById((long)1.2)).thenReturn(order);
+        when(ticketRepository.findAllByOrder(order)).thenReturn(ticketList);
+
+        OrderResponseDto respone = orderService.selectFares((long)1.2,fares);
+
+        assertNull(respone);
+
+    }
+    @Test
+    void selectFaresIllegalArgument(){
+        OrderResponseDto orderResponseDto = new OrderResponseDto(null, null, null, null, null, null, null, null, null, null);
+        Ticket ticket = new Ticket(null, null, null, null, null);
+        Map<String,Integer> fares = Map.of("Adult",2);
+        List<Ticket> ticketList = List.of(ticket);
+        Order order = new Order(null, null);
+        order.setStatus(OrderStatus.IN_PROGRESS);
+
+        when(orderRepository.getReferenceById((long)1.2)).thenReturn(order);
+        when(ticketRepository.findAllByOrder(order)).thenReturn(ticketList);
+
+        assertThrows(IllegalArgumentException.class,()->orderService.selectFares((long)1.2,fares));
+
+
+
+
     }
 
     @Test

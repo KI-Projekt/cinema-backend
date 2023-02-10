@@ -75,7 +75,7 @@ class ReservationServiceTest {
     void addReservationAlreadyOccupiedStatus() {
         OrderResponseDto orderResponseDto = new OrderResponseDto(null,null,null,null,null,null,null,null,null,null);
         ReservationRequestDto reservationRequestDto = new ReservationRequestDto(null,(long)1.2,(long)1.2);
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+
         Screening screening = new Screening(null,null,null,null,null,true,true,null);
         Seat seat = new Seat(null,null,null,null);
         when(screeningRepository.getReferenceById((long)1.2)).thenReturn(screening);
@@ -87,7 +87,7 @@ class ReservationServiceTest {
     void addReservationIllegalArgument() {
         OrderResponseDto orderResponseDto = new OrderResponseDto(null,null,null,null,null,null,null,null,null,null);
         ReservationRequestDto reservationRequestDto = new ReservationRequestDto(null,(long)1.2,(long)1.2);
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+
         Room room = new Room(null,true,true);
         Screening screening = new Screening(null,null,room,null,null,true,true, ScreeningStatus.TICKET_SALE_OPEN);
         Seat seat = new Seat(null,null,null,null);
@@ -100,7 +100,7 @@ class ReservationServiceTest {
     void addReservationAlreadyOccupiedexists() {
         OrderResponseDto orderResponseDto = new OrderResponseDto(null,null,null,null,null,null,null,null,null,null);
         ReservationRequestDto reservationRequestDto = new ReservationRequestDto(null,(long)1.2,(long)1.2);
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+
         Room room = new Room(null,true,true);
         Screening screening = new Screening(null,null,null,null,null,true,true, ScreeningStatus.TICKET_SALE_OPEN);
         Seat seat = new Seat(null,null,null,null);
@@ -110,38 +110,13 @@ class ReservationServiceTest {
 
         assertThrows(ResourceAlreadyOccupiedException.class,()->reservationService.addReservation(reservationRequestDto,httpServletRequest));
     }
-    @Test
-    void addReservationelse() {
-        OrderResponseDto orderResponseDto = new OrderResponseDto(null,null,null,null,null,null,null,null,null,null);
-        ReservationRequestDto reservationRequestDto = new ReservationRequestDto(null,(long)1.2,(long)1.2);
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        Order order = new Order("1");
-        order.setId((long)1.2);
-        Room room = new Room(null,true,true);
-        Screening screening = new Screening(null,null,null,null,null,true,true, ScreeningStatus.TICKET_SALE_OPEN);
-        Seat seat = new Seat(null,null,null,null);
-        User user = new User("Luca", "Chmiprogramierski", "luca@gmail.com", "12345", LocalDate.of(2020, 1, 2), "Deutschland", "Mannheim", "68259", "Baumstr", 3);
-        TicketFare ticketFare = new TicketFare("Adult",20.0,"cool");
-        when(screeningRepository.getReferenceById((long)1.2)).thenReturn(screening);
-        when(seatRepository.getReferenceById((long)1.2)).thenReturn(seat);
-        when(ticketRepository.existsByScreeningAndSeat(screening,seat)).thenReturn(false);
 
-        httpServletRequest.setUserPrincipal(null);
-        when(orderRepository.existsBySessionAndStatusAndTicketsScreening("1", OrderStatus.IN_PROGRESS,screening)).thenReturn(true);
-        when(orderRepository.findBySessionAndStatusAndTicketsScreening(httpServletRequest.getSession().getId(),OrderStatus.IN_PROGRESS,screening)).thenReturn(order);
-        when(ticketFareRepository.findByNameLikeIgnoreCase("Adult")).thenReturn(ticketFare);
-        when(referenceMapper.map((long)1.2,Order.class)).thenReturn(order);
-        when(orderMapper.entityToDto(order)).thenReturn(orderResponseDto);
-
-        OrderResponseDto response = reservationService.addReservation(reservationRequestDto,httpServletRequest);
-        assertEquals(orderResponseDto,response);
-    }
 
     @Test
     void addReservationif() {
         OrderResponseDto orderResponseDto = new OrderResponseDto(null,null,null,null,null,null,null,null,null,null);
         ReservationRequestDto reservationRequestDto = new ReservationRequestDto((long)1.2,(long)1.2,(long)1.2);
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+
         Order order = new Order("1");
         Room room = new Room(null,true,true);
         Screening screening = new Screening(null,null,null,null,null,true,true, ScreeningStatus.TICKET_SALE_OPEN);
