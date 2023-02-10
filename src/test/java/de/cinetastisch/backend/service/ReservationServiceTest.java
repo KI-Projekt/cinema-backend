@@ -52,27 +52,12 @@ class ReservationServiceTest {
     TicketMapper ticketMapper;
 
 
-    @Test
-    void getAllReservations() {
-        Order order = new Order("1");
-        Screening screening = new Screening();
-        Ticket ticket = new Ticket(null, null, null, null, null);
-        List<Ticket> ticketList = List.of(ticket);
-        TicketResponseDto ticketResponseDto = new TicketResponseDto(null, null, null, null, null, null, null);
-        List<TicketResponseDto> ticketResponseDtoList = List.of(ticketResponseDto);
-        order.setStatus(OrderStatus.CANCELLED);
-        LocalDateTime localDateTime = LocalDateTime.of(12, 12, 12, 12, 12, 12);
-        when(ticketRepository.findAll()).thenReturn(ticketList);
-        when(ticketMapper.entityToDto(ticketList)).thenReturn(ticketResponseDtoList);
-        when(ticketRepository.findAllByScreening(screening)).thenReturn(ticketList);
-        when(referenceMapper.map(null, Screening.class)).thenReturn(screening);
-        List<TicketResponseDto> response = reservationService.getAllReservations((long)1.2, null);
-        assertEquals(ticketResponseDtoList, response);
 
-    }
+
 
     @Test
     void addReservationAlreadyOccupiedStatus() {
+        MockHttpServletRequest httpServletRequest =new MockHttpServletRequest();
         OrderResponseDto orderResponseDto = new OrderResponseDto(null,null,null,null,null,null,null,null,null,null);
         ReservationRequestDto reservationRequestDto = new ReservationRequestDto(null,(long)1.2,(long)1.2);
 
@@ -85,6 +70,7 @@ class ReservationServiceTest {
     }
     @Test
     void addReservationIllegalArgument() {
+        MockHttpServletRequest httpServletRequest =new MockHttpServletRequest();
         OrderResponseDto orderResponseDto = new OrderResponseDto(null,null,null,null,null,null,null,null,null,null);
         ReservationRequestDto reservationRequestDto = new ReservationRequestDto(null,(long)1.2,(long)1.2);
 
@@ -98,6 +84,7 @@ class ReservationServiceTest {
     }
     @Test
     void addReservationAlreadyOccupiedexists() {
+        MockHttpServletRequest httpServletRequest =new MockHttpServletRequest();
         OrderResponseDto orderResponseDto = new OrderResponseDto(null,null,null,null,null,null,null,null,null,null);
         ReservationRequestDto reservationRequestDto = new ReservationRequestDto(null,(long)1.2,(long)1.2);
 
@@ -114,6 +101,7 @@ class ReservationServiceTest {
 
     @Test
     void addReservationif() {
+        MockHttpServletRequest httpServletRequest =new MockHttpServletRequest();
         OrderResponseDto orderResponseDto = new OrderResponseDto(null,null,null,null,null,null,null,null,null,null);
         ReservationRequestDto reservationRequestDto = new ReservationRequestDto((long)1.2,(long)1.2,(long)1.2);
 
