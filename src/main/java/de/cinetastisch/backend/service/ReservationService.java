@@ -34,6 +34,7 @@ public class ReservationService {
     private final OrderMapper orderMapper;
     private final ReferenceMapper referenceMapper;
     private final TicketFareRepository ticketFareRepository;
+    private EmailService emailService;
 
     public List<TicketResponseDto> getAllReservations(Long userId, Long screeningId){
         ticketRepository.deleteAllByOrderStatusOrOrderExpiresAtIsLessThan(OrderStatus.CANCELLED, LocalDateTime.now());
@@ -104,6 +105,11 @@ public class ReservationService {
         order.getTickets().add(ticket);
         ticketRepository.save(ticket);
         orderRepository.save(order);
+        try{
+            emailService.sendTicket(order.getUser().getEmail(),ticket.getScreening().getMovie().getTitle(),ticket.getScreening().getStartDateTime().toString(),ticket.getScreening().getStartDateTime().toString(),ticket.getSeat().toString());
+        }catch (Exception e){
+            System.out.println("Error by Sending Mail");
+        }
         return orderMapper.entityToDto(referenceMapper.map(order.getId(), Order.class));
     }
 

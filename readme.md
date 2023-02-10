@@ -2,6 +2,14 @@
 
 [![Build Status](https://drone.c930.net/api/badges/mabu2807/cinema-backend/status.svg)](https://drone.c930.net/mabu2807/cinema-backend)
  [![codecov](https://codecov.io/gh/mabu2807/cinema-backend/branch/main/graph/badge.svg)](https://codecov.io/gh/mabu2807/cinema-backend)
+ 
+ 
+- Lisa Reß-Park: 3798263
+- Nora Klemp: 7979965
+- Luca Chmielarski: 3047210
+- Aidan Zimmer: 4803747
+- Marcel Bulling: 2953627
+- Johanna Deike: 4940972
 
 ## Bi-direktionale vs Uni-direktionale Datenbankbeziehungen
 
