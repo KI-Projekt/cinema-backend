@@ -2,11 +2,14 @@ package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.dto.request.ReservationRequestDto;
 import de.cinetastisch.backend.dto.response.OrderResponseDto;
+import de.cinetastisch.backend.dto.response.TicketResponseDto;
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.enumeration.ScreeningStatus;
+import de.cinetastisch.backend.enumeration.TicketType;
 import de.cinetastisch.backend.exception.ResourceAlreadyOccupiedException;
 import de.cinetastisch.backend.mapper.OrderMapper;
 import de.cinetastisch.backend.mapper.ReferenceMapper;
+import de.cinetastisch.backend.mapper.TicketMapper;
 import de.cinetastisch.backend.model.*;
 import de.cinetastisch.backend.repository.*;
 import org.aspectj.weaver.ast.Or;
@@ -18,6 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -43,9 +48,27 @@ class ReservationServiceTest {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    TicketMapper ticketMapper;
+
 
     @Test
     void getAllReservations() {
+        Order order = new Order("1");
+        Screening screening = new Screening();
+        Ticket ticket = new Ticket(null, null, null, null, null);
+        List<Ticket> ticketList = List.of(ticket);
+        TicketResponseDto ticketResponseDto = new TicketResponseDto(null, null, null, null, null, null, null);
+        List<TicketResponseDto> ticketResponseDtoList = List.of(ticketResponseDto);
+        order.setStatus(OrderStatus.CANCELLED);
+        LocalDateTime localDateTime = LocalDateTime.of(12, 12, 12, 12, 12, 12);
+        when(ticketRepository.findAll()).thenReturn(ticketList);
+        when(ticketMapper.entityToDto(ticketList)).thenReturn(ticketResponseDtoList);
+        when(ticketRepository.findAllByScreening(screening)).thenReturn(ticketList);
+        when(referenceMapper.map(null, Screening.class)).thenReturn(screening);
+        List<TicketResponseDto> response = reservationService.getAllReservations((long)1.2, null);
+        assertEquals(ticketResponseDtoList, response);
+
     }
 
     @Test
@@ -147,5 +170,9 @@ class ReservationServiceTest {
 
     @Test
     void deleteReservation() {
+        Ticket ticket = new Ticket(null, null, null, null, TicketType.TICKET);
+        when(ticketRepository.getReferenceById((long)1.2)).thenReturn(ticket);
+        assertThrows(ResourceAlreadyOccupiedException.class, ()->reservationService.deleteReservation((long)1.2));
+
     }
 }
