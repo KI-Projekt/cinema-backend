@@ -1,6 +1,7 @@
 package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.dto.response.OrderResponseDto;
+import de.cinetastisch.backend.enumeration.OrderPaymentMethod;
 import de.cinetastisch.backend.enumeration.OrderStatus;
 import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.mapper.OrderMapper;
@@ -73,9 +74,53 @@ class OrderServiceTest {
     }
 
     @Test
-    void selectPaymentMethod() {
+    void selectPaymentMethodException() {
+        Order order = new Order(null, null);
+        order.setStatus(OrderStatus.CANCELLED);
+        when(orderRepository.getReferenceById((long)1.2)).thenReturn(order);
+        assertThrows(IllegalArgumentException.class, ()->orderService.selectPaymentMethod(((long)1.2), "Ha"));
     }
 
+    @Test
+    void selectPaymentMethod(){
+        Order order = new Order(null, null);
+        order.setStatus(OrderStatus.IN_PROGRESS);
+        OrderPaymentMethod orderPaymentMethod = OrderPaymentMethod.PAYPAL;
+        order.setPaymentMethod(orderPaymentMethod);
+        when(orderRepository.getReferenceById((long)1.2)).thenReturn(order);
+        assertThrows(ResourceAlreadyExistsException.class, ()->orderService.selectPaymentMethod((long)1.2,"PAYPAL"));
+
+    }
+
+    @Test
+    void selectPaymentMethodNewMethod(){
+        Order order = new Order(null, null);
+        order.setStatus(OrderStatus.IN_PROGRESS);
+        OrderResponseDto orderResponseDto = new OrderResponseDto((long)1.2, null, null, OrderStatus.CANCELLED, null, null, null, null, null, null);
+        OrderPaymentMethod orderPaymentMethod = OrderPaymentMethod.PAYPAL;
+        order.setPaymentMethod(orderPaymentMethod);
+        when(orderRepository.getReferenceById((long)1.2)).thenReturn(order);
+        when(orderRepository.save(order)).thenReturn(order);
+        when(orderMapper.entityToDto(order)).thenReturn(orderResponseDto);
+        OrderResponseDto response = orderService.selectPaymentMethod((long)1.2, "CASH");
+        assertEquals(orderResponseDto, response);
+
+    }
+
+    @Test
+    void selectPaymentMethodExpires(){
+        Order order = new Order(null, null);
+        order.setStatus(OrderStatus.IN_PROGRESS);
+        OrderResponseDto orderResponseDto = new OrderResponseDto((long)1.2, null, null, OrderStatus.CANCELLED, null, null, null, null, null, null);
+        OrderPaymentMethod orderPaymentMethod = OrderPaymentMethod.PAYPAL;
+        order.setPaymentMethod(orderPaymentMethod);
+        when(orderRepository.getReferenceById((long)1.2)).thenReturn(order);
+        when(orderRepository.save(order)).thenReturn(order);
+        when(orderMapper.entityToDto(order)).thenReturn(orderResponseDto);
+        OrderResponseDto response = orderService.selectPaymentMethod((long)1.2, "GIROPAY");
+        assertEquals(orderResponseDto, response);
+
+    }
     @Test
     void payOrder() {
         Order order = new Order(null, null);
