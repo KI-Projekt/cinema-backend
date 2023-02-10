@@ -1,6 +1,8 @@
 package de.cinetastisch.backend.service;
 
 import de.cinetastisch.backend.dto.response.OrderResponseDto;
+import de.cinetastisch.backend.enumeration.OrderStatus;
+import de.cinetastisch.backend.exception.ResourceAlreadyExistsException;
 import de.cinetastisch.backend.mapper.OrderMapper;
 import de.cinetastisch.backend.model.Order;
 import de.cinetastisch.backend.model.Screening;
@@ -74,7 +76,25 @@ class OrderServiceTest {
     }
 
     @Test
-    void cancelOrder() {
+    void cancelOrderException() {
+        Order order = new Order(null, null);
+        order.setStatus(OrderStatus.CANCELLED);
+        OrderResponseDto orderResponseDto = new OrderResponseDto((long)1.2, null, null, OrderStatus.CANCELLED, null, null, null, null, null, null);
+        when(orderRepository.getReferenceById((long)1.2)).thenReturn(order);
+        assertThrows(ResourceAlreadyExistsException.class, ()->orderService.cancelOrder((long)1.2));
+    }
+
+    @Test
+    void cancelOrder(){
+        Order order = new Order(null, null);
+        order.setStatus(OrderStatus.IN_PROGRESS);
+        OrderResponseDto orderResponseDto = new OrderResponseDto((long)1.2, null, null, OrderStatus.CANCELLED, null, null, null, null, null, null);
+        when(orderRepository.getReferenceById((long)1.2)).thenReturn(order);
+        when(orderRepository.save(order)).thenReturn(order);
+        when(orderMapper.entityToDto(order)).thenReturn(orderResponseDto);
+        OrderResponseDto response = orderService.cancelOrder((long)1.2);
+
+        assertEquals(orderResponseDto, response);
     }
 
     @Test
@@ -83,5 +103,6 @@ class OrderServiceTest {
 
     @Test
     void refundOrder() {
+
     }
 }
