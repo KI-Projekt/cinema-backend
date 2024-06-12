@@ -40,6 +40,8 @@ public class UserController {
     }
 
 
+
+
     @Operation(
             tags = {"Users"}
     )
@@ -57,8 +59,6 @@ public class UserController {
         return new ResponseEntity<>(userService.registerUser(request), HttpStatus.CREATED);
     }
 
-
-
     @Operation(
             tags = {"Users"}
     )
@@ -66,6 +66,11 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> replaceOne(@PathVariable("id") Long id, @RequestBody User newUser) {
         return new ResponseEntity<>(userService.replaceUser(id, newUser), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/moviemate")
+    public ResponseEntity<UserResponseDto> changeMovieMate(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(userService.changeMovieMate(id), HttpStatus.OK);
     }
 
     @Operation(

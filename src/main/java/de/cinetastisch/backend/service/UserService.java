@@ -52,4 +52,11 @@ public class UserService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+
+    public UserResponseDto changeMovieMate(Long id){
+        User user = userRepository.getReferenceById(id);
+        user.setAiAccepted(!user.isAiAccepted());
+        return userMapper.entityToDto(userRepository.save(user));
+    }
 }

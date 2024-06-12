@@ -82,6 +82,11 @@ public class MovieController {
         return new ResponseEntity<>(movieService.getAllMovies(spec, page), HttpStatus.OK);
     }
 
+    @GetMapping("/review")
+    public ResponseEntity<List<MovieResponseDto>> getAllForReview(){
+        return new ResponseEntity<>(movieService.getAllMoviesForReview(), HttpStatus.OK);
+    }
+
     @Operation(
             tags = {"Movies"},
             operationId = "getMovie",

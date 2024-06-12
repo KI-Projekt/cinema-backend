@@ -34,26 +34,16 @@ public class MovieService {
     @Transactional
     public List<MovieResponseDto> getAllMovies(Specification<Movie> spec, Pageable pageable) {
 
-//        List<Sort.Order> orders = sort.stream()
-//                                        .flatMap(str -> str.contains(",")
-//                                                ? Stream.of(new Sort.Order(Sort.Direction.valueOf(str.split(",")[1].toUpperCase()), str.split(",")[0]))
-//                                                : Stream.of(new Sort.Order(Sort.Direction.ASC, str)))
-//                                        .toList();
-
-//        return movieMapper.entityToDto(movieRepository.findAll(
-//                spec,
-//                Sort.by(sort.contains(",")
-//                                ? new Sort.Order(Sort.Direction.valueOf(sort.split(",")[1].toUpperCase()), sort.split(",")[0])
-//                                : new Sort.Order(Sort.Direction.ASC, sort)
-//                )
-//        ));
         Sort sort = pageable.getSort();
         if ( sort.isEmpty() ){
             sort = Sort.by("id");
         }
         List<Movie> result = movieRepository.findAll(spec, sort);
-//        List<MovieResponseDto> result = movieRepository.findAll(spec, pageable).map(movieMapper::entityToDto);
         return movieMapper.entityToDto(result);
+    }
+
+    public List<MovieResponseDto> getAllMoviesForReview(){
+        return movieMapper.entityToDto(movieRepository.findAllByForReview(true));
     }
 
     public MovieResponseDto getMovie(Long id){
@@ -70,6 +60,8 @@ public class MovieService {
     }
 
     public MovieResponseDto addMovieByParameters(MovieRequestDto movie, String imdbId, String title){
+        //TODO: api endpoint for AI to add movie
+
         if (movie != null){
             if(MovieRating.valueOfLabel(movie.rated()) == null){
                 throw new IllegalArgumentException("Wrong Movie Rating given, optional are: " + Arrays.toString(MovieRating.getLabels()));
@@ -145,6 +137,7 @@ public class MovieService {
 
 
     public MovieResponseDto archive(Long id) {
+        //TODO: API endpoint for AI to archive movie
         Movie movie = movieRepository.findById(id)
                                      .orElseThrow(() -> new ResourceNotFoundException("Movie id not found."));
         if (movie.getMovieStatus() != MovieStatus.ARCHIVED){
