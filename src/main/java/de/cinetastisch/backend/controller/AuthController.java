@@ -53,9 +53,11 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user = userRepository.findByEmail(request.getUserPrincipal().getName()).orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+
         if (user.isFirstLogin()){
             user.setFirstLogin(false);
             userRepository.save(user);
+            user.setFirstLogin(true);
         }
         return user;
     }
