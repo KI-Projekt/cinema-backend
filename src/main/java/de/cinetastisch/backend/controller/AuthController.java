@@ -58,7 +58,7 @@ public class AuthController {
             user.setFirstLogin(false);
             userRepository.save(user);
             User responeUser = userRepository.findByEmail(request.getUserPrincipal().getName()).orElseThrow(() -> new UsernameNotFoundException("Email not found"));
-            user.setFirstLogin(true);
+            responeUser.setFirstLogin(true);
             return responeUser;
         }
         return user;
