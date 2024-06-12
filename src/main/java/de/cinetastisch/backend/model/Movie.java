@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.Set;
+
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
@@ -42,6 +44,10 @@ public class Movie {
     private String imdbId;
     private String imdbRating;
     private String imdbRatingCount;
+    private boolean forReview = false;
+
+    @OneToMany(mappedBy = "movie")
+    private Set<Review> reviews;
 
     @Enumerated(EnumType.STRING)
     private MovieStatus movieStatus = MovieStatus.IN_CATALOG;

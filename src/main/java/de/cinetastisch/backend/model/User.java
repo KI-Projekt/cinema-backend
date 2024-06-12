@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -40,6 +41,14 @@ public class User {
     private String street;
     private Integer houseNumber;
     private String role = "ROLE_USER";
+    private boolean firstLogin = true;
+    private boolean aiAccepted = false;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Review> reviews;
+
+
+
 
     public User(String firstName, String lastName, String email, String password, LocalDate birthday, String country,
                 String city, String zip, String street, Integer houseNumber) {
