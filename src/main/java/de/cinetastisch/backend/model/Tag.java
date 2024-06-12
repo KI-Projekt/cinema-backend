@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -27,6 +28,7 @@ public class Tag {
     private String tag;
 
     @OneToMany(mappedBy = "tag")
+    @JsonIgnore
     private Set<ReviewTag> reviewTags;
 
     public Tag(String tag) {

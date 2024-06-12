@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.cinetastisch.backend.enumeration.MovieRating;
 import de.cinetastisch.backend.enumeration.MovieStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,6 +48,7 @@ public class Movie {
     private boolean forReview = false;
 
     @OneToMany(mappedBy = "movie")
+    @JsonIgnore
     private Set<Review> reviews;
 
     @Enumerated(EnumType.STRING)

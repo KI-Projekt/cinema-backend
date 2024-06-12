@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,6 +46,7 @@ public class User {
     private boolean aiAccepted = false;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<Review> reviews;
 
 
