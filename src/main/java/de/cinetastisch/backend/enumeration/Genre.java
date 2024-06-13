@@ -1,0 +1,5 @@
+package de.cinetastisch.backend.enumeration;
+
+public enum Genre {
+    ACTION, ADVENTURE, ANIMATION,COMEDY, CRIME, DOCUMENTARY, DRAMA, FANTASY, HORROR, MYSTERY, ROMANCE, SCI_FI, SPORT, THRILLER, WAR, WESTERN
+}

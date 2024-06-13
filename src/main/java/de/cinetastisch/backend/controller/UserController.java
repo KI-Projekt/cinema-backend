@@ -68,7 +68,7 @@ public class UserController {
         return new ResponseEntity<>(userService.replaceUser(id, newUser), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/moviemate")
+    @PutMapping("/{id}/ai")
     public ResponseEntity<UserResponseDto> changeMovieMate(@PathVariable("id") Long id) {
         return new ResponseEntity<>(userService.changeMovieMate(id), HttpStatus.OK);
     }

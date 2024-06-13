@@ -49,6 +49,9 @@ public class User {
     @JsonIgnore
     private Set<Review> reviews;
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private Set<FavoriteGenres> favoriteGenres;
 
 
 
