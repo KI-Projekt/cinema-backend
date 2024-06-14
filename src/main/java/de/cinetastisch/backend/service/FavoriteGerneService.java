@@ -21,21 +21,18 @@ public class FavoriteGerneService {
 
     public void addFavoriteGenre(Long userId, String genre){
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Genre genreEnum = Genre.valueOf(genre);
 
-        for (String g : splitStringToGenres(genre)){
-            Genre genre1 = Genre.valueOf(g);
-            favoriteGenreRepository.save(new FavoriteGenres(genre1, user));
+        if(favoriteGenreRepository.existsByGenreAndUser_Id(genreEnum, userId)){
+            FavoriteGenres favoriteGenres = favoriteGenreRepository.findByGenreAndUser_Id(genreEnum, userId);
+            favoriteGenreRepository.delete(favoriteGenres);
+        }else{
+            FavoriteGenres favoriteGenres = new FavoriteGenres(genreEnum, user);
+            favoriteGenreRepository.save(favoriteGenres);
         }
+
 
 
     }
 
-    public ArrayList<String> splitStringToGenres(String genre){
-        String[] genres = genre.split(",");
-        ArrayList<String> genreList = new ArrayList<>();
-        for (String g : genres){
-            genreList.add(g);
-        }
-        return genreList;
-    }
 }

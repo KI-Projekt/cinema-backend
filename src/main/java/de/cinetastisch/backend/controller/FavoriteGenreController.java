@@ -16,8 +16,8 @@ public class FavoriteGenreController {
     }
 
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<?> addFavoriteGenre(@PathVariable Long userId, @RequestBody String genre){
+    @PutMapping("/{userId}/{genre}")
+    public ResponseEntity<?> addFavoriteGenre(@PathVariable Long userId, @PathVariable String genre){
         favoriteGerneService.addFavoriteGenre(userId, genre);
         return ResponseEntity.ok().build();
     }

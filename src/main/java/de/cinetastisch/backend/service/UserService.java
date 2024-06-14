@@ -56,6 +56,7 @@ public class UserService {
 
     public UserResponseDto changeMovieMate(Long id){
         User user = userRepository.getReferenceById(id);
+        System.out.println(user);
         user.setAiAccepted(!user.isAiAccepted());
         return userMapper.entityToDto(userRepository.save(user));
     }
