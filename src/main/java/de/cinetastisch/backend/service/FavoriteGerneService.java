@@ -21,7 +21,9 @@ public class FavoriteGerneService {
 
     public void addFavoriteGenre(Long userId, String genre){
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        genre = genre.toUpperCase();
         Genre genreEnum = Genre.valueOf(genre);
+        System.out.println("dssdsd" + genreEnum);
 
         if(favoriteGenreRepository.existsByGenreAndUser_Id(genreEnum, userId)){
             FavoriteGenres favoriteGenres = favoriteGenreRepository.findByGenreAndUser_Id(genreEnum, userId);

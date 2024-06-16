@@ -41,6 +41,9 @@ public class ReviewService {
         ArrayList<String> tags = getTagsFromString(request.getTags());
 
         for (String tag : tags){
+            if (tag.isEmpty()){
+                continue;
+            }
             if (!tagRepository.existsByTag(tag)){
                 tagRepository.save(new Tag(tag));
             }

@@ -15,7 +15,6 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @Entity(name = "User")
 @Table(name = "user",

@@ -82,8 +82,8 @@ public class MovieController {
         return new ResponseEntity<>(movieService.getAllMovies(spec, page), HttpStatus.OK);
     }
 
-    @GetMapping("/review")
-    public ResponseEntity<List<MovieResponseDto>> getAllForReview(){
+    @GetMapping("/{id}/review")
+    public ResponseEntity<List<MovieResponseDto>> getAllForReview(@PathVariable Long id){
         return new ResponseEntity<>(movieService.getAllMoviesForReview(), HttpStatus.OK);
     }
 
