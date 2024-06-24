@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.repository;
 
+import de.cinetastisch.backend.enumeration.MovieStatus;
 import de.cinetastisch.backend.model.Movie;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -12,4 +13,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecific
     Boolean existsByTitleIgnoreCase(String title);
     Boolean existsByImdbIdIgnoreCase(String imdbId);
     List<Movie> findAllByForReview(Boolean forReview);
+    List<Movie> findAllByForReviewAndMovieStatus(Boolean forReview, MovieStatus movieStatus);
 }

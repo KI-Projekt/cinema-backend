@@ -137,7 +137,6 @@ public class MovieService {
 
 
     public MovieResponseDto archive(Long id) {
-        //TODO: API endpoint for AI to archive movie
         Movie movie = movieRepository.findById(id)
                                      .orElseThrow(() -> new ResourceNotFoundException("Movie id not found."));
         if (movie.getMovieStatus() != MovieStatus.ARCHIVED){
@@ -156,4 +155,5 @@ public class MovieService {
         }
         return movieMapper.entityToDto(movie);
     }
+
 }

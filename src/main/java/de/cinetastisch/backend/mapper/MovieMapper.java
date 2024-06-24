@@ -1,5 +1,6 @@
 package de.cinetastisch.backend.mapper;
 
+import de.cinetastisch.backend.dto.request.AiMovieRequestDTO;
 import de.cinetastisch.backend.dto.request.MovieRequestDto;
 import de.cinetastisch.backend.dto.response.MovieResponseDto;
 import de.cinetastisch.backend.dto.response.MovieSlimResponseDto;
@@ -44,5 +45,12 @@ public interface MovieMapper {
     @Mapping(target = "id", expression = "java(movie.id())")
     MovieSlimResponseDto trimDto(MovieResponseDto movie);
     List<MovieSlimResponseDto> trimDto(Iterable<MovieResponseDto> movie);
+
+    @Mapping(target = "movieId", expression = "java(movie.getId())")
+    @Mapping(target = "title", expression = "java(movie.getTitle())")
+    @Mapping(target = "description", expression = "java(movie.getPlot())")
+    @Mapping(target = "genre", expression = "java(movie.getGenre())")
+    AiMovieRequestDTO entityToAiMovieDto(Movie movie);
+    List<AiMovieRequestDTO> entityToAiMovieDto(Iterable<Movie> movies);
 
 }

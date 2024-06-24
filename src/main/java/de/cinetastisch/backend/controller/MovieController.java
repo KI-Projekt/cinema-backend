@@ -87,6 +87,7 @@ public class MovieController {
         return new ResponseEntity<>(movieService.getAllMoviesForReview(), HttpStatus.OK);
     }
 
+
     @Operation(
             tags = {"Movies"},
             operationId = "getMovie",
@@ -119,7 +120,6 @@ public class MovieController {
     public ResponseEntity<MovieResponseDto> getOne(@PathVariable("id") Long id){
         return new ResponseEntity<>(movieService.getMovie(id), HttpStatus.OK);
     }
-
 
     @Operation(
             tags = {"Movies"},
