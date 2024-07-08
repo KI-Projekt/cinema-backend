@@ -13,5 +13,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecific
     Boolean existsByTitleIgnoreCase(String title);
     Boolean existsByImdbIdIgnoreCase(String imdbId);
     List<Movie> findAllByForReview(Boolean forReview);
-    List<Movie> findAllByForReviewAndMovieStatus(Boolean forReview, MovieStatus movieStatus);
+    List<Movie> findAllByMovieStatus(MovieStatus movieStatus);
 }

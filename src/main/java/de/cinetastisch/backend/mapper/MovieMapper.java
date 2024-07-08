@@ -46,11 +46,13 @@ public interface MovieMapper {
     MovieSlimResponseDto trimDto(MovieResponseDto movie);
     List<MovieSlimResponseDto> trimDto(Iterable<MovieResponseDto> movie);
 
-    @Mapping(target = "movieId", expression = "java(movie.getId())")
+    @Mapping(target = "externalId", expression = "java(movie.getId())")
     @Mapping(target = "title", expression = "java(movie.getTitle())")
-    @Mapping(target = "description", expression = "java(movie.getPlot())")
-    @Mapping(target = "genre", expression = "java(movie.getGenre())")
+    @Mapping(target = "year", expression = "java(Integer.parseInt(movie.getReleaseYear()))")
     AiMovieRequestDTO entityToAiMovieDto(Movie movie);
     List<AiMovieRequestDTO> entityToAiMovieDto(Iterable<Movie> movies);
+
+
+
 
 }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.cinetastisch.backend.dto.request.AiMovieRequestDTO;
 import de.cinetastisch.backend.dto.request.AiRatingRequestDTO;
 import de.cinetastisch.backend.dto.request.AiScoreRequestDTO;
-import de.cinetastisch.backend.dto.request.AiScoreUserRequestDTO;
+import de.cinetastisch.backend.dto.response.AiScoreMoviesResponseDTO;
 import de.cinetastisch.backend.dto.response.AiScoreResponseDTO;
 import de.cinetastisch.backend.enumeration.MovieStatus;
 import de.cinetastisch.backend.exception.ResourceNotFoundException;
@@ -63,27 +63,28 @@ public class AiScoreService {
         List<Review> reviews = reviewRepository.findByUser(user);
         List<AiRatingRequestDTO> ratings = new ArrayList<>();
         for (Review review : reviews){
-            AiRatingRequestDTO ratingDTO = new AiRatingRequestDTO(review.getMovie().getTitle(), review.getRating());
+            AiRatingRequestDTO ratingDTO = new AiRatingRequestDTO(review.getMovie().getId(), review.getMovie().getTitle(), Integer.parseInt(review.getMovie().getReleaseYear()), review.getRating());
             ratings.add(ratingDTO);
         }
 
-        List<Movie> movies = movieRepository.findAllByForReviewAndMovieStatus(false, MovieStatus.IN_CATALOG);
+        List<Movie> movies = movieRepository.findAllByMovieStatus(MovieStatus.IN_CATALOG);
 
         List<AiMovieRequestDTO> aiMovies = movieMapper.entityToAiMovieDto(movies);
 
-
-        AiScoreUserRequestDTO aiScoreUserRequestDTO = new AiScoreUserRequestDTO(genres, ratings);
-        AiScoreRequestDTO aiScoreRequestDTO = new AiScoreRequestDTO(aiMovies, aiScoreUserRequestDTO);
+        AiScoreRequestDTO aiScoreRequestDTO = new AiScoreRequestDTO(aiMovies, ratings);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
         HttpEntity<AiScoreRequestDTO> request = new HttpEntity<>(aiScoreRequestDTO, headers);
+        System.out.println(aiScoreRequestDTO);
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(AiScoreServiceUrl, HttpMethod.POST, request, String.class);
         try {
-            List<AiScoreResponseDTO> aiScoreResponseDTO = objectMapper.readValue(responseEntity.getBody(), new TypeReference<List<AiScoreResponseDTO>>() {
-            });
-            return ResponseEntity.ok(aiScoreResponseDTO);
+            ResponseEntity<String> responseEntity = restTemplate.exchange(AiScoreServiceUrl, HttpMethod.POST, request, String.class);
+            AiScoreMoviesResponseDTO aiScoreResponseDTO = objectMapper.readValue(responseEntity.getBody(), new TypeReference<AiScoreMoviesResponseDTO>() {
+                }); // This line is throwing an exception
+            System.out.println(aiScoreResponseDTO);
+
+            return ResponseEntity.ok(aiScoreResponseDTO.getMovies());
         } catch (Exception e){
             e.printStackTrace();
         }

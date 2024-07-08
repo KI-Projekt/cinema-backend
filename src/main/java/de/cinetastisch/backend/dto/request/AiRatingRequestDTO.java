@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AiRatingRequestDTO {
-    private String movieTitle;
+    private Long externalId;
+    private String title;
+    private int year;
     private double rating;
 }

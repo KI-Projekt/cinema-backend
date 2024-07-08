@@ -6,10 +6,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AiMovieRequestDTO {
-    private Long movieId;
+    private Long externalId;
     private String title;
-    private String description;
-    private String genre;
+    private int year;
 
 
 }

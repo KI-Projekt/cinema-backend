@@ -9,5 +9,5 @@ import java.util.List;
 public class AiScoreRequestDTO {
 
     List<AiMovieRequestDTO> movies;
-    AiScoreUserRequestDTO user;
+    List<AiRatingRequestDTO> user_ratings;
 }
